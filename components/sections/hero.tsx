@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import BeamsBackground from "@/components/kokonutui/beams-background";
+import MouseEffectBackground from "@/components/kokonutui/mouse-effect-background";
 
 const container = {
   hidden: {},
@@ -22,9 +22,9 @@ export function Hero() {
     <section
       id="home"
       aria-labelledby="hero-heading"
-      className="relative overflow-hidden pt-16 pb-20"
+      className="hero-surface relative overflow-hidden pt-16 pb-20"
     >
-      <BeamsBackground intensity="subtle" className="-z-10" />
+      <MouseEffectBackground className="-z-10" focus={{ x: 0.28, y: 0.5 }} />
       <div className="relative mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-16 px-6 md:grid-cols-[1.2fr_1fr]">
         <motion.div variants={container} initial="hidden" animate="show">
           <motion.h1

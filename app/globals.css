@@ -11,6 +11,7 @@
   --color-foreground-muted: var(--foreground-muted);
   --color-brand-strong: var(--brand-strong);
   --color-brand-weak: var(--brand-weak);
+  --color-brand-green: var(--brand-green);
   --font-sans: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
   --font-heading: var(--font-sans);
@@ -53,88 +54,93 @@
 }
 
 /*
-  Brand palette: near-black text on a light neutral/cream background, with a
-  lime-green accent in two variants —
-    --brand-strong : vivid lime for fills & focus (active nav, buttons)
-    --brand-weak   : deep readable lime for text accents (labels, pills)
+  Palette (from supplied swatches, with contrast variants created as needed):
+    charcoal  #242424  →  primary text (light) / background base (dark)
+    grey      #7E8287  →  borders / muted UI (darker variant for muted text)
+    sage      #9DA39A  →  --brand-green: hero dot field
+    rose      #B98389  →  --secondary: pill tint
+    raspberry #DB2955  →  --primary + --brand-strong: buttons, links, rules, focus
+  Off-white bg and deeper contrast variants (readable raspberry/rose/grey) are created.
 */
 :root {
-  --background: #faf7f4;
-  --background-alt: #f1ece7;
-  --foreground: #1b1815;
-  --foreground-muted: #55504b;
-  --brand-strong: #84cc16;
-  --brand-weak: #3f6212;
+  --background: #f8f7f7;
+  --background-alt: #eeeded;
+  --foreground: #242424;
+  --foreground-muted: #585b5f;
+  --brand-strong: #db2955;
+  --brand-weak: #c11f48;
+  --brand-green: #9da39a;
 
   --card: #ffffff;
-  --card-foreground: #1b1815;
+  --card-foreground: #242424;
   --popover: #ffffff;
-  --popover-foreground: #1b1815;
-  --primary: #84cc16;
-  --primary-foreground: #1b1815;
-  --secondary: #e7e4e0;
-  --secondary-foreground: #1b1815;
-  --muted: #f1ece7;
-  --muted-foreground: #55504b;
-  --accent: #f1ece7;
-  --accent-foreground: #1b1815;
+  --popover-foreground: #242424;
+  --primary: #db2955;
+  --primary-foreground: #ffffff;
+  --secondary: #ecdcde;
+  --secondary-foreground: #5e4448;
+  --muted: #eeeded;
+  --muted-foreground: #585b5f;
+  --accent: #e8eae7;
+  --accent-foreground: #242424;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e3dbd3;
-  --input: #e3dbd3;
-  --ring: #1b1815;
+  --border: #dad8d8;
+  --input: #d3d1d2;
+  --ring: #c11f48;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: #faf7f4;
-  --sidebar-foreground: #1b1815;
-  --sidebar-primary: #84cc16;
-  --sidebar-primary-foreground: #1b1815;
-  --sidebar-accent: #f1ece7;
-  --sidebar-accent-foreground: #1b1815;
-  --sidebar-border: #e3dbd3;
-  --sidebar-ring: #1b1815;
+  --sidebar: #f8f7f7;
+  --sidebar-foreground: #242424;
+  --sidebar-primary: #db2955;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8eae7;
+  --sidebar-accent-foreground: #242424;
+  --sidebar-border: #dad8d8;
+  --sidebar-ring: #c11f48;
 }
 
 .dark {
-  --background: #1b1815;
-  --background-alt: #242019;
-  --foreground: #faf7f4;
-  --foreground-muted: #b9b2aa;
-  --brand-strong: #a3e635;
-  --brand-weak: #bef264;
+  --background: #242424;
+  --background-alt: #2c2c2c;
+  --foreground: #f2f1f1;
+  --foreground-muted: #a6a9ac;
+  --brand-strong: #db2955;
+  --brand-weak: #f2809b;
+  --brand-green: #aeb4ab;
 
-  --card: #211d19;
-  --card-foreground: #faf7f4;
-  --popover: #211d19;
-  --popover-foreground: #faf7f4;
-  --primary: #a3e635;
-  --primary-foreground: #1b1815;
-  --secondary: #33302b;
-  --secondary-foreground: #faf7f4;
-  --muted: #2a2521;
-  --muted-foreground: #b9b2aa;
-  --accent: #2a2521;
-  --accent-foreground: #faf7f4;
+  --card: #2c2c2c;
+  --card-foreground: #f2f1f1;
+  --popover: #2c2c2c;
+  --popover-foreground: #f2f1f1;
+  --primary: #db2955;
+  --primary-foreground: #ffffff;
+  --secondary: #4a3438;
+  --secondary-foreground: #e6cccf;
+  --muted: #333333;
+  --muted-foreground: #a6a9ac;
+  --accent: #333333;
+  --accent-foreground: #f2f1f1;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #3a332c;
-  --input: #3a332c;
-  --ring: #faf7f4;
+  --border: #3b3b3b;
+  --input: #3b3b3b;
+  --ring: #f2809b;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: #1b1815;
-  --sidebar-foreground: #faf7f4;
-  --sidebar-primary: #a3e635;
-  --sidebar-primary-foreground: #1b1815;
-  --sidebar-accent: #2a2521;
-  --sidebar-accent-foreground: #faf7f4;
-  --sidebar-border: #3a332c;
-  --sidebar-ring: #faf7f4;
+  --sidebar: #242424;
+  --sidebar-foreground: #f2f1f1;
+  --sidebar-primary: #db2955;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #333333;
+  --sidebar-accent-foreground: #f2f1f1;
+  --sidebar-border: #3b3b3b;
+  --sidebar-ring: #f2809b;
 }
 
 @utility glass {
@@ -142,6 +148,19 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
+}
+
+/*
+  Hero / landing surface. In light mode it matches the page background (no
+  band). In dark mode only, it deepens to a near-black — darker than the rest
+  of the dark UI — so the landing area reads as a distinct dark band. Text,
+  dots and accents keep the normal theme tokens (which already flip per theme).
+*/
+.hero-surface {
+  background-color: var(--background);
+}
+.dark .hero-surface {
+  background-color: #171717;
 }
 
 @layer base {
@@ -157,8 +176,34 @@
   }
 }
 
+/*
+  Uniform light/dark cross-fade. The `.theme-transition` class is added to
+  <html> only while the theme is switching (see ThemeToggle), so EVERY element
+  — buttons and nav included — fades its colours over the same 500ms in sync,
+  then reverts to its normal (snappy) hover transitions afterwards. The
+  !important beats component-level transition utilities (e.g. transition-all).
+*/
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 500ms ease,
+    border-color 500ms ease,
+    color 500ms ease,
+    fill 500ms ease,
+    stroke 500ms ease,
+    text-decoration-color 500ms ease !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition-duration: 0ms !important;
   }
 }

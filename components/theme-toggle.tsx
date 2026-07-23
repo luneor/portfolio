@@ -3,25 +3,42 @@
 import { AnimatePresence, motion } from "motion/react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+// Matches the 500ms cross-fade defined for `.theme-transition` in globals.css.
+const THEME_TRANSITION_MS = 500;
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const timeoutRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     // Server and the first client render must match (theme is unknown
     // server-side), so the real icon only appears once mounted.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+    return () => window.clearTimeout(timeoutRef.current);
   }, []);
 
   const isDark = resolvedTheme === "dark";
 
+  const toggleTheme = () => {
+    // Flag the switch so EVERY element cross-fades on the same 500ms timing,
+    // then drop the flag so normal (fast) hover transitions resume.
+    const root = document.documentElement;
+    root.classList.add("theme-transition");
+    window.clearTimeout(timeoutRef.current);
+    timeoutRef.current = window.setTimeout(() => {
+      root.classList.remove("theme-transition");
+    }, THEME_TRANSITION_MS + 50);
+    setTheme(isDark ? "light" : "dark");
+  };
+
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={toggleTheme}
       aria-label={
         mounted
           ? isDark

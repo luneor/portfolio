@@ -49,7 +49,7 @@ export function ProjectCard({
             </motion.div>
           </div>
           <div className="flex flex-1 flex-col gap-1.5 p-4">
-            <Badge className="w-fit rounded-full bg-secondary px-2 py-0.5 text-[0.65rem] font-bold tracking-wide text-foreground-muted uppercase">
+            <Badge className="w-fit rounded-full bg-secondary px-2 py-0.5 text-[0.65rem] font-bold tracking-wide text-secondary-foreground uppercase">
               {tag}
             </Badge>
             <h3 className="text-base font-bold tracking-tight text-foreground">

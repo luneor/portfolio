@@ -6,7 +6,7 @@
 
 function PlaceholderLabel() {
   return (
-    <span className="absolute bottom-2 left-2 rounded-full bg-foreground/70 px-2.5 py-1 text-[0.72rem] font-semibold text-white">
+    <span className="absolute bottom-2 left-2 rounded-full bg-foreground/70 px-2.5 py-1 text-[0.72rem] font-semibold text-background">
       Replace with real project image
     </span>
   );

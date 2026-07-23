@@ -32,16 +32,11 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <a
           href="#main"
-          className="sr-only rounded-br-md bg-foreground px-5 py-3 text-white focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[1000]"
+          className="sr-only rounded-br-md bg-foreground px-5 py-3 text-background focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[1000]"
         >
           Skip to main content
         </a>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <MotionConfig reducedMotion="user">
             <SiteHeader />
             {children}

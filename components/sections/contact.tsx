@@ -36,20 +36,20 @@ export function Contact() {
           <ul className="space-y-2.5">
             <li>
               <a
-                href="mailto:[EMAIL]"
+                href="mailto:hanruweh@hotmail.com"
                 className="underline decoration-brand-strong underline-offset-4"
               >
-                [EMAIL]
+                hanruweh@hotmail.com
               </a>
             </li>
             <li>
               <a
-                href="[LINKEDIN]"
+                href="https://www.linkedin.com/in/hanru-wehmeyer-2a5327258/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline decoration-brand-strong underline-offset-4"
               >
-                [LINKEDIN]
+                linkedin.com/in/hanru-wehmeyer
               </a>
             </li>
           </ul>

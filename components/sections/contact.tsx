@@ -20,8 +20,9 @@ export function Contact() {
     <section id="contact" aria-labelledby="contact-heading" className="py-24">
       <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-16 px-6 md:grid-cols-2">
         <div>
-          <span className="mb-4 inline-block text-[0.8rem] font-bold tracking-[0.08em] text-brand-weak uppercase">
-            Get in touch
+          <span className="mb-4 flex items-center gap-2 font-mono text-[0.78rem] tracking-[0.06em] lowercase">
+            <span className="text-brand-weak">›</span>
+            <span className="text-foreground-muted">get in touch</span>
           </span>
           <h2
             id="contact-heading"

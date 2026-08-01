@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Archivo, DM_Sans, Space_Mono } from "next/font/google";
 import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
-const inter = Inter({
+// Body + buttons. DM Sans at Regular (400) and Bold (700) per the type spec.
+const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "700"],
+});
+
+// Headings only. Archivo Heavy (800/900) gives display type its weight.
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  weight: ["400", "700", "800", "900"],
+});
+
+// Captions & labels — eyebrows, nav, tags, the terminal prompt motif.
+const spaceMono = Space_Mono({
+  variable: "--font-mono-face",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${archivo.variable} ${spaceMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
@@ -36,7 +51,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" forcedTheme="dark">
           <MotionConfig reducedMotion="user">
             <SiteHeader />
             {children}

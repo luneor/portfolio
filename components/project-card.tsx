@@ -33,9 +33,11 @@ export function ProjectCard({
       transition={{ duration: 0.35, ease: "easeOut" }}
     >
       <motion.div
-        whileHover={{ boxShadow: "0 16px 32px -12px rgba(27, 24, 21, 0.18)" }}
+        whileHover={{
+          boxShadow: "0 18px 40px -16px rgba(0,0,0,0.6), 0 0 0 1px rgba(36,161,130,0.5)",
+        }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        style={{ boxShadow: "0 1px 2px rgba(27, 24, 21, 0.04)" }}
+        style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
         className="h-full overflow-hidden rounded-xl border border-border bg-card"
       >
         <Link href={`/work/${slug}`} className="flex h-full flex-col">
@@ -49,7 +51,7 @@ export function ProjectCard({
             </motion.div>
           </div>
           <div className="flex flex-1 flex-col gap-1.5 p-4">
-            <Badge className="w-fit rounded-full bg-secondary px-2 py-0.5 text-[0.65rem] font-bold tracking-wide text-secondary-foreground uppercase">
+            <Badge className="w-fit rounded-full border border-border bg-secondary px-2.5 py-0.5 font-mono text-[0.62rem] tracking-[0.04em] text-brand-weak lowercase">
               {tag}
             </Badge>
             <h3 className="text-base font-bold tracking-tight text-foreground">

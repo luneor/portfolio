@@ -7,22 +7,25 @@ export function About() {
         <div className="grid grid-cols-2 gap-4">
           <Image
             src="/assets/about-portrait-1.png"
-            alt="Portrait of Hanru Wehmeyer, secondary shot"
+            alt="Hanru Wehmeyer, portrait"
             width={1875}
             height={1886}
+            sizes="(max-width: 768px) 45vw, 220px"
             className="aspect-[3/4] w-full rounded-xl border border-border object-cover"
           />
           <Image
             src="/assets/about-portrait-2.png"
-            alt="Portrait of Hanru Wehmeyer, alternate shot"
+            alt="Hanru Wehmeyer, portrait"
             width={4272}
             height={1693}
+            sizes="(max-width: 768px) 92vw, 460px"
             className="col-span-2 aspect-[4272/1693] w-full rounded-xl border border-border object-cover"
           />
         </div>
         <div>
-          <span className="mb-4 inline-block text-[0.8rem] font-bold tracking-[0.08em] text-brand-weak uppercase">
-            About
+          <span className="mb-4 flex items-center gap-2 font-mono text-[0.78rem] tracking-[0.06em] lowercase">
+            <span className="text-brand-weak">›</span>
+            <span className="text-foreground-muted">about</span>
           </span>
           <h2
             id="about-heading"

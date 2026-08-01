@@ -13,10 +13,15 @@ export function SectionHeading({
 }) {
   return (
     <div className="mb-10">
-      <span className="mb-4 inline-block text-[0.8rem] font-bold tracking-[0.08em] text-brand-weak uppercase">
-        {eyebrow}
+      {/* mono `› eyebrow` — the terminal-prompt signature, repeated per section */}
+      <span className="mb-4 flex items-center gap-2 font-mono text-[0.78rem] tracking-[0.06em] lowercase">
+        <span className="text-brand-weak">›</span>
+        <span className="text-foreground-muted">{eyebrow}</span>
       </span>
-      <h2 id={headingId} className="text-[clamp(1.6rem,3.4vw,2.3rem)] leading-[1.15] font-bold tracking-tight text-foreground">
+      <h2
+        id={headingId}
+        className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-foreground"
+      >
         {title}
       </h2>
       {children && (

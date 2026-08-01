@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MorphicNavbar, type NavItem } from "@/components/kokonutui/morphic-navbar";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const NAV: NavItem[] = [
@@ -64,13 +63,15 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur-sm">
       <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-6 py-4">
-        <Link href="/#home" className="text-[1.05rem] font-bold tracking-tight text-foreground">
-          Hanru Wehmeyer
+        <Link
+          href="/#home"
+          className="font-mono text-[0.95rem] font-medium tracking-tight text-foreground"
+        >
+          <span className="text-brand-weak">~/</span>hanru
         </Link>
 
         <div className="flex items-center gap-3">
           <MorphicNavbar items={NAV} activeKey={activeKey} className="hidden lg:flex" />
-          <ThemeToggle />
           <button
             type="button"
             className="inline-flex items-center rounded-md border border-border px-3 py-2 lg:hidden"

@@ -62,8 +62,13 @@
   guaranteed regardless of the theme class.
     paper     #0F0F0F  →  --background: page ground
     surface   #1A1A1A  →  --card / --background-alt: lifted surfaces
-    ink       #F5F3EC  →  --foreground: primary text (warm off-white)
-    caption   #A8A499  →  --foreground-muted: body / secondary text
+    ink       #F5F3EC  →  --foreground: ALL body copy — paragraphs, lists,
+                          card summaries, section intros. Mixing white and grey
+                          inside a reading flow reads as jarring, so prose is
+                          uniformly `--foreground`.
+    caption   #A8A499  →  --foreground-muted: chrome and secondary labels ONLY —
+                          nav, figure captions, eyebrows, dates/meta, footer.
+                          Never body copy.
     coral     #ED2A03  →  --primary + --brand-strong: buttons, rules, signal
     mint      #44CCBE  →  --ring + --brand-weak: labels, links, focus (cool)
     teal      #24A182  →  --brand-green: secondary cool accent

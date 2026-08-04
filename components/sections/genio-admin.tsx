@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SectionHeading } from "@/components/section-heading";
 import { ProjectCard } from "@/components/project-card";
 import { PROJECTS } from "@/lib/projects";
@@ -27,6 +28,19 @@ export function GenioAdmin() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {projects.map((project) => {
             const Art = project.art;
+            // A real screenshot wins over the abstract motif where we have one.
+            const media = project.cover ? (
+              <Image
+                src={project.cover.src}
+                alt={project.cover.alt}
+                width={project.cover.width}
+                height={project.cover.height}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Art />
+            );
             return (
               <ProjectCard
                 key={project.slug}
@@ -34,7 +48,7 @@ export function GenioAdmin() {
                 tag={project.tag}
                 title={project.title}
                 summary={project.summary}
-                media={<Art />}
+                media={media}
               />
             );
           })}

@@ -44,7 +44,7 @@ export function Ai() {
                 <span className="text-brand-weak">{String(i + 1).padStart(2, "0")}</span>
                 <span className="text-foreground-muted lowercase">{p.label}</span>
               </div>
-              <p className="text-[0.95rem] leading-relaxed text-foreground-muted">
+              <p className="text-[0.95rem] leading-relaxed text-foreground">
                 {p.body}
               </p>
             </div>

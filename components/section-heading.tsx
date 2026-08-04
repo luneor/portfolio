@@ -25,7 +25,7 @@ export function SectionHeading({
         {title}
       </h2>
       {children && (
-        <div className="mt-4 max-w-[640px] text-foreground-muted">{children}</div>
+        <div className="mt-4 max-w-[640px] text-foreground">{children}</div>
       )}
     </div>
   );

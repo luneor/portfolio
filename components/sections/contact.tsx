@@ -30,7 +30,7 @@ export function Contact() {
           >
             Contact
           </h2>
-          <p className="mb-4 text-foreground-muted">
+          <p className="mb-4 text-foreground">
             Happy to talk about UX work, collaborations, or roles — drop a
             message or reach out directly.
           </p>

@@ -73,7 +73,7 @@ export function Cv() {
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-10">
           <div className="mb-8">
             <CvBlockHeading>Profile</CvBlockHeading>
-            <p className="text-foreground-muted">
+            <p className="text-foreground">
               UX Designer shaping how educators manage and understand their
               students at scale, currently designing admin tooling at Genio.
               I default to asking why before how, on feature decisions, on
@@ -101,7 +101,7 @@ export function Cv() {
               </p>
               <ul className="mt-2 list-disc space-y-1.5 pl-5">
                 {genioBullets.map((bullet) => (
-                  <li key={bullet.slice(0, 24)} className="text-foreground-muted">
+                  <li key={bullet.slice(0, 24)} className="text-foreground">
                     {bullet}
                   </li>
                 ))}
@@ -119,7 +119,7 @@ export function Cv() {
               </div>
               <ul className="mt-2 list-disc space-y-1.5 pl-5">
                 {storiBullets.map((bullet) => (
-                  <li key={bullet.slice(0, 24)} className="text-foreground-muted">
+                  <li key={bullet.slice(0, 24)} className="text-foreground">
                     {bullet}
                   </li>
                 ))}
@@ -163,7 +163,7 @@ export function Cv() {
 
           <div className="mb-8">
             <CvBlockHeading>About Me</CvBlockHeading>
-            <p className="text-foreground-muted">
+            <p className="text-foreground">
               I ask why more than I ask how, on feature decisions, on
               process, on the tools I reach for. That instinct extends to
               AI: I use it deliberately for the speed it offers, but I stay
@@ -175,7 +175,7 @@ export function Cv() {
 
           <div>
             <CvBlockHeading>Achievements &amp; Interests</CvBlockHeading>
-            <p className="mb-2 text-foreground-muted">
+            <p className="mb-2 text-foreground">
               Dundee Uni Men&apos;s Hockey 1st XI Captain (2024)
             </p>
             <ul className="flex flex-wrap gap-2">

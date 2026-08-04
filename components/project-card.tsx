@@ -57,7 +57,7 @@ export function ProjectCard({
             <h3 className="text-base font-bold tracking-tight text-foreground">
               {title}
             </h3>
-            <p className="line-clamp-2 text-sm text-foreground-muted">
+            <p className="line-clamp-2 text-sm text-foreground">
               {summary}
             </p>
           </div>

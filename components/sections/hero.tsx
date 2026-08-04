@@ -62,7 +62,7 @@ export function Hero() {
 
           <motion.p
             variants={item}
-            className="mt-7 max-w-[54ch] text-[1.05rem] leading-relaxed text-foreground-muted"
+            className="mt-7 max-w-[54ch] text-[1.05rem] leading-relaxed text-foreground"
           >
             UX designer, currently at Genio and curious about what&apos;s next.
             I care about the reasoning behind a product as much as the
@@ -75,11 +75,11 @@ export function Hero() {
             className="mt-10 grid max-w-[520px] grid-cols-[auto_1fr] gap-x-5 gap-y-2 font-mono text-[0.82rem]"
           >
             <dt style={{ color: mint }}>focus</dt>
-            <dd className="text-foreground-muted">
+            <dd className="text-foreground">
               product design · design systems · accessibility
             </dd>
             <dt style={{ color: mint }}>now</dt>
-            <dd className="text-foreground-muted">UX Designer @ Genio</dd>
+            <dd className="text-foreground">UX Designer @ Genio</dd>
           </motion.dl>
 
           <motion.div variants={item} className="mt-10 flex flex-wrap gap-3">

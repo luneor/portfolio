@@ -1,15 +1,13 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Badge } from "@/components/ui/badge";
 import { CaseStudyNav } from "@/components/case-study/case-study-nav";
-import { cn } from "@/lib/utils";
 import {
   PROJECTS,
   decisionId,
   getCaseStudySections,
   getProjectBySlug,
-  type ProjectImage,
+  type ProjectMedia,
 } from "@/lib/projects";
 
 export function generateStaticParams() {
@@ -56,49 +54,65 @@ function Section({
       >
         {heading}
       </h2>
-      <div className="mt-3 flex flex-col gap-4 text-foreground-muted">
+      <div className="mt-3 flex flex-col gap-4 text-foreground">
         {children}
       </div>
     </section>
   );
 }
 
-/** Snapshot facts, rendered as a definition list so pairs stay associated. */
-function SnapshotFacts({
-  facts,
-}: {
-  facts: { label: string; value: string }[];
-}) {
-  if (facts.length === 0) return null;
+/*
+  The role/timeline/team/tools fact list is intentionally not rendered — it
+  read as clutter above the write-up. The fields stay on the Project type so
+  the metadata isn't lost and the list can be brought back if wanted.
+*/
 
-  return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 font-mono text-[0.82rem]">
-      {facts.map((fact) => (
-        <div key={fact.label} className="col-span-2 grid grid-cols-subgrid">
-          <dt className="text-brand-weak">{fact.label}</dt>
-          <dd className="text-foreground-muted">{fact.value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
+/**
+ * Section body content. A plain string becomes a paragraph; richer content
+ * (multiple paragraphs, lists) is passed straight through, since the wrapping
+ * <p> a string needs would be invalid markup around block elements.
+ */
+function Prose({ children }: { children: React.ReactNode }) {
+  return typeof children === "string" ? <p>{children}</p> : <>{children}</>;
 }
 
-function Figure({ image }: { image: ProjectImage }) {
+/** A captioned image or screen recording. */
+function Figure({ media }: { media: ProjectMedia }) {
   return (
     <figure className="flex flex-col gap-3">
       <div className="overflow-hidden rounded-xl border border-border bg-background-alt">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={image.width}
-          height={image.height}
-          sizes="(max-width: 768px) 100vw, 680px"
-          className="h-auto w-full"
-        />
+        {media.kind === "video" ? (
+          /*
+            Never autoplayed: nothing moves until the reader presses play, so
+            the page stays calm and reduced-motion needs no special case. These
+            recordings are silent, so `description` is the accessible name and
+            there's no audio to caption.
+          */
+          <video
+            src={media.src}
+            poster={media.poster}
+            width={media.width}
+            height={media.height}
+            controls
+            playsInline
+            preload="metadata"
+            aria-label={media.description}
+            className="h-auto w-full"
+          />
+        ) : (
+          <Image
+            src={media.src}
+            alt={media.alt}
+            width={media.width}
+            height={media.height}
+            sizes="(max-width: 768px) 100vw, 680px"
+            className="h-auto w-full"
+          />
+        )}
       </div>
-      {image.caption && (
+      {media.caption && (
         <figcaption className="font-mono text-[0.72rem] leading-relaxed tracking-[0.03em] text-foreground-muted">
-          {image.caption}
+          {media.caption}
         </figcaption>
       )}
     </figure>
@@ -121,42 +135,44 @@ export default async function ProjectPage({
   const sections = getCaseStudySections(project);
   const { snapshot } = project;
 
-  const facts = [
-    { label: "role", value: snapshot?.role },
-    { label: "timeline", value: snapshot?.timeline },
-    { label: "team", value: snapshot?.team },
-    { label: "tools", value: snapshot?.tools },
-  ].filter((fact): fact is { label: string; value: string } =>
-    Boolean(fact.value)
-  );
-
   return (
     <main id="main" className="mx-auto w-full max-w-[1120px] px-6 pb-24">
       <div className="flex flex-col gap-6 md:grid md:grid-cols-[15rem_minmax(0,1fr)] md:gap-12">
         <CaseStudyNav sections={sections} title={project.title} />
 
-        <article className="min-w-0 max-w-[680px] pt-8 md:pt-16">
-          {/* Title block — outside the TOC sections, it's the page's h1. */}
+        {/*
+          `pt-8` matches the rail's own top padding, so the h1 starts on the
+          same line as "Back to work" in the sidebar.
+        */}
+        <article className="min-w-0 max-w-[680px] pt-8">
+          {/*
+            Title block — outside the TOC sections, it's the page's h1. Neither
+            the tag nor the one-line `summary` is repeated here: the tag is card
+            chrome and the summary restates the Snapshot statement. Both still
+            do their job on the work cards, and the summary is the page's meta
+            description.
+          */}
           <header>
-            <Badge
-              variant="outline"
-              className={cn(
-                "w-fit rounded-full border px-2.5 py-1 font-mono text-[0.7rem] tracking-[0.04em] lowercase",
-                project.tagMuted
-                  ? "border-border text-foreground-muted"
-                  : "border-brand-weak text-brand-weak"
-              )}
-            >
-              {project.tag}
-            </Badge>
-            <h1 className="mt-3 text-[clamp(1.8rem,4vw,2.6rem)] leading-[1.15] font-bold tracking-tight text-foreground">
+            <h1 className="text-[clamp(1.8rem,4vw,2.6rem)] leading-[1.15] font-bold tracking-tight text-foreground">
               {project.title}
             </h1>
-            <p className="mt-3 text-[1.05rem] text-foreground-muted">
-              {project.summary}
-            </p>
+          </header>
 
-            <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-background-alt">
+          <div className="mt-10 flex flex-col gap-12">
+            {/* Snapshot leads, so it frames the work before the image. */}
+            {snapshot && (
+              <Section id="snapshot" heading="Snapshot">
+                {snapshot.statement && (
+                  <p className="text-[1.05rem] text-foreground">
+                    {snapshot.statement}
+                  </p>
+                )}
+                {snapshot.overview && <Prose>{snapshot.overview}</Prose>}
+              </Section>
+            )}
+
+            {/* Cover sits under the snapshot rather than above it. */}
+            <div className="overflow-hidden rounded-2xl border border-border bg-background-alt">
               {project.cover ? (
                 <Image
                   src={project.cover.src}
@@ -173,46 +189,46 @@ export default async function ProjectPage({
                 </div>
               )}
             </div>
-          </header>
-
-          <div className="mt-12 flex flex-col gap-12">
-            {snapshot && (
-              <Section id="snapshot" heading="Snapshot">
-                {snapshot.statement && (
-                  <p className="text-[1.05rem] text-foreground">
-                    {snapshot.statement}
-                  </p>
-                )}
-                <SnapshotFacts facts={facts} />
-                {snapshot.overview && <p>{snapshot.overview}</p>}
-              </Section>
-            )}
 
             {project.problem && (
               <Section id="problem" heading="Problem">
-                <p>{project.problem}</p>
+                <Prose>{project.problem}</Prose>
+              </Section>
+            )}
+
+            {project.constraints && (
+              <Section id="constraints" heading="Constraints">
+                <Prose>{project.constraints}</Prose>
               </Section>
             )}
 
             {/* Each decision is its own section so it gets its own TOC entry,
-                titled with the actual judgment call. */}
+                titled with the actual judgment call. Its evidence renders with
+                it, rather than being pooled into the gallery below. */}
             {project.decisions?.map((decision, index) => (
               <Section
                 key={decision.heading}
                 id={decisionId(index)}
                 heading={decision.heading}
               >
-                <p>{decision.body}</p>
+                <Prose>{decision.body}</Prose>
+                {decision.media && decision.media.length > 0 && (
+                  <div className="mt-4 flex flex-col gap-10">
+                    {decision.media.map((media) => (
+                      <Figure key={media.src} media={media} />
+                    ))}
+                  </div>
+                )}
               </Section>
             ))}
 
             {project.shipped && (
               <Section id="shipped" heading="Shipped">
-                <p>{project.shipped}</p>
+                <Prose>{project.shipped}</Prose>
                 {project.gallery && project.gallery.length > 0 && (
                   <div className="mt-4 flex flex-col gap-10">
-                    {project.gallery.map((image) => (
-                      <Figure key={image.src} image={image} />
+                    {project.gallery.map((media) => (
+                      <Figure key={media.src} media={media} />
                     ))}
                   </div>
                 )}
@@ -221,21 +237,21 @@ export default async function ProjectPage({
 
             {project.outcome && (
               <Section id="outcome" heading="Outcome">
-                <p>{project.outcome}</p>
+                <Prose>{project.outcome}</Prose>
               </Section>
             )}
 
             {project.reflection && (
               <Section id="reflection" heading="Reflection">
-                <p>{project.reflection}</p>
+                <Prose>{project.reflection}</Prose>
               </Section>
             )}
 
             {/* Projects with no `shipped` section still show their imagery. */}
             {!project.shipped && project.gallery && project.gallery.length > 0 && (
               <div className="flex flex-col gap-10">
-                {project.gallery.map((image) => (
-                  <Figure key={image.src} image={image} />
+                {project.gallery.map((media) => (
+                  <Figure key={media.src} media={media} />
                 ))}
               </div>
             )}

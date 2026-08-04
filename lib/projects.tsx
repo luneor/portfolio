@@ -33,20 +33,42 @@ export interface CaseStudySnapshot {
 export interface Decision {
   heading: string;
   body: React.ReactNode;
+  /**
+   * Evidence for this specific call — kept with the decision rather than
+   * pooled into the gallery, so the artefacts sit beside the reasoning.
+   */
+  media?: ProjectMedia[];
 }
 
 /**
  * A real image asset in `public/work/<slug>/`. Intrinsic `width`/`height`
  * are required so next/image can reserve space and avoid layout shift.
- * Sourced from the archived Framer portfolio (hanruwehmeyer.framer.website).
  */
 export interface ProjectImage {
+  kind?: "image";
   src: string;
   alt: string;
   width: number;
   height: number;
   caption?: string;
 }
+
+/**
+ * A screen recording. Rendered with native controls and never autoplayed, so
+ * nothing moves until the reader asks for it. `description` carries the
+ * accessible name — these clips are silent, so there's no audio to caption.
+ */
+export interface ProjectVideo {
+  kind: "video";
+  src: string;
+  poster?: string;
+  width: number;
+  height: number;
+  description: string;
+  caption?: string;
+}
+
+export type ProjectMedia = ProjectImage | ProjectVideo;
 
 export interface Project {
   slug: string;
@@ -68,6 +90,11 @@ export interface Project {
   snapshot?: CaseStudySnapshot;
   /** 2. Problem: context and the real constraint. */
   problem?: React.ReactNode;
+  /**
+   * Optional: the constraints the work had to hold inside, where they carry
+   * enough weight to stand apart from the Problem rather than sit inside it.
+   */
+  constraints?: React.ReactNode;
   /** 3. Decisions: 1–3 key judgment calls, each with a specific heading. */
   decisions?: Decision[];
   /** 4. Shipped: the final solution. */
@@ -77,10 +104,27 @@ export interface Project {
   /** 6. Reflection: one line on what you'd change or learned. */
   reflection?: React.ReactNode;
 
-  /** Wide hero image shown at the top of the detail page in place of the SVG art. */
+  /**
+   * Wide hero image for the detail page, in place of the SVG art. Also used as
+   * the work-card thumbnail where the card would otherwise show the motif.
+   */
   cover?: ProjectImage;
-  /** Case-study imagery rendered as a captioned column under "Shipped". */
-  gallery?: ProjectImage[];
+  /** Case-study media rendered as a captioned column under "Shipped". */
+  gallery?: ProjectMedia[];
+}
+
+/**
+ * A deliberately visible gap in a write-up — a fact, artefact or asset still to
+ * be supplied. Loud on purpose: nothing here should reach a published page, so
+ * it should be obvious in review rather than blending into the copy.
+ */
+function Placeholder({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="rounded-lg border border-dashed border-brand-strong px-4 py-3 font-mono text-[0.78rem] leading-relaxed text-foreground-muted">
+      <strong className="font-bold text-brand-strong">TO ADD — </strong>
+      {children}
+    </p>
+  );
 }
 
 export const PROJECTS: Project[] = [
@@ -118,21 +162,230 @@ export const PROJECTS: Project[] = [
     summary:
       "A two-tier control model so institution-wide policy doesn't block the students who need support.",
     snapshot: {
-      role: "UX Designer — Genio Notes (BEAR Squad)",
-      // TODO: timeline, team, tools
-      statement:
-        "Institution-wide AI policy risked blocking the students who most needed support, so I split control into an org baseline plus group-level overrides.",
+      // TODO: exact timeline dates and stakeholder names/roles to confirm.
+      role: "UX Designer — Genio Admin (BEAR Squad)",
+      timeline: "TODO — confirm dates",
+      team: "TODO — confirm names and roles",
+      statement: (
+        <>
+          Admins needed to turn AI features on and off for individual students,
+          but the request arrived as two incompatible asks — a competitor-style
+          profile system from marketing and exec, and the groups system the
+          squad had already built. Shipped as an extension of groups: an
+          org-wide baseline with group-level overrides.
+        </>
+      ),
+      overview: (
+        <>
+          <p>
+            Genio Admin is the tooling academic institutions use to manage how
+            their students are supported. This work covered per-student control
+            of the AI features in Genio Notes, plus filtered exports for
+            reporting.
+          </p>
+          <Placeholder>
+            Product, role, timeline and stakeholder list to confirm — names,
+            dates and exact titles.
+          </Placeholder>
+        </>
+      ),
     },
-    problem:
-      "AI tools within Genio Notes can conflict with a course or institution's academic policy — but some individual students genuinely need that support.",
+    problem: (
+      <>
+        <p>
+          AI tools inside Genio Notes can conflict with a course or
+          institution’s academic policy, while some individual students
+          genuinely need that support to work. Admins had no way to draw that
+          line: they needed to enable and disable AI features for individual
+          students, and to pull filtered exports showing where those features
+          were switched on.
+        </p>
+        <p>
+          Partway through, the shape of the work changed rather than the problem
+          itself. Our PM went on leave, priorities moved while they were out,
+          and the stakeholder input arriving in their absence pointed in
+          different directions — leadership on when the work should happen,
+          marketing and exec on what form it should take.
+        </p>
+      </>
+    ),
+    constraints: (
+      <>
+        <p>
+          Two constraints compounded each other, and a third sat on top of
+          both.
+        </p>
+        <p>
+          <strong className="font-semibold text-foreground">
+            The roadmap was already locked in.
+          </strong>{" "}
+          Our PM had done solid work nailing it down before going on leave.
+          Feature toggles were on it, but further out than the rest of the work
+          in front of the squad.
+        </p>
+        <p>
+          <strong className="font-semibold text-foreground">
+            A quarterly squad review moved them up.
+          </strong>{" "}
+          The strong signal coming down from leadership was that feature toggles
+          were now the priority, ahead of where the roadmap had placed them —
+          with no PM in the room to absorb that signal or translate it into
+          something the squad could act on.
+        </p>
+        <p>
+          <strong className="font-semibold text-foreground">
+            Marketing and exec wanted to match a competitor.
+          </strong>{" "}
+          Specifically, they wanted feature management as a standalone
+          “profile” system: a different architecture from the groups-based
+          system the squad had already built and invested in.
+        </p>
+        <Placeholder>
+          Exact names, dates and roles for the review and the
+          marketing/exec ask.
+        </Placeholder>
+      </>
+    ),
     decisions: [
       {
-        heading: "Split control into org baseline plus group overrides",
-        body: "I designed a two-tier control model — an org-wide baseline setting plus group-level overrides — across the three AI features Notes currently ships, so institutions set policy while individual groups (a course with different needs, for example) can override it.",
+        heading: "Turn an ambiguous priority signal into scoped work",
+        body: (
+          <>
+            <p>
+              What came out of the quarterly review was a direction, not a
+              brief: feature toggles matter more than the roadmap currently
+              says. Normally that gets absorbed and translated by a PM before it
+              reaches the squad. With no one in that seat, it reached the squad
+              as-is, and the gap between “this is the priority” and “this is what
+              we build next” had to be closed before any design work meant
+              anything.
+            </p>
+            <p>
+              I worked back from the signal to what it implied in practice:
+              which parts of the toggle work were actually being asked for
+              first, what that displaced on the locked roadmap, and what could
+              be delivered without discarding work already underway. That gave
+              the squad a scope to commit to rather than a priority to
+              interpret.
+            </p>
+            <Placeholder>
+              The specific asks and who they came from — quotes or notes from
+              the quarterly review, and what was displaced on the roadmap.
+            </Placeholder>
+          </>
+        ),
+      },
+      {
+        heading: "Extend the groups system instead of building profiles",
+        body: (
+          <>
+            <p>
+              The marketing and exec ask was concrete: a standalone profile
+              system for managing features, matching what a competitor offered.
+              The squad had already built a groups-based system for organising
+              students, and profiles would have meant a second, parallel
+              architecture for the same job — a from-scratch rebuild alongside
+              something that already worked.
+            </p>
+            <p>
+              I made the case for extending groups instead, on the grounds that
+              the intent behind the request was competitive capability rather
+              than that particular structure: admins being able to manage AI
+              features at a level above the individual student. Groups already
+              expressed that relationship, so extending them met the intent
+              without the squad absorbing a rebuild.
+            </p>
+            <p>
+              The gap between what was requested and what shipped was
+              therefore architectural, not functional: no profile system, but
+              the feature-management capability the request was after.
+            </p>
+            <Placeholder>
+              The synthesis artefact — profile system vs. groups extension,
+              weighed against what exec and marketing actually needed. To find
+              or rebuild.
+            </Placeholder>
+          </>
+        ),
+      },
+      {
+        heading: "Split control into an org baseline plus group overrides",
+        body: (
+          <>
+            <p>
+              Working inside the scope that came out of the reconciliation
+              above, I designed a two-tier control model across the three AI
+              features Notes ships: an org-wide baseline setting, plus
+              group-level overrides. Institutions set policy once, and a group
+              with different needs — a course, a cohort — can depart from it
+              without that decision being made for every student at once.
+            </p>
+            <Placeholder>
+              Figma exploration for the toggle UI — links and screenshots of the
+              concepts explored within this scope.
+            </Placeholder>
+          </>
+        ),
+      },
+      {
+        heading: "Treat the toggle screen as an opportunity for delight",
+        body: (
+          <>
+            <p>
+              The control model answered the policy problem, but the screen
+              itself was also a chance to push Admin past a purely utilitarian
+              feel. Rather than fit the toggles into the existing page
+              structure, I built a new layout for them.
+            </p>
+            <Placeholder>
+              Context for this section — what the new layout changed, what the
+              delight opportunity actually was, and screenshots of the result.
+            </Placeholder>
+          </>
+        ),
       },
     ],
-    outcome:
-      "A student who needs the support isn't blocked by a blanket policy decision made elsewhere in the organisation.",
+    outcome: (
+      <>
+        <p>
+          Feature toggles shipped as an extension of the existing groups
+          system: an org-wide baseline for each of the three AI features in
+          Notes, with group-level overrides on top, alongside the filtered
+          exports admins needed for reporting. No parallel profile architecture
+          was built.
+        </p>
+        <p>
+          The practical result is that a student who needs the support isn’t
+          blocked by a blanket policy decision made elsewhere in the
+          organisation, and an institution that needs to restrict a feature can
+          do so without exceptions being handled one student at a time.
+        </p>
+        <Placeholder>
+          Adoption or usage figures, if any are available.
+        </Placeholder>
+      </>
+    ),
+    reflection: (
+      <>
+        <p>
+          Most of this project wasn’t interface work. Two sets of input —
+          leadership on timing, marketing and exec on architecture — arrived
+          pointing in different directions, and the person who would normally
+          reconcile them was on leave. What I did was turn that into a single
+          direction the team could commit to: a scope that answered the priority
+          signal, and an architecture that met the intent behind the
+          competitor comparison without discarding what the squad had already
+          built.
+        </p>
+        <p>
+          The part worth keeping is that the useful question turned out not to
+          be “profiles or groups” but “what is the profile system actually
+          for” — the request named a solution, and the intent behind it was
+          reachable another way. Asking that earlier would have shortened the
+          route to the same answer.
+        </p>
+      </>
+    ),
   },
   {
     slug: "admin-home-page",
@@ -163,28 +416,417 @@ export const PROJECTS: Project[] = [
     summary:
       "Getting a lightweight, background UI element to WCAG 2.1 AA without making it visually loud.",
     snapshot: {
-      role: "Lead UX role on accessibility compliance — Genio",
-      // TODO: timeline, team, tools
-      statement:
-        "A background audio component failed WCAG 2.1 AA, and the obvious contrast fix made it loud — so I met contrast with borders and weight instead of colour, landing AA without the muddiness.",
+      role: "UX Designer — Genio Notes, Audio tab",
+      timeline: "Sep 2025 – Jan 2026",
+      team:
+        "Dave Tucker-Diaz (CEO), Paul Davis (Head of UX), Steven (accessibility/dev support), Matt Russell (analytics), Level Access (external WCAG auditor)",
+      tools: "Figma, Pendo, a custom bubble playground prototype",
+      statement: (
+        <>
+          Ahead of a VPAT submission, Genio Notes’ audio bubbles failed WCAG 2.1
+          AA contrast — brought into compliance with a border-based fix that
+          kept the interface quiet, rather than raising saturation until the
+          numbers passed.
+        </>
+      ),
+      overview: (
+        <>
+          Genio Notes uses small “audio bubbles” (with connecting lines) in the
+          audio tab to let students navigate and annotate recorded lectures. The
+          trigger was an upcoming VPAT (accessibility conformance report).
+        </>
+      ),
     },
-    problem:
-      "The audio-capture interface (\"bubbles\") failed WCAG 2.1 AA colour contrast requirements — but a straightforward contrast fix risked making the redesign visually loud and cognitively heavy for what's meant to be a lightweight, background UI element.",
+    cover: {
+      src: "/work/audio-bubbles/cover.jpg",
+      alt: "The Genio Notes audio tab in light mode, showing the redesigned outlined audio bubbles in the right-hand panel.",
+      width: 2000,
+      height: 1110,
+    },
+    problem: (
+      <>
+        <p>The audit found a colour contrast issue:</p>
+        <ul className="flex list-disc flex-col gap-1.5 pl-5">
+          <li>
+            <strong className="font-semibold text-foreground">
+              Dark mode:
+            </strong>{" "}
+            grey (4.04:1) and yellow (3.5:1) passed. Blue (2.94:1) and red
+            (2.42:1) failed.
+          </li>
+          <li>
+            <strong className="font-semibold text-foreground">
+              Light mode:
+            </strong>{" "}
+            every colour except red failed.
+          </li>
+        </ul>
+        <p>
+          The brief: bring the interface up to WCAG AA without tipping it into a
+          heavier, more clinical UI that increases cognitive load, which was the
+          opposite of the design’s original intent (helping students review
+          notes without distraction).
+        </p>
+        <p>
+          <strong className="font-semibold text-foreground">
+            Why this became a multi-month, closely-tracked piece of work rather
+            than a quick contrast fix:
+          </strong>{" "}
+          the CEO (Dave) was specifically concerned that the obvious fix,
+          raising contrast until every colour hit 3:1/4.5:1, would make the
+          interface louder and more demanding to look at, undermining the whole
+          point of the audio bubbles. That concern was the running theme of the
+          project: it’s why a naive “just bump the contrast” pass was tested and
+          explicitly rejected on cognitive-load grounds rather than shipped, why
+          every subsequent decision (the border-based fix, the line-opacity
+          direction, the AI cross-check, the targeted user survey, and
+          eventually the external ruling from Level Access) was treated as
+          evidence to weigh against that risk rather than a box to tick, and why
+          the process below is this thorough. This wasn’t accessibility work
+          done in isolation from UX quality, it was an ongoing negotiation
+          between the two, with the CEO actively invested in the outcome.
+        </p>
+        <p className="text-foreground">Constraints:</p>
+        <ul className="flex list-disc flex-col gap-1.5 pl-5">
+          <li>
+            A hard external deadline (VPAT), later pulled forward from a general
+            window to early February, compressing the decision timeline.
+          </li>
+          <li>
+            Any fix had to hold up under a second, separate accessibility
+            question: whether the grey connecting lines between bubbles counted
+            as decorative or as conveying essential information
+            (sequence/grouping), which would determine whether they needed to
+            independently meet 3:1 contrast.
+          </li>
+          <li>
+            Limited access to a large testing pool — reliant on Insiders and
+            self-selected internal reviewers.
+          </li>
+        </ul>
+      </>
+    ),
     decisions: [
       {
-        heading: "Meet contrast with borders, not heavier colour",
-        body: "Rather than deepening fills to force contrast, I used a border that met requirements without relying on heavier colour, brought the sizing in tighter, and reduced the connecting line to 1px for a sharper, more modern feel.",
+        heading: "Reject the contrast bump; fix it with borders",
+        body: (
+          <>
+            <p>
+              Tried simply raising saturation on the failing colours to hit 3:1.
+              Result: visually “muddy” and a clear increase in cognitive load,
+              exactly the tradeoff the CEO had flagged as the risk to avoid, so
+              it was rejected on principle rather than just aesthetics.
+            </p>
+            <p>
+              Landed on a border-based approach instead: white/background fill
+              for inactive bubbles with a contrast-passing border, a lighter
+              fill for active bubbles, line weight dropped from 2px to 1px, and
+              bubble height retuned (8px → 5px inactive, 12px → 11px active) to
+              center on the thinner lines. Pulled the new grey from the existing
+              design system to sit as close to 3:1 as possible without
+              overshooting.
+            </p>
+            <p>
+              <strong className="font-semibold text-foreground">
+                Cross-check with AI tools:
+              </strong>{" "}
+              Paul Davis ran the two candidate directions through ChatGPT and
+              Gemini blind (no framing bias) to sanity-check the cognitive-load
+              read. Both independently favoured the thinner, lower-contrast
+              direction, citing lower visual weight, more restrained use of
+              alert colour, and easier scannability. Used as a second opinion,
+              not a substitute for user testing.
+            </p>
+            <p>
+              <strong className="font-semibold text-foreground">
+                Stakeholder input (Dave, CEO):
+              </strong>{" "}
+              Raised a compliance question worth documenting: does an{" "}
+              <em>inactive</em> bubble need to meet 3:1 if it isn’t
+              communicating information until interacted with? Also connected
+              the new direction back to Genio’s Audio Notetaker heritage (darker
+              outlines, lighter fills) and used the redesign as a jumping-off
+              point for a longer-term idea, treating bubbles as an extensible
+              annotation layer (labels, reactions, AI-driven scaffolding like
+              surfacing “unclear” sections). Flagged explicitly as a future
+              idea, not a scope addition.
+            </p>
+          </>
+        ),
+        media: [
+          {
+            src: "/work/audio-bubbles/contrast-bump-rejected.png",
+            alt: "Two columns of audio bubbles with fully saturated red, orange and purple fills against grey connecting lines.",
+            width: 772,
+            height: 554,
+            caption:
+              "The rejected direction — raising saturation to force 3:1 read as muddy and visually heavier.",
+          },
+          {
+            src: "/work/audio-bubbles/fill-variants.png",
+            alt: "Three panels comparing audio bubble fill treatments across slide outlines.",
+            width: 1236,
+            height: 583,
+            caption:
+              "Comparing fill treatments for active bubbles against the thinner 1px connecting line.",
+          },
+          {
+            src: "/work/audio-bubbles/light-dark-panels.png",
+            alt: "Two audio tab panels side by side, one with a purple header and one with a teal header, showing highlighted bubbles.",
+            width: 972,
+            height: 772,
+            caption:
+              "The border-based treatment checked across themes, where the light-mode failures were worst.",
+          },
+          {
+            kind: "video",
+            src: "/work/audio-bubbles/recording-sep-1.mp4",
+            poster: "/work/audio-bubbles/poster-sep-1.png",
+            width: 1278,
+            height: 718,
+            description:
+              "Silent screen recording of the Genio Notes audio tab in light mode, showing the redesigned outlined audio bubbles and their connecting lines.",
+            caption:
+              "The border-based direction in light mode (silent screen recording).",
+          },
+          {
+            kind: "video",
+            src: "/work/audio-bubbles/recording-sep-2.mp4",
+            poster: "/work/audio-bubbles/poster-sep-2.png",
+            width: 1276,
+            height: 714,
+            description:
+              "Silent screen recording of the Genio Notes audio tab in dark mode, with the cursor over a red flagged audio bubble.",
+            caption:
+              "The same direction in dark mode, where grey and yellow already passed (silent screen recording).",
+          },
+        ],
       },
       {
-        heading: "Push one direction through to a decision, not consensus",
-        body: "I iterated through many design directions over an extended back-and-forth, working closely with stakeholders including direct input from the CEO. Rather than defaulting to consensus, I pushed for the specific direction I believed was right and managed the process through to a concrete decision.",
+        heading: "Soften the connecting lines to 40% opacity",
+        body: (
+          <>
+            <p>
+              Tested removing the connecting lines entirely (lost visual
+              structure, likely to raise new accessibility concerns), dropping
+              them to ~40% opacity (didn’t strictly pass contrast but measurably
+              reduced visual weight), and a full-opacity grey line (too heavy,
+              drew attention to a non-interactive-feeling zone).
+            </p>
+            <p>
+              Settled on the 40%-opacity direction, with Steven’s support to
+              proceed and push back if it got flagged in formal review. Built a
+              click-through Figma prototype covering all bubble-fill variants in
+              situ, and scoped the immediate goal deliberately narrow: pass WCAG
+              AA first, defer feature ideas (like usage-based investment
+              decisions) until usage data existed. Matt Russell added logging to
+              compare audio-tab vs. transcript-tab engagement to inform that
+              later, separate decision.
+            </p>
+          </>
+        ),
+        media: [
+          {
+            src: "/work/audio-bubbles/line-opacity.png",
+            alt: "Three panels comparing connecting-line treatments at different opacities behind outlined audio bubbles.",
+            width: 1236,
+            height: 583,
+            caption:
+              "Line treatments compared: removed entirely, ~40% opacity, and full-opacity grey.",
+          },
+          {
+            src: "/work/audio-bubbles/progression.png",
+            alt: "Three panels showing the progression of bubble and line styling across red, orange and purple states.",
+            width: 1268,
+            height: 563,
+            caption:
+              "The progression across states, checking that sequence stayed readable as line weight dropped.",
+          },
+        ],
+      },
+      {
+        heading: "Survey only the students who use the audio tab",
+        body: (
+          <>
+            <p>
+              Deliberately moved away from a general survey toward users who
+              actually use the audio tab (cross-referencing Pendo usage data
+              against the Insiders panel), reasoning that a general population
+              wouldn’t surface a real signal on a feature-specific change.
+            </p>
+            <p>
+              The survey compared current vs. proposed design on two axes: a
+              forced-choice cognitive-load question, and agreement with “the
+              audio bubble design is both beautiful and minimal, allowing me to
+              take and review notes without distraction,” followed by a direct
+              preference question with a branching follow-up (why it’s an
+              improvement, or what would make the new design better).
+            </p>
+            <p>
+              <strong className="font-semibold text-foreground">
+                Results (n=5, explicitly caveated as too small for hard
+                conclusions):
+              </strong>
+            </p>
+            <ul className="flex list-disc flex-col gap-1.5 pl-5">
+              <li>
+                Cognitive-load question tied 3/1/1 on both designs.
+              </li>
+              <li>
+                “Beautiful and minimal” agreement: current design 3.8/5, new
+                design 3.2/5, though one respondent who was resistant to any
+                change scored the new design 1/5, which skewed the small sample
+                noticeably.
+              </li>
+              <li>
+                Qualitative positives for the new design: easier to spot where a
+                bubble starts/ends, clearer contrast between highlighted and
+                non-highlighted sections when reviewing notes, and a less
+                visually distracting feel overall.
+              </li>
+            </ul>
+          </>
+        ),
+        media: [
+          {
+            src: "/work/audio-bubbles/survey-preference.png",
+            alt: "Multiple choice survey results: 60% said the new bubble design would be an improvement, 20% wouldn't mind, 20% would miss the old design.",
+            width: 797,
+            height: 410,
+            caption:
+              "The direct preference question — 3 of 5 called the new design an improvement.",
+          },
+          {
+            src: "/work/audio-bubbles/survey-why-improvement.png",
+            alt: "Survey responses explaining why the new audio bubble design is an improvement, with an AI summary of the themes.",
+            width: 786,
+            height: 680,
+            caption:
+              "Why respondents saw it as an improvement: clearer start/end points, less clutter.",
+          },
+        ],
+      },
+      {
+        heading: "Reverse the line decision on the auditor’s ruling",
+        body: (
+          <>
+            <p>
+              Submitted the design to Level Access, the external WCAG auditor,
+              specifically on the open question of whether the connecting lines
+              were decorative or functional. Their ruling: if the lines are
+              interactive and convey essential context (bubble
+              sequence/grouping), they must meet the same 3:1 non-text contrast
+              requirement as any other interactive element; only purely
+              decorative lines are exempt.
+            </p>
+            <p>
+              Conclusion: because the lines are interactive and act as a
+              sequencing aid, they count as essential context, not decoration.
+              This reversed the working assumption from October (that softening
+              the lines to 40% opacity was viable) — the lines stayed at full
+              contrast rather than being lightened further, to avoid inflating
+              cognitive load for low-vision users by making the bubble
+              relationships illegible.
+            </p>
+          </>
+        ),
       },
     ],
-    shipped:
-      "More compact sizing; a border that met contrast requirements without relying on heavier colour; the connecting line reduced to 1px for a sharper, more modern feel.",
-    outcome:
-      "A WCAG 2.1 AA–compliant component that reads as light and sleek rather than muddy — appropriate for what should be a quiet background feature.",
-    // TODO: reflection — one line on what you'd change or learned.
+    shipped: (
+      <>
+        <p>
+          The shipped treatment keeps contrast in the border and the weight
+          rather than the fill: a background-fill inactive bubble with a
+          contrast-passing border, a lighter fill for active bubbles, connecting
+          lines at 1px and full contrast (per the Level Access ruling), and
+          bubble heights retuned to 5px inactive / 11px active so they centre on
+          the thinner line.
+        </p>
+        <p>
+          <strong className="font-semibold text-foreground">
+            Corner-radius refinement (Jan 2026):
+          </strong>{" "}
+          I built an interactive “Bubble Playground” (sliders for corner radius
+          at 0.5px increments, line-opacity toggle) so stakeholders could test
+          rounding presets directly rather than review static comps. Informal
+          testing converged on “Fully rounded” or “Rounded,” with “Rounded”
+          offering marginally better segment distinction, though the border
+          treatment introduced earlier was judged to already solve that problem
+          on its own.
+        </p>
+      </>
+    ),
+    gallery: [
+      {
+        src: "/work/audio-bubbles/bubbles-new.png",
+        alt: "A tall audio tab panel showing the final bubble treatment across three slide sections.",
+        width: 726,
+        height: 1329,
+        caption: "The final bubble treatment in the audio tab.",
+      },
+      {
+        src: "/work/audio-bubbles/playground-55px.png",
+        alt: "The Bubble Playground with corner radius set to 5.5px, fully rounded, for selected bubbles.",
+        width: 1600,
+        height: 796,
+        caption:
+          "The Bubble Playground — radius sliders in 0.5px increments, so stakeholders could test presets directly rather than review comps. “Fully rounded” shown here.",
+      },
+    ],
+    outcome: (
+      <>
+        <ul className="flex list-disc flex-col gap-2 pl-5">
+          <li>
+            Bubble colours and borders brought into WCAG 2.1 AA compliance ahead
+            of the VPAT deadline, using a border-based contrast strategy rather
+            than raising fill saturation, preserving the low-cognitive-load
+            intent of the original design.
+          </li>
+          <li>
+            Resolved an ambiguous compliance question (decorative vs. functional
+            lines) with an external authority (Level Access) rather than an
+            internal guess, and adjusted the design in response even though it
+            meant reversing an earlier decision.
+          </li>
+          <li>
+            Validated the design direction with both a lightweight AI
+            cross-check and a small but targeted user survey, while being
+            explicit about the survey’s limitations rather than overstating a
+            5-person sample.
+          </li>
+          <li>
+            Left a clear, logged usage-data trail (audio tab vs. transcript tab)
+            to inform whether deeper investment in the audio interface,
+            including Dave’s annotation-layer idea, is worth pursuing next.
+          </li>
+        </ul>
+      </>
+    ),
+    reflection: (
+      <>
+        <p>
+          The throughline worth highlighting: the “make the lines lighter” fix
+          looked settled in October, backed by a developer’s informal blessing,
+          but got reopened and reversed in January once put in front of the
+          actual accessibility authority. Treating that ruling as new
+          information rather than defending the earlier call is the more
+          interesting design decision here than the visual polish.
+        </p>
+        <p>
+          More broadly, the level of rigor across this whole project (audit →
+          explore multiple directions → validate with both a quick AI gut-check
+          and real, if small, user data → confirm compliance with an external
+          expert → only then refine remaining visual details like rounding)
+          exists because of one running tension set by the CEO on day one: don’t
+          let compliance quietly make the product worse to use. Every stage of
+          the process is really an attempt to answer “did we just trade
+          cognitive load for contrast?” with actual evidence instead of a gut
+          call. What could have been a colour swap became a more in-depth piece
+          of work — and a valuable lesson in treating accessibility as something
+          that makes the design better, rather than a constraint to satisfy.
+        </p>
+      </>
+    ),
   },
   {
     slug: "five-whys",
@@ -551,6 +1193,9 @@ export function getCaseStudySections(project: Project): CaseStudySection[] {
 
   if (project.snapshot) sections.push({ id: "snapshot", label: "Snapshot" });
   if (project.problem) sections.push({ id: "problem", label: "Problem" });
+  if (project.constraints) {
+    sections.push({ id: "constraints", label: "Constraints" });
+  }
 
   project.decisions?.forEach((decision, index) => {
     sections.push({ id: decisionId(index), label: decision.heading });

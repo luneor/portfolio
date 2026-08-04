@@ -120,6 +120,26 @@
 }
 
 /*
+  Case-study sidebar rail. Pinned to the viewport so the table of contents
+  holds the same top-left spot for the entire page — a sticky rail drifts
+  upward once its grid row ends (the last ~240px, over the footer).
+
+  The grid column reserves the 15rem of space, so `left` only has to mirror
+  the container's own gutter maths: a centred max-w-[1120px] with a 1.5rem
+  gutter, clamped so it never goes past the gutter on narrower viewports.
+  `top` clears the sticky site header.
+*/
+@media (min-width: 768px) {
+  .case-study-rail {
+    position: fixed;
+    top: 4.5rem;
+    left: max(1.5rem, calc((100vw - 1120px) / 2 + 1.5rem));
+    width: 15rem;
+    max-height: calc(100vh - 4.5rem);
+  }
+}
+
+/*
   Hero / landing surface. A clean near-black ground lit by two soft accent
   glows — teal (top-left) and coral (bottom-right) — the cool/warm pairing
   pulled from the old-site hero gradient. They supply the energy in place of a

@@ -2,12 +2,10 @@ import type { ComponentType } from "react";
 import {
   LastActiveArt,
   FeatureTogglesArt,
-  AdminHomeArt,
   AudioBubblesArt,
   FiveWhysArt,
   MemorArt,
   StoriArt,
-  DissertationArt,
 } from "@/components/project-art";
 
 /**
@@ -72,7 +70,11 @@ export type ProjectMedia = ProjectImage | ProjectVideo;
 
 export interface Project {
   slug: string;
-  section: "genio-admin" | "exploring" | "earlier-projects";
+  /**
+   * Which homepage section lists the project. "ai" sits under the AI section
+   * rather than Work, since that work puts AI inside the design itself.
+   */
+  section: "genio-admin" | "ai" | "earlier-projects";
   art: ComponentType;
   tag: string;
   tagMuted?: boolean;
@@ -105,9 +107,13 @@ export interface Project {
   reflection?: React.ReactNode;
 
   /**
-   * Wide hero image for the detail page, in place of the SVG art. Also used as
-   * the work-card thumbnail where the card would otherwise show the motif.
+   * Work-card thumbnail, in place of the abstract motif. Separate from `cover`
+   * so a card can reuse a shipped screenshot without that image also becoming
+   * the detail-page hero and appearing twice on the page. Falls back to
+   * `cover`, then to the motif.
    */
+  cardImage?: ProjectImage;
+  /** Wide hero image for the detail page, in place of the SVG art. */
   cover?: ProjectImage;
   /** Case-study media rendered as a captioned column under "Shipped". */
   gallery?: ProjectMedia[];
@@ -136,22 +142,201 @@ export const PROJECTS: Project[] = [
     title: "Last Active Filtering",
     summary:
       'Custom, admin-defined thresholds for what "active" means at each institution.',
+    cardImage: {
+      src: "/work/last-active/final-ranges-in-context.png",
+      alt: "The Last Active Ranges dialog open over the users table, defining the range for each status.",
+      width: 1600,
+      height: 900,
+    },
     snapshot: {
       role: "UX Designer — Genio Admin (BEAR Squad)",
       // TODO: timeline, team, tools
-      statement:
-        'Binary "last active" data hid at-risk students, so I let each institution define "active" for itself — adopted strongly enough that admins sent unprompted thank-you videos.',
+      statement: (
+        <>
+          The standard answer here was a date picker. Instead I let each
+          institution set its own ranges for what Active, At risk and Inactive
+          mean — A/B tested against the date picker with real admins, and now at
+          25.4% adoption.
+        </>
+      ),
     },
-    problem:
-      'Admin-facing "last active" data was stagnant and binary. Institutions had no way to define what "active" actually meant for their own students, so at-risk students blended into the noise.',
+    problem: (
+      <>
+        <p>
+          The job admins actually had was hard to do: work out who was genuinely
+          inactive so they could bulk deactivate them, and who was genuinely at
+          risk so they could get in touch. Admin-facing “last active” data was
+          stagnant and binary, so neither group was easy to isolate.
+        </p>
+        <p>
+          RAG last-active statuses already existed, but the thresholds behind
+          them were fixed: 0–7 days green, 7–14 amber, 14+ red. Those numbers
+          were invisible in the interface, and my read was that few admins knew
+          what any of the three colours actually meant — which made a status
+          they couldn’t interrogate hard to act on.
+        </p>
+      </>
+    ),
     decisions: [
+      {
+        heading: "Pass on the date picker for custom ranges",
+        body: (
+          <>
+            <p>
+              The standard approach to this problem is a date picker: let the
+              admin pick a cut-off and filter against it. It answers the
+              question asked, but it hands over no more control than the fixed
+              thresholds already did — the admin still has to know which date
+              matters before they can choose it.
+            </p>
+            <p>
+              Since the RAG statuses were the thing admins couldn’t see inside,
+              the opportunity was to make those definitions editable rather than
+              route around them. That meant custom ranges: the admin sets what
+              Active, At risk and Inactive mean, and the statuses they already
+              see start reflecting their own institution.
+            </p>
+            <p>
+              I A/B tested the two directions in a survey with admins who
+              actually use Genio, putting the date picker against custom ranges.
+              They preferred custom ranges, and the reason they gave was the
+              sense of control and customisation it offered rather than the
+              filtering itself.
+            </p>
+          </>
+        ),
+      },
       {
         heading: 'Let admins define what "active" means',
         body: 'I introduced RAG-coded status categories — Active, At Risk, Inactive, No Data — and, critically, let admins set their own custom week-thresholds for each category, rather than imposing one fixed definition of "active" across every institution.',
+        media: [
+          {
+            src: "/work/last-active/ideation-icons.png",
+            alt: "Five variants of an Activity filter card, each showing the four states — Active, At risk, Inactive, No data — with differently weighted status icons.",
+            width: 820,
+            height: 565,
+            caption:
+              "Ideation — icon treatments for the four states, compared at the size they'd actually be read at in the filter.",
+          },
+          {
+            src: "/work/last-active/ideation-thresholds-inputs.png",
+            alt: "Threshold editor using numeric stepper inputs, with a segmented colour bar above and a plain-language summary of the resulting logic.",
+            width: 599,
+            height: 452,
+            caption:
+              "Ideation — thresholds as numeric inputs, with the resulting logic spelled out in words beside them.",
+          },
+          {
+            src: "/work/last-active/ideation-thresholds-timeline.png",
+            alt: "Threshold editor as a timeline with two draggable markers, and the resulting Active, At Risk and Inactive ranges shown beneath.",
+            width: 678,
+            height: 485,
+            caption:
+              "Ideation — the same thresholds as draggable markers on a timeline, with each range read back underneath.",
+          },
+          {
+            src: "/work/last-active/ideation-filter-date.png",
+            alt: "The users table with a filter panel open, showing a Last Active date picker with a January 2026 calendar.",
+            width: 1280,
+            height: 720,
+            caption:
+              "Ideation — filtering the table by a specific last-active date.",
+          },
+          {
+            src: "/work/last-active/ideation-filter-status.png",
+            alt: "The users table with a filter panel open, showing a Filter by Last Active Status dropdown listing Green (Active), Amber (At Risk) and Red (Inactive).",
+            width: 1280,
+            height: 720,
+            caption:
+              "Ideation — filtering by status rather than by date, which is what the thresholds make possible.",
+          },
+        ],
+      },
+      {
+        heading: "Run the prototype as scenarios, not a demo",
+        body: (
+          <>
+            <p>
+              For the customer calls I ran an interactive prototype, but handed
+              it to the admin rather than driving it myself, and read out
+              scenarios for them to carry out — “you want to see who’s at risk
+              so you can contact them: set the inactive range to 2–4 weeks and
+              filter by inactive to see those users.” That tests whether the
+              model is usable under a real intent, rather than whether a
+              walkthrough is persuasive.
+            </p>
+            <p>
+              It was well received, and it surfaced the thing a demo wouldn’t
+              have: once admins could isolate a group, they immediately wanted
+              to act on it — export the list, email those users, bulk
+              deactivate. That shaped the roadmap beyond this feature.
+            </p>
+          </>
+        ),
       },
     ],
-    outcome:
-      "Strong adoption, plus admins recording and sharing videos unprompted showing appreciation for the feature — validation that wasn't solicited.",
+    shipped: (
+      <p>
+        A Last Active filter in the users table: the four states as checkboxes,
+        each carrying its status icon, with an Edit Ranges control that opens
+        the editor where an admin sets the week boundaries for Active, At risk
+        and Inactive.
+      </p>
+    ),
+    gallery: [
+      {
+        src: "/work/last-active/final-filter-panel.png",
+        alt: "The users table with the Filters panel open, showing Status and Group dropdowns and a Last Active group with Active, At risk, Inactive and No data checkboxes plus an Edit Ranges button.",
+        width: 1280,
+        height: 720,
+        caption:
+          "Shipped — the Last Active filter, with Edit Ranges sitting next to the states it defines.",
+      },
+      {
+        src: "/work/last-active/final-ranges-modal.png",
+        alt: "The Edit Last Active Ranges dialog, with week inputs for Active, At risk and Inactive and a reset to default option.",
+        width: 608,
+        height: 431,
+        caption:
+          "Shipped — the range editor: each status spelled out as a sentence that updates with the week values.",
+      },
+      {
+        src: "/work/last-active/final-ranges-in-context.png",
+        alt: "The Last Active Ranges dialog open over the users table, defining the range for each status alongside the filter panel.",
+        width: 1600,
+        height: 900,
+        caption:
+          "Shipped — setting the ranges in context, over the table whose statuses they re-colour.",
+      },
+    ],
+    outcome: (
+      <>
+        <p>
+          Adoption currently sits at 25.4%*, and admins recorded and shared
+          videos unprompted showing appreciation for the feature — validation
+          that wasn’t solicited.
+        </p>
+        <p>
+          The prototype calls also moved the roadmap: wanting to act on a
+          filtered group, not just see it, pushed exporting filtered lists as
+          CSVs further up the priority order. This was the first step toward a
+          bigger solution rather than the whole of it.
+        </p>
+        <p className="font-mono text-[0.78rem] text-foreground-muted">
+          * Still growing.
+        </p>
+      </>
+    ),
+    reflection: (
+      <p>
+        The date picker would have been a defensible answer, and it would have
+        left the part that actually blocked admins untouched: a status they
+        couldn’t see the definition of. The useful move was doubting that the
+        fixed thresholds meant anything to the people relying on them — and then
+        A/B testing that hunch against the obvious solution instead of shipping
+        on it.
+      </p>
+    ),
   },
   {
     slug: "feature-toggles-for-ai-tools",
@@ -161,6 +346,12 @@ export const PROJECTS: Project[] = [
     title: "Feature Toggles for AI Tools",
     summary:
       "A two-tier control model so institution-wide policy doesn't block the students who need support.",
+    cardImage: {
+      src: "/work/feature-toggles/final-org-form.png",
+      alt: "The shipped Edit Organisation screen, showing the Manage Features block alongside general details.",
+      width: 1600,
+      height: 900,
+    },
     snapshot: {
       // TODO: exact timeline dates and stakeholder names/roles to confirm.
       role: "UX Designer — Genio Admin (BEAR Squad)",
@@ -307,6 +498,24 @@ export const PROJECTS: Project[] = [
             </Placeholder>
           </>
         ),
+        media: [
+          {
+            src: "/work/feature-toggles/ideation-profiles.png",
+            alt: "Ideation screen showing a Profiles page with three preset cards — No AI, No Outlines and All — each toggling Auto Notes, AI Outlines, QuizMe and Captions.",
+            width: 1282,
+            height: 720,
+            caption:
+              "Ideation — the profile system explored: named presets, each toggling the same set of features.",
+          },
+          {
+            src: "/work/feature-toggles/ideation-assign-profile.png",
+            alt: "Ideation screen showing the Users table with two users selected and an Assign Profile action, with Profiles as its own sidebar section.",
+            width: 1600,
+            height: 754,
+            caption:
+              "Ideation — assigning a profile to selected users, with Profiles standing as its own section alongside Groups.",
+          },
+        ],
       },
       {
         heading: "Split control into an org baseline plus group overrides",
@@ -320,12 +529,34 @@ export const PROJECTS: Project[] = [
               with different needs — a course, a cohort — can depart from it
               without that decision being made for every student at once.
             </p>
-            <Placeholder>
-              Figma exploration for the toggle UI — links and screenshots of the
-              concepts explored within this scope.
-            </Placeholder>
           </>
         ),
+        media: [
+          {
+            src: "/work/feature-toggles/ideation-bulk-config.png",
+            alt: "Ideation screen showing four course groups selected with a Feature Configuration panel, features split into AI Features, Recording & Transcription and Note-taking Tools.",
+            width: 1617,
+            height: 1069,
+            caption:
+              "Ideation — configuring several groups at once, with features sorted into categories and settings copyable between groups.",
+          },
+          {
+            src: "/work/feature-toggles/ideation-feature-conflict.png",
+            alt: "Ideation modal titled Feature Conflict, asking which group's settings to use for a user who belongs to two groups.",
+            width: 700,
+            height: 326,
+            caption:
+              "Ideation — the case a group-based model has to answer: which settings win when a student belongs to two groups.",
+          },
+          {
+            src: "/work/feature-toggles/ideation-user-matrix.png",
+            alt: "Ideation screen for editing a single user, with a Managed Features table showing org-level and group-level state for each feature.",
+            width: 1280,
+            height: 776,
+            caption:
+              "Ideation — showing the org-level and group-level state of each feature side by side on a single user.",
+          },
+        ],
       },
       {
         heading: "Treat the toggle screen as an opportunity for delight",
@@ -338,22 +569,51 @@ export const PROJECTS: Project[] = [
               structure, I built a new layout for them.
             </p>
             <Placeholder>
-              Context for this section — what the new layout changed, what the
-              delight opportunity actually was, and screenshots of the result.
+              Context for this section — what the delight opportunity actually
+              was, and what specifically the new layout set out to fix.
             </Placeholder>
           </>
         ),
+        media: [
+          {
+            src: "/work/feature-toggles/old-org-form.png",
+            alt: "The previous organisation settings form: a single stacked column of fields with no feature management.",
+            width: 1600,
+            height: 900,
+            caption:
+              "Before — the organisation form as it stood: one long stacked column, with nowhere for feature management to live. The overhauled version is under Shipped.",
+          },
+        ],
+      },
+    ],
+    shipped: (
+      <p>
+        Feature toggles shipped as an extension of the existing groups system:
+        an org-wide baseline for each of the three AI features in Notes, with
+        group-level overrides on top, alongside the filtered exports admins
+        needed for reporting. No parallel profile architecture was built.
+      </p>
+    ),
+    gallery: [
+      {
+        src: "/work/feature-toggles/final-org-form.png",
+        alt: "The shipped Edit Organisation screen, with a Manage Features block marked New! listing Study Notes, QuizMe and Outlines, alongside general details and sharing policy.",
+        width: 1600,
+        height: 900,
+        caption:
+          "Shipped — the organisation baseline, in the overhauled two-column layout: section intent on the left, controls on the right.",
+      },
+      {
+        src: "/work/feature-toggles/final-edit-group.png",
+        alt: "The shipped Edit Group screen, with Managed Features set to Customise for this group and each feature labelled with its organisation default.",
+        width: 1600,
+        height: 898,
+        caption:
+          "Shipped — the group override. Each feature carries its organisation default in the label, so an admin can see what they're departing from.",
       },
     ],
     outcome: (
       <>
-        <p>
-          Feature toggles shipped as an extension of the existing groups
-          system: an org-wide baseline for each of the three AI features in
-          Notes, with group-level overrides on top, alongside the filtered
-          exports admins needed for reporting. No parallel profile architecture
-          was built.
-        </p>
         <p>
           The practical result is that a student who needs the support isn’t
           blocked by a blanket policy decision made elsewhere in the
@@ -386,26 +646,6 @@ export const PROJECTS: Project[] = [
         </p>
       </>
     ),
-  },
-  {
-    slug: "admin-home-page",
-    section: "genio-admin",
-    art: AdminHomeArt,
-    tag: "Ongoing — revisiting in H2",
-    tagMuted: true,
-    title: "Admin Home Page",
-    summary:
-      "Current thinking, not a shipped result: efficient, seamless workflows on the admin home page.",
-    snapshot: {
-      role: "UX Designer — Genio Admin (BEAR Squad)",
-      timeline: "Ongoing — revisiting in H2 2026",
-      // TODO: team, tools
-      statement:
-        "Admins lack a home page that lets them build their own efficient workflows; this is in-progress thinking rather than a shipped result.",
-    },
-    problem:
-      "Current thinking, not a shipped result: giving admins the tools to build efficient, seamless workflows on their home page. I'm revisiting this properly in the second half of the year, so consider this a snapshot of process rather than a finished case study.",
-    // TODO: decisions, shipped, outcome, reflection — pending the H2 revisit.
   },
   {
     slug: "audio-bubbles",
@@ -830,7 +1070,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "five-whys",
-    section: "exploring",
+    section: "ai",
     art: FiveWhysArt,
     tag: "Independent concept — still taking shape",
     tagMuted: true,
@@ -971,7 +1211,9 @@ export const PROJECTS: Project[] = [
     art: StoriArt,
     tag: "Sponsored research — paused",
     tagMuted: true,
-    title: "Stori",
+    // The project was "Tell Me a Story"; "Stori" was the app itself, which is
+    // why the slug and in-copy references to Stori still stand.
+    title: "Tell Me a Story",
     summary:
       "A proof-of-concept research project for NHS neonatal units, sponsored by Sarra Hoy.",
     cover: {
@@ -1053,111 +1295,6 @@ export const PROJECTS: Project[] = [
         width: 1200,
         height: 848,
         caption: "The full concept — recording, reactions, and a shared library of stories from other NICU parents.",
-      },
-    ],
-  },
-  {
-    slug: "honours-dissertation",
-    section: "earlier-projects",
-    art: DissertationArt,
-    tag: "Honours dissertation",
-    tagMuted: true,
-    title: "Honours Dissertation",
-    summary:
-      "Investigated gamification's effect on motivation in exercise apps.",
-    cover: {
-      src: "/work/dissertation/slide-07.jpg",
-      alt: "A spread from the dissertation's design guideline — four gamification principles on a colourful winding path.",
-      width: 2000,
-      height: 1414,
-    },
-    snapshot: {
-      role: "Researcher & designer — BSc (Hons) Digital Interaction Design thesis",
-      // TODO: timeline, tools
-      team: "Solo, with 51 survey participants and a 10-day user-testing cohort",
-      statement:
-        "Gamification in fitness apps ignores how intrinsic and extrinsic motivation interact, so I tested whether more extrinsic input raises intrinsic drive — it did, and became an eight-part design guideline.",
-      overview:
-        "My thesis: How gamification influences motivation to exercise through fitness products and services — and how that implementation could be improved. The through-line is the relationship between intrinsic and extrinsic motivation, and whether increasing exposure to extrinsic motivation can, in turn, raise intrinsic motivation.",
-    },
-    problem:
-      "A literature review contrasted intrinsic motivation (self-determination theory; Deci & Ryan) with extrinsic motivation, then defined gamification as design thinking borrowed from video games and applied to non-gaming contexts (Deterding et al., 2011). It identified why gamification works in exercise through three recurring factors: self-tracking, the desire to reach goals, and the visualisation of exercise data. The real constraint surfaced in the survey: 92% of participants said they'd prefer to be intrinsically driven, yet gamification works by supplying extrinsic stimuli — so the question was whether the latter could actually build the former.",
-    decisions: [
-      {
-        heading: "Survey the split between intrinsic and extrinsic drive",
-        body: "A survey of 51 participants found 80% considered existing gamification a successful method of motivation. On motivation type, 35% identified as intrinsically motivated, 47% a mixture, and 18% extrinsically motivated — but 92% said they'd prefer to be intrinsically driven, valuing autonomy and independence from external stimuli.",
-      },
-      {
-        heading: "Test three groups against a no-contact control",
-        body: "Over ten days, participants were split into three groups: Group A received simple app-style encouragement by message, Group B received more enthusiastic messages that actively pushed them to increase their goals, and Group C received no contact (simulating no product at all). Both messaged groups saw motivation climb — Group A from 6.6 to 8, Group B from 6.8 to 8.6 — supporting the theory that greater exposure to extrinsic motivation can lift intrinsic motivation.",
-      },
-      {
-        heading: "Ship a guideline, not another gamified feature",
-        body: "Rather than designing one more gamified app, I made the deliverable a reusable strategic guideline so the findings could apply across fitness products — and deliberately aligned it with design methods teams already use, such as the Double Diamond, so it slots into existing process rather than replacing it.",
-      },
-    ],
-    shipped:
-      "An eight-part strategic guideline for implementing gamification in fitness products: define clear objectives, consider behavioural psychology, use social and visual features, align with users' fitness goals, understand your audience, design notifications and interactions, user-test and iterate, and build on prior design methods such as the Double Diamond.",
-    outcome:
-      "The guideline was validated by a target user, an avid gym-goer, who called it \"a very detailed strategy\" that would make fitness services more accessible and easier to stay consistent with.",
-    reflection:
-      "Validation surfaced one real gap: the behavioural-psychology section needed a reward principle covering both tangible rewards (discounts, merch) and virtual ones (badges, levels, rank lists). That's the first thing I'd extend.",
-    gallery: [
-      {
-        src: "/work/dissertation/slide-01.jpg",
-        alt: "Dissertation spread on intrinsic versus extrinsic motivation in exercise.",
-        width: 2000,
-        height: 1414,
-        caption: "Secondary research — intrinsic vs. extrinsic motivation in exercise (literature review).",
-      },
-      {
-        src: "/work/dissertation/slide-02.jpg",
-        alt: "Dissertation spread defining gamification and why it succeeds in exercise.",
-        width: 2000,
-        height: 1414,
-        caption: "What gamification is, and why it works in exercise: self-tracking, goals, and data visualisation.",
-      },
-      {
-        src: "/work/dissertation/slide-03.jpg",
-        alt: "Survey spread showing 80% found existing gamification successful.",
-        width: 2000,
-        height: 1414,
-        caption: "The survey — 80% of 51 participants found existing gamification a successful motivator.",
-      },
-      {
-        src: "/work/dissertation/slide-04.jpg",
-        alt: "Survey spread showing 92% preferred to be intrinsically motivated, plus causes of demotivation.",
-        width: 2000,
-        height: 1414,
-        caption: "92% preferred to be intrinsically motivated — and the many pulls behind feeling unmotivated.",
-      },
-      {
-        src: "/work/dissertation/slide-05.jpg",
-        alt: "Spread describing the three user-testing groups A, B and a no-contact control.",
-        width: 2000,
-        height: 1414,
-        caption: "Survey conclusions and the user-testing design — three groups, including a no-contact control.",
-      },
-      {
-        src: "/work/dissertation/slide-06.jpg",
-        alt: "User-testing results for Groups A and B with rising motivation scores and message examples.",
-        width: 2000,
-        height: 1414,
-        caption: "Results — motivation rose from ~6.7 to 8+ in both messaged groups over ten days.",
-      },
-      {
-        src: "/work/dissertation/slide-08.jpg",
-        alt: "Second half of the design guideline covering audience, notifications, iteration and prior methods.",
-        width: 2000,
-        height: 1414,
-        caption: "The guideline continued — audience, notifications, iteration, and building on prior design methods.",
-      },
-      {
-        src: "/work/dissertation/slide-09.jpg",
-        alt: "Validation and conclusion spread from the dissertation.",
-        width: 2000,
-        height: 1414,
-        caption: "Validation with a target user, and the thesis conclusion.",
       },
     ],
   },

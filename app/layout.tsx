@@ -51,7 +51,12 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <ThemeProvider attribute="class" forcedTheme="dark">
+        {/*
+          Dark is the default look, but light is a real theme now — no
+          forcedTheme. `disableTransitionOnChange` is deliberately NOT set: the
+          toggle drives the 500ms cross-fade defined in globals.css.
+        */}
+        <ThemeProvider attribute="class" defaultTheme="dark">
           <MotionConfig reducedMotion="user">
             <SiteHeader />
             {children}

@@ -12,6 +12,7 @@
  */
 
 import clsx from "clsx";
+import Link from "next/link";
 
 export interface NavItem {
   key: string;
@@ -33,7 +34,7 @@ export function MorphicNavbar({ items, activeKey, className }: MorphicNavbarProp
           const isActive = item.key === activeKey;
 
           return (
-            <a
+            <Link
               className={clsx(
                 "rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors duration-200",
                 isActive
@@ -44,7 +45,7 @@ export function MorphicNavbar({ items, activeKey, className }: MorphicNavbarProp
               key={item.key}
             >
               {item.name}
-            </a>
+            </Link>
           );
         })}
       </div>

@@ -57,9 +57,21 @@
 /*
   "GRADIENT FOLIO" palette — sampled and clustered from the old Framer site's
   hero gradient, turned into a system. Vivid hues built to sit on near-black.
-  Coral is the signal, teal/mint the cool anchor, mustard the highlight. The
-  site is dark-only; :root and .dark hold the same values so the look is
-  guaranteed regardless of the theme class.
+  Coral is the signal, teal/mint the cool anchor, mustard the highlight.
+
+  Two themes: `:root` is light, `.dark` is dark.
+
+  RULE OF THUMB: teal in light mode, mint in dark mode. The cool accent is
+  ALWAYS `--brand-weak` — never a hardcoded hex — so it swaps automatically.
+  Mint on cream is 1.91:1, nowhere near AA, so mint must never carry text in
+  light mode; the light substitute is a deep teal (#0F6B57, 6.22:1).
+
+  Coral stays #ED2A03 in BOTH themes, because it is never text — it's a fill
+  or a rule, and text sits on top of it. As a shape it clears the 3:1 non-text
+  bar on every surface (3.73–4.50). Where text sits ON coral the label must be
+  near-black #0F0F0F (4.50:1) — cream, white and #14131A all fall short, which
+  is why --primary-foreground is #0F0F0F in both themes. Any new accent needs
+  checking against BOTH papers before it ships.
     paper     #0F0F0F  →  --background: page ground
     surface   #1A1A1A  →  --card / --background-alt: lifted surfaces
     ink       #F5F3EC  →  --foreground: ALL body copy — paragraphs, lists,
@@ -70,11 +82,58 @@
                           nav, figure captions, eyebrows, dates/meta, footer.
                           Never body copy.
     coral     #ED2A03  →  --primary + --brand-strong: buttons, rules, signal
-    mint      #44CCBE  →  --ring + --brand-weak: labels, links, focus (cool)
+    mint      #44CCBE  →  --ring + --brand-weak: labels, links, focus (cool).
+                          DARK MODE ONLY — light swaps this to teal #0F6B57.
     teal      #24A182  →  --brand-green: secondary cool accent
     mustard   #FAE419  →  --brand-accent: high-energy highlight
 */
-:root,
+/* Light — cream paper. Only the cool accent changes; coral is shared. */
+:root {
+  --background: #fdfbf5;
+  --background-alt: #f4f0e3;
+  --foreground: #14131a;
+  --foreground-muted: #57515f;
+  --brand-strong: #ed2a03;
+  --brand-weak: #0f6b57;
+  --brand-green: #12775f;
+  --brand-accent: #7a5c00;
+
+  --card: #ffffff;
+  --card-foreground: #14131a;
+  --popover: #ffffff;
+  --popover-foreground: #14131a;
+  --primary: #ed2a03;
+  --primary-foreground: #0f0f0f;
+  --secondary: #efe9da;
+  --secondary-foreground: #3a3542;
+  --muted: #f4f0e3;
+  --muted-foreground: #57515f;
+  --accent: #efe9da;
+  --accent-foreground: #14131a;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #d8d3c4;
+  --input: #cfc9b8;
+  --ring: #0f6b57;
+  --chart-1: #ed2a03;
+  --chart-2: #12775f;
+  --chart-3: #0f6b57;
+  --chart-4: #7a5c00;
+  --chart-5: #57515f;
+  --radius: 0.625rem;
+  --sidebar: #fdfbf5;
+  --sidebar-foreground: #14131a;
+  --sidebar-primary: #ed2a03;
+  --sidebar-primary-foreground: #0f0f0f;
+  --sidebar-accent: #efe9da;
+  --sidebar-accent-foreground: #14131a;
+  --sidebar-border: #d8d3c4;
+  --sidebar-ring: #0f6b57;
+
+  /* Hero glows, softened so they tint cream rather than muddy it. */
+  --hero-glow-cool: rgba(18, 119, 95, 0.13);
+  --hero-glow-warm: rgba(237, 42, 3, 0.1);
+}
+
 .dark {
   --background: #0f0f0f;
   --background-alt: #1a1a1a;
@@ -115,6 +174,9 @@
   --sidebar-accent-foreground: #f5f3ec;
   --sidebar-border: #2a2a2a;
   --sidebar-ring: #44ccbe;
+
+  --hero-glow-cool: rgba(36, 161, 130, 0.22);
+  --hero-glow-warm: rgba(237, 42, 3, 0.16);
 }
 
 @utility glass {
@@ -152,8 +214,8 @@
 */
 .hero-surface {
   background:
-    radial-gradient(58% 50% at 12% 18%, rgba(36, 161, 130, 0.22), transparent 68%),
-    radial-gradient(48% 46% at 92% 88%, rgba(237, 42, 3, 0.16), transparent 66%),
+    radial-gradient(58% 50% at 12% 18%, var(--hero-glow-cool), transparent 68%),
+    radial-gradient(48% 46% at 92% 88%, var(--hero-glow-warm), transparent 66%),
     var(--background);
 }
 

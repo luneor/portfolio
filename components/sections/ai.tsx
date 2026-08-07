@@ -1,4 +1,9 @@
 import { SectionHeading } from "@/components/section-heading";
+import { ProjectCard } from "@/components/project-card";
+import { PROJECTS } from "@/lib/projects";
+
+// Work where AI is part of the design itself, rather than a way of working.
+const projects = PROJECTS.filter((project) => project.section === "ai");
 
 /*
   Content grounded in Hanru's approved AI stance (see design-brief-prompt.md /
@@ -26,7 +31,7 @@ export function Ai() {
   return (
     <section id="ai" aria-labelledby="ai-heading" className="py-24">
       <div className="mx-auto max-w-[1120px] px-6">
-        <SectionHeading eyebrow="ways of working" title="On AI" headingId="ai-heading">
+        <SectionHeading title="On AI" headingId="ai-heading">
           <p>
             I&apos;m genuinely pro-AI — I just refuse to let it skip the parts of
             design that matter. Here&apos;s how I keep it useful without letting
@@ -50,6 +55,34 @@ export function Ai() {
             </div>
           ))}
         </div>
+
+        {projects.length > 0 && (
+          <div className="mt-16">
+            <h3 className="mb-3 text-[1.15rem] font-bold tracking-tight text-foreground">
+              AI in the design itself
+            </h3>
+            <p className="mb-8 text-foreground">
+              The principles above are how I work with AI. This is work where AI
+              is part of what&apos;s being designed — concepts I explore on my
+              own time, not attributed to my employer.
+            </p>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project) => {
+                const Art = project.art;
+                return (
+                  <ProjectCard
+                    key={project.slug}
+                    slug={project.slug}
+                    title={project.title}
+                    summary={project.summary}
+                    media={<Art />}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

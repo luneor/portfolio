@@ -4,19 +4,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MorphicNavbar, type NavItem } from "@/components/kokonutui/morphic-navbar";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
+/*
+  AI, About and CV are their own routes. Home and Work share the homepage, so
+  Work stays a hash link. Contact closes every page, so it targets the current
+  page's own #contact rather than the homepage's.
+*/
 const NAV: NavItem[] = [
-  { key: "home", href: "/#home", name: "Home" },
+  { key: "home", href: "/", name: "Home" },
   { key: "work", href: "/#work", name: "Work" },
-  { key: "ai", href: "/#ai", name: "AI" },
-  { key: "about", href: "/#about", name: "About" },
-  { key: "cv", href: "/#cv", name: "CV" },
-  { key: "contact", href: "/#contact", name: "Contact" },
+  { key: "ai", href: "/ai", name: "AI" },
+  { key: "about", href: "/about", name: "About" },
+  { key: "cv", href: "/cv", name: "CV" },
+  { key: "contact", href: "#contact", name: "Contact" },
 ];
 
 // Homepage sections the scroll-spy watches, in document order.
-const SECTION_IDS = ["home", "work", "ai", "about", "cv", "contact"];
+const SECTION_IDS = ["home", "work", "contact"];
+
+/** Routes that own a nav item outright, so no scroll-spy is needed. */
+const ROUTE_KEYS: Record<string, string> = {
+  "/ai": "ai",
+  "/about": "about",
+  "/cv": "cv",
+};
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -58,13 +71,15 @@ export function SiteHeader() {
     };
   }, [pathname]);
 
-  const activeKey = pathname.startsWith("/work") ? "work" : activeSection;
+  const activeKey =
+    ROUTE_KEYS[pathname] ??
+    (pathname.startsWith("/work") ? "work" : activeSection);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur-sm">
       <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-6 py-4">
         <Link
-          href="/#home"
+          href="/"
           className="font-mono text-[0.95rem] font-medium tracking-tight text-foreground"
         >
           <span className="text-brand-weak">~/</span>hanru
@@ -72,6 +87,8 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-3">
           <MorphicNavbar items={NAV} activeKey={activeKey} className="hidden lg:flex" />
+          {/* Sits beside the nav on every breakpoint, including mobile. */}
+          <ThemeToggle />
           <button
             type="button"
             className="inline-flex items-center rounded-md border border-border px-3 py-2 lg:hidden"
@@ -93,7 +110,7 @@ export function SiteHeader() {
         >
           {NAV.map((item) => (
             <li key={item.key}>
-              <a
+              <Link
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
@@ -104,7 +121,7 @@ export function SiteHeader() {
                 )}
               >
                 {item.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

@@ -49,13 +49,9 @@ export function Cv() {
       <div className="mx-auto max-w-[1120px] px-6">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <span className="mb-4 flex items-center gap-2 font-mono text-[0.78rem] tracking-[0.06em] lowercase">
-              <span className="text-brand-weak">›</span>
-              <span className="text-foreground-muted">curriculum vitae</span>
-            </span>
             <h2
               id="cv-heading"
-              className="text-[clamp(1.6rem,3.4vw,2.3rem)] leading-[1.15] font-bold tracking-tight text-foreground"
+              className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-brand-weak"
             >
               CV
             </h2>

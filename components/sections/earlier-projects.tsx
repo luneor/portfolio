@@ -6,10 +6,18 @@ const projects = PROJECTS.filter((project) => project.section === "earlier-proje
 
 export function EarlierProjects() {
   return (
-    <div aria-labelledby="earlier-projects-heading" className="bg-background-alt py-24">
+    /*
+      Page ground, deliberately not the lifted `bg-background-alt` used by
+      Genio Admin above: current work sits on a raised surface, the archive
+      recedes to the base. The two sections are adjacent, so sharing a surface
+      merged them into one slab.
+    */
+    <div
+      aria-labelledby="earlier-projects-heading"
+      className="border-t border-border py-24"
+    >
       <div className="mx-auto max-w-[1120px] px-6">
         <SectionHeading
-          eyebrow="Portfolio archive"
           title="Earlier Projects"
           headingId="earlier-projects-heading"
         >
@@ -20,14 +28,13 @@ export function EarlierProjects() {
           </p>
         </SectionHeading>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => {
             const Art = project.art;
             return (
               <ProjectCard
                 key={project.slug}
                 slug={project.slug}
-                tag={project.tag}
                 title={project.title}
                 summary={project.summary}
                 media={<Art />}

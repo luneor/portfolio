@@ -14,13 +14,9 @@ export function About() {
           className="aspect-square w-full rounded-xl border border-border object-cover"
         />
         <div>
-          <span className="mb-4 flex items-center gap-2 font-mono text-[0.78rem] tracking-[0.06em] lowercase">
-            <span className="text-brand-weak">›</span>
-            <span className="text-foreground-muted">about</span>
-          </span>
           <h2
             id="about-heading"
-            className="mb-4 text-[clamp(1.6rem,3.4vw,2.3rem)] leading-[1.15] font-bold tracking-tight text-foreground"
+            className="mb-4 text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-brand-weak"
           >
             Hi, I&apos;m Hanru.
           </h2>

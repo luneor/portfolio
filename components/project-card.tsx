@@ -3,12 +3,14 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import { type ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+/*
+  The `tag` badge is intentionally not rendered for now. `tag`/`tagMuted` stay
+  on the Project type so the data isn't lost and the badge can come back.
+*/
 interface ProjectCardProps {
   slug: string;
-  tag: string;
   title: string;
   summary: string;
   media: ReactNode;
@@ -17,7 +19,6 @@ interface ProjectCardProps {
 
 export function ProjectCard({
   slug,
-  tag,
   title,
   summary,
   media,
@@ -25,20 +26,21 @@ export function ProjectCard({
 }: ProjectCardProps) {
   return (
     <motion.div
-      className={cn("h-full", className)}
+      className={cn("group h-full", className)}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
     >
-      <motion.div
-        whileHover={{
-          boxShadow: "0 18px 40px -16px rgba(0,0,0,0.6), 0 0 0 1px rgba(36,161,130,0.5)",
-        }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
-        className="h-full overflow-hidden rounded-xl border border-border bg-card"
+      {/*
+        The shadow eases via CSS, not Motion. Motion can't cleanly interpolate
+        two box-shadows with different numbers of length values (3 vs 4), which
+        made it lurch dark on the way back out. Depths stay soft so they read on
+        cream as well as near-black.
+      */}
+      <div
+        className="h-full overflow-hidden rounded-xl border border-border bg-card shadow-[0_1px_2px_0_rgba(0,0,0,0.12)] transition-shadow duration-300 ease-out group-hover:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.28)]"
       >
         <Link href={`/work/${slug}`} className="flex h-full flex-col">
           <div className="relative aspect-video overflow-hidden border-b border-border bg-background-alt">
@@ -51,9 +53,6 @@ export function ProjectCard({
             </motion.div>
           </div>
           <div className="flex flex-1 flex-col gap-1.5 p-4">
-            <Badge className="w-fit rounded-full border border-border bg-secondary px-2.5 py-0.5 font-mono text-[0.62rem] tracking-[0.04em] text-brand-weak lowercase">
-              {tag}
-            </Badge>
             <h3 className="text-base font-bold tracking-tight text-foreground">
               {title}
             </h3>
@@ -62,7 +61,7 @@ export function ProjectCard({
             </p>
           </div>
         </Link>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

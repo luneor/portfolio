@@ -50,7 +50,7 @@ function Section({
     >
       <h2
         id={`${id}-heading`}
-        className="text-[0.85rem] font-bold tracking-wide text-brand-weak uppercase"
+        className="text-[1.05rem] font-bold tracking-wide text-brand-weak uppercase"
       >
         {heading}
       </h2>

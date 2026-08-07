@@ -10,7 +10,6 @@ export function GenioAdmin() {
     <div aria-labelledby="genio-admin-heading" className="bg-background-alt py-24">
       <div className="mx-auto max-w-[1120px] px-6">
         <SectionHeading
-          eyebrow="Current work"
           title="Genio Admin"
           headingId="genio-admin-heading"
         >
@@ -25,16 +24,17 @@ export function GenioAdmin() {
           </p>
         </SectionHeading>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => {
             const Art = project.art;
             // A real screenshot wins over the abstract motif where we have one.
-            const media = project.cover ? (
+            const thumb = project.cardImage ?? project.cover;
+            const media = thumb ? (
               <Image
-                src={project.cover.src}
-                alt={project.cover.alt}
-                width={project.cover.width}
-                height={project.cover.height}
+                src={thumb.src}
+                alt={thumb.alt}
+                width={thumb.width}
+                height={thumb.height}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
                 className="h-full w-full object-cover"
               />
@@ -45,7 +45,6 @@ export function GenioAdmin() {
               <ProjectCard
                 key={project.slug}
                 slug={project.slug}
-                tag={project.tag}
                 title={project.title}
                 summary={project.summary}
                 media={media}

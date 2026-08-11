@@ -1,14 +1,26 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Button } from "@/components/ui/button";
+import { MorphicNavbar, type NavItem } from "@/components/kokonutui/morphic-navbar";
 
 /*
-  Base hero, headline, one line of positioning, two actions. Deliberately
-  stripped back as a starting point for a redesign. Accent colours come from
-  the theme tokens, never hardcoded hexes, so they stay legible in light mode
-  (mint is dark-mode only; light substitutes a deep teal).
+  Base hero, headline, one line of positioning, two actions, and the site's
+  primary navigation, centred beneath. Work now lives on its own route like
+  every other section, so the header above carries only the logo and the
+  theme toggle; this centred pill is the main way to get around from the
+  homepage. No "Home" entry, since it's redundant here. Accent colours come
+  from the theme tokens, never hardcoded hexes, so they stay legible in light
+  mode (mint is dark-mode only; light substitutes a deep teal).
 */
+const NAV: NavItem[] = [
+  // Work carries the coral accent: with the hero's buttons gone, this is the
+  // primary destination and needs to read as such.
+  { key: "work", href: "/work", name: "Work", accent: true },
+  { key: "ai", href: "/ai", name: "AI" },
+  { key: "about", href: "/about", name: "About" },
+  { key: "cv", href: "/cv", name: "CV" },
+  { key: "contact", href: "#contact", name: "Contact" },
+];
 
 const container = {
   hidden: {},
@@ -33,8 +45,13 @@ export function Hero() {
         <span className="hero-blob hero-blob--b" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-[1120px] flex-col justify-center px-6 py-24">
-        <motion.div variants={container} initial="hidden" animate="show">
+      <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-[1120px] flex-col items-center justify-center px-6 py-24 text-center">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="flex flex-col items-center"
+        >
           <motion.h1
             id="hero-heading"
             variants={item}
@@ -54,22 +71,10 @@ export function Hero() {
             much as the interface</strong>.
           </motion.p>
 
-          <motion.div variants={item} className="mt-10 flex flex-wrap gap-3">
-            <Button
-              size="lg"
-              nativeButton={false}
-              className="h-11 px-6 text-[0.95rem]"
-              render={<a href="#work">See the work →</a>}
-            />
-            <Button
-              variant="outline"
-              size="lg"
-              nativeButton={false}
-              // Filled with the page ground, not transparent, otherwise the
-              // hero glow shows through and the button reads as a hole.
-              className="h-11 border border-border bg-background px-6 text-[0.95rem] text-foreground hover:bg-accent"
-              render={<a href="#contact">Get in touch</a>}
-            />
+          {/* No hero buttons: Work and Contact already live in the nav below,
+              so a pair of CTAs alongside it just duplicated them. */}
+          <motion.div variants={item} className="mt-12">
+            <MorphicNavbar items={NAV} />
           </motion.div>
         </motion.div>
       </div>

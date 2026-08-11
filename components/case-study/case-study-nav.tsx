@@ -88,7 +88,7 @@ function useActiveSection(sections: CaseStudySection[]) {
 function BackLink({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <Link
-      href="/#work"
+      href="/work"
       onClick={onNavigate}
       className="w-fit text-sm text-foreground-muted underline decoration-brand-strong underline-offset-4 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
     >

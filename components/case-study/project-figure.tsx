@@ -89,19 +89,27 @@ export function ProjectFigure({ media }: { media: ProjectMedia }) {
 
   return (
     <figure className="flex flex-col gap-3">
+      {/*
+        Capped to the image's own intrinsic width: without this, a narrow
+        portrait screenshot gets stretched up to the full article width and
+        renders far larger inline than intended. Capping it means the lightbox
+        (which scales up toward the viewport) is always an enlargement, never
+        a same-size or smaller view.
+      */}
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="group relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border bg-background-alt focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+        style={{ maxWidth: media.width }}
+        className="group relative mx-auto block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border bg-background-alt focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
       >
         <Image
           src={media.src}
           alt={media.alt}
           width={media.width}
           height={media.height}
-          sizes="(max-width: 768px) 100vw, 680px"
+          sizes={`(max-width: 768px) 100vw, ${media.width}px`}
           className="h-auto w-full"
         />
         {/* Appears on hover AND keyboard focus, so it isn't pointer-only. */}
@@ -140,16 +148,22 @@ export function ProjectFigure({ media }: { media: ProjectMedia }) {
                 className="max-h-[82vh] w-auto max-w-full rounded-xl border border-border object-contain"
               />
               {media.caption && (
-                <p className="max-w-[70ch] text-center font-mono text-[0.72rem] leading-relaxed tracking-[0.03em] text-foreground-muted">
+                <p className="max-w-[70ch] text-center font-mono text-[0.72rem] leading-relaxed tracking-[0.03em] text-foreground">
                   {media.caption}
                 </p>
               )}
 
+              {/*
+                Solid, not `glass`: over a blurred backdrop a translucent
+                button reads as a smudge rather than a control. A plain card
+                fill and a standard border keep it in line with the rest of
+                the site's chrome.
+              */}
               <button
                 ref={closeRef}
                 type="button"
                 onClick={close}
-                className="glass absolute -top-3 -right-3 inline-flex size-9 items-center justify-center rounded-full border border-foreground-muted text-foreground transition-colors hover:border-brand-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+                className="absolute -top-3 -right-3 inline-flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-brand-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
               >
                 <span className="sr-only">Close image</span>
                 <span aria-hidden="true">✕</span>

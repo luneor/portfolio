@@ -84,7 +84,7 @@ export function ThemeToggle() {
             : "Switch to dark mode"
           : "Toggle colour theme"
       }
-      className="glass relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-foreground-muted text-foreground transition-colors hover:border-brand-strong"
+      className="glass relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-foreground-muted/40 text-foreground transition-colors hover:border-brand-strong"
     >
       {mounted && (
         <AnimatePresence mode="wait" initial={false}>

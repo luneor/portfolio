@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MorphicNavbar, type NavItem } from "@/components/kokonutui/morphic-navbar";
@@ -91,13 +92,23 @@ export function SiteHeader() {
           <ThemeToggle />
           <button
             type="button"
-            className="inline-flex items-center rounded-md border border-border px-3 py-2 lg:hidden"
+            // Same box and border as the theme toggle, so the pair matches.
+            className="glass relative inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground-muted text-foreground transition-colors hover:border-brand-strong lg:hidden"
             aria-expanded={isOpen}
             aria-controls="primary-nav-links"
             onClick={() => setIsOpen((open) => !open)}
           >
             <span className="sr-only">Toggle menu</span>
-            <span aria-hidden="true">☰</span>
+            {/*
+              A lucide icon rather than the ☰ character: the glyph carried its
+              own baseline offset and sat high in the circle. An SVG centres on
+              its own box, and matches the toggle's Sun/Moon at the same size.
+            */}
+            {isOpen ? (
+              <X className="size-4" aria-hidden="true" />
+            ) : (
+              <Menu className="size-4" aria-hidden="true" />
+            )}
           </button>
         </div>
 

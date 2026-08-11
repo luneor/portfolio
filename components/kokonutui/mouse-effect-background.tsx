@@ -5,7 +5,7 @@
  * https://kokonutui.com/docs/cards/mouse-effect-card
  *
  * Ported from the card into a full-bleed background layer:
- * - No card chrome / text — just the interactive dot field.
+ * - No card chrome / text, just the interactive dot field.
  * - Pointer is tracked on `window` (not the element) so dots still react
  *   when the cursor is over the sibling content sitting on top.
  * - The card's "dots fade toward the centred text" logic is KEPT and made

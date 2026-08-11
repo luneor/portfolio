@@ -20,7 +20,7 @@ const archivo = Archivo({
   weight: ["400", "700", "800", "900"],
 });
 
-// Captions & labels — eyebrows, nav, tags, the terminal prompt motif.
+// Captions & labels, eyebrows, nav, tags, the terminal prompt motif.
 const spaceMono = Space_Mono({
   variable: "--font-mono-face",
   subsets: ["latin"],
@@ -28,7 +28,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hanru Wehmeyer — UX Designer",
+  title: "Hanru Wehmeyer | UX Designer",
   description:
     "Hanru Wehmeyer is a UX Designer at Genio, designing admin tooling that gives educators real control over how they support students at scale.",
 };
@@ -52,7 +52,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         {/*
-          Dark is the default look, but light is a real theme now — no
+          Dark is the default look, but light is a real theme now, no
           forcedTheme. `disableTransitionOnChange` is deliberately NOT set: the
           toggle drives the 500ms cross-fade defined in globals.css.
         */}

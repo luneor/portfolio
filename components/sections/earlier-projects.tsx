@@ -1,5 +1,6 @@
 import { SectionHeading } from "@/components/section-heading";
 import { ProjectCard } from "@/components/project-card";
+import { ProjectThumb } from "@/components/project-thumb";
 import { PROJECTS } from "@/lib/projects";
 
 const projects = PROJECTS.filter((project) => project.section === "earlier-projects");
@@ -22,22 +23,20 @@ export function EarlierProjects() {
           headingId="earlier-projects-heading"
         >
           <p>
-            Earlier work spanning conceptual apps, sponsored research, and
-            university study — refreshed here visually, with the original
-            findings and claims kept intact.
+            Conceptual apps and sponsored research, refreshed visually with the
+            original findings kept intact.
           </p>
         </SectionHeading>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => {
-            const Art = project.art;
             return (
               <ProjectCard
                 key={project.slug}
                 slug={project.slug}
                 title={project.title}
                 summary={project.summary}
-                media={<Art />}
+                media={<ProjectThumb project={project} />}
               />
             );
           })}

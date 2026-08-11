@@ -3,9 +3,9 @@ import { Ai } from "@/components/sections/ai";
 import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
-  title: "On AI — Hanru Wehmeyer",
+  title: "On AI | Hanru Wehmeyer",
   description:
-    "How Hanru Wehmeyer works with AI as a UX designer — leaning on it for pace without letting it skip the thinking — plus concept work where AI is part of the design itself.",
+    "How Hanru Wehmeyer works with AI as a UX designer, leaning on it for pace without letting it skip the thinking, plus concept work where AI is part of the design itself.",
 };
 
 export default function AiPage() {

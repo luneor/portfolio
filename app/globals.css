@@ -55,39 +55,38 @@
 }
 
 /*
-  "GRADIENT FOLIO" palette — sampled and clustered from the old Framer site's
+  "GRADIENT FOLIO" palette, sampled and clustered from the old Framer site's
   hero gradient, turned into a system. Vivid hues built to sit on near-black.
   Coral is the signal, teal/mint the cool anchor, mustard the highlight.
 
   Two themes: `:root` is light, `.dark` is dark.
 
   RULE OF THUMB: teal in light mode, mint in dark mode. The cool accent is
-  ALWAYS `--brand-weak` — never a hardcoded hex — so it swaps automatically.
+  ALWAYS `--brand-weak`, never a hardcoded hex, so it swaps automatically.
   Mint on cream is 1.91:1, nowhere near AA, so mint must never carry text in
   light mode; the light substitute is a deep teal (#0F6B57, 6.22:1).
 
-  Coral stays #ED2A03 in BOTH themes, because it is never text — it's a fill
+  Coral stays #ED2A03 in BOTH themes, because it is never text, it's a fill
   or a rule, and text sits on top of it. As a shape it clears the 3:1 non-text
   bar on every surface (3.73–4.50). Where text sits ON coral the label must be
-  near-black #0F0F0F (4.50:1) — cream, white and #14131A all fall short, which
+  near-black #0F0F0F (4.50:1), cream, white and #14131A all fall short, which
   is why --primary-foreground is #0F0F0F in both themes. Any new accent needs
   checking against BOTH papers before it ships.
     paper     #0F0F0F  →  --background: page ground
     surface   #1A1A1A  →  --card / --background-alt: lifted surfaces
-    ink       #F5F3EC  →  --foreground: ALL body copy — paragraphs, lists,
+    ink       #F5F3EC  →  --foreground: ALL body copy, paragraphs, lists,
                           card summaries, section intros. Mixing white and grey
                           inside a reading flow reads as jarring, so prose is
                           uniformly `--foreground`.
-    caption   #A8A499  →  --foreground-muted: chrome and secondary labels ONLY —
-                          nav, figure captions, eyebrows, dates/meta, footer.
+    caption   #A8A499  →  --foreground-muted: chrome and secondary labels ONLY, nav, figure captions, eyebrows, dates/meta, footer.
                           Never body copy.
     coral     #ED2A03  →  --primary + --brand-strong: buttons, rules, signal
     mint      #44CCBE  →  --ring + --brand-weak: labels, links, focus (cool).
-                          DARK MODE ONLY — light swaps this to teal #0F6B57.
+                          DARK MODE ONLY, light swaps this to teal #0F6B57.
     teal      #24A182  →  --brand-green: secondary cool accent
     mustard   #FAE419  →  --brand-accent: high-energy highlight
 */
-/* Light — cream paper. Only the cool accent changes; coral is shared. */
+/* Light, cream paper. Only the cool accent changes; coral is shared. */
 :root {
   --background: #fdfbf5;
   --background-alt: #f4f0e3;
@@ -129,9 +128,8 @@
   --sidebar-border: #d8d3c4;
   --sidebar-ring: #0f6b57;
 
-  /* Hero glows, softened so they tint cream rather than muddy it. */
-  --hero-glow-cool: rgba(18, 119, 95, 0.13);
-  --hero-glow-warm: rgba(237, 42, 3, 0.1);
+  /* Deep teal on cream needs a lighter touch than mint on near-black. */
+  --hero-glow-strength: 16%;
 }
 
 .dark {
@@ -175,20 +173,23 @@
   --sidebar-border: #2a2a2a;
   --sidebar-ring: #44ccbe;
 
-  --hero-glow-cool: rgba(36, 161, 130, 0.22);
-  --hero-glow-warm: rgba(237, 42, 3, 0.16);
+  --hero-glow-strength: 30%;
 }
 
+/*
+  Frosted surface. Deliberately sets no border: callers add their own
+  `border-*` utilities, so hover/theme border colours win predictably
+  instead of racing this shorthand in the cascade.
+*/
 @utility glass {
   background: color-mix(in oklch, var(--card) 72%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
 }
 
 /*
   Case-study sidebar rail. Pinned to the viewport so the table of contents
-  holds the same top-left spot for the entire page — a sticky rail drifts
+  holds the same top-left spot for the entire page: a sticky rail drifts
   upward once its grid row ends (the last ~240px, over the footer).
 
   The grid column reserves the 15rem of space, so `left` only has to mirror
@@ -207,16 +208,76 @@
 }
 
 /*
-  Hero / landing surface. A clean near-black ground lit by two soft accent
-  glows — teal (top-left) and coral (bottom-right) — the cool/warm pairing
-  pulled from the old-site hero gradient. They supply the energy in place of a
-  grid, and keep body text sitting on flat colour (no muddiness).
+  Hero / landing surface. Just the page ground plus the cool accent, two soft
+  blobs that drift slowly behind the content, so the gradient is alive rather
+  than a static wash. The colour is `--brand-weak`, so it follows the theme
+  rule for free: mint on near-black, teal on cream. No second hue.
+
+  Motion is transform-only (cheap to composite) and the blobs sit under the
+  content, which keeps body text on flat colour.
 */
 .hero-surface {
-  background:
-    radial-gradient(58% 50% at 12% 18%, var(--hero-glow-cool), transparent 68%),
-    radial-gradient(48% 46% at 92% 88%, var(--hero-glow-warm), transparent 66%),
-    var(--background);
+  background: var(--background);
+}
+
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-blob {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  /*
+    Strength lives in the colour, not `opacity`, so the theme switch fades it
+    as a background-color rather than snapping a non-transitioned property.
+  */
+  background: color-mix(in srgb, var(--brand-weak) var(--hero-glow-strength), transparent);
+  filter: blur(90px);
+  will-change: transform;
+}
+
+.hero-blob--a {
+  width: 62%;
+  height: 72%;
+  top: -22%;
+  left: -12%;
+  animation: hero-drift-a 26s ease-in-out infinite alternate;
+}
+
+.hero-blob--b {
+  width: 56%;
+  height: 66%;
+  right: -14%;
+  bottom: -26%;
+  animation: hero-drift-b 34s ease-in-out infinite alternate;
+}
+
+@keyframes hero-drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(9%, 7%, 0) scale(1.16);
+  }
+}
+
+@keyframes hero-drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-8%, -6%, 0) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob {
+    animation: none;
+  }
 }
 
 @layer base {
@@ -246,22 +307,49 @@
 
 /*
   Uniform light/dark cross-fade. The `.theme-transition` class is added to
-  <html> only while the theme is switching (see ThemeToggle), so EVERY element
-  — buttons and nav included — fades its colours over the same 500ms in sync,
+  <html> only while the theme is switching (see ThemeToggle), so EVERY element, buttons and nav included, fades its colours over the same 300ms in sync,
   then reverts to its normal (snappy) hover transitions afterwards. The
   !important beats component-level transition utilities (e.g. transition-all).
+
+  Every theme-driven property must be listed here, or it snaps while the rest
+  fade and the switch reads as a pop. Anything that changes with the theme and
+  isn't a colour (e.g. the hero glow's strength) is expressed AS a colour, see .hero-blob, so it rides background-color rather than needing `opacity`,
+  which would fight Motion's own fade-ins during the window.
 */
+/*
+  Preferred theme cross-fade: one snapshot of the whole page fades to the next,
+  so text, backgrounds and borders move together on identical timing. This
+  replaces per-element colour transitions, which React re-renders kept
+  cancelling and restarting mid-switch (text crawled, then snapped).
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Fallback for browsers without View Transitions. */
 html.theme-transition,
 html.theme-transition *,
 html.theme-transition *::before,
 html.theme-transition *::after {
   transition:
-    background-color 500ms ease,
-    border-color 500ms ease,
-    color 500ms ease,
-    fill 500ms ease,
-    stroke 500ms ease,
-    text-decoration-color 500ms ease !important;
+    background-color 300ms ease-in-out,
+    background-image 300ms ease-in-out,
+    border-color 300ms ease-in-out,
+    outline-color 300ms ease-in-out,
+    box-shadow 300ms ease-in-out,
+    color 300ms ease-in-out,
+    fill 300ms ease-in-out,
+    stroke 300ms ease-in-out,
+    text-decoration-color 300ms ease-in-out !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

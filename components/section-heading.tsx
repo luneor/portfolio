@@ -17,7 +17,7 @@ export function SectionHeading({
       >
         {title}
       </h2>
-      {/* Intro copy runs the full container width — no measure cap. */}
+      {/* Intro copy runs the full container width, no measure cap. */}
       {children && <div className="mt-4 text-foreground">{children}</div>}
     </div>
   );

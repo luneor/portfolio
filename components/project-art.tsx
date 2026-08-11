@@ -1,7 +1,7 @@
 /*
   Abstract placeholder art for project cards without real screenshots yet.
-  Repainted to the "gradient folio" duotone — deep teal (#24A182) + coral
-  (#ED2A03) on a near-black panel — so the cards sit in the same system as the
+  Repainted to the "gradient folio" duotone, deep teal (#24A182) + coral
+  (#ED2A03) on a near-black panel, so the cards sit in the same system as the
   rest of the site. Each is an on-brand abstract motif, NOT a real screenshot:
   swap for genuine product imagery when available (see design-brief-prompt.md).
 */

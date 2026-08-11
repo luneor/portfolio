@@ -12,7 +12,7 @@ export function Contact() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus(
-      "This form isn't wired up to a backend yet — please reach out directly via email or LinkedIn below in the meantime."
+      "This form isn't wired up to a backend yet, please reach out directly via email or LinkedIn below in the meantime."
     );
   }
 
@@ -27,7 +27,7 @@ export function Contact() {
             Contact
           </h2>
           <p className="mb-4 text-foreground">
-            Happy to talk about UX work, collaborations, or roles — drop a
+            Happy to talk about UX work, collaborations, or roles, drop a
             message or reach out directly.
           </p>
           <ul className="space-y-2.5">

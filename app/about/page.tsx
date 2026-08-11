@@ -3,7 +3,7 @@ import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
-  title: "About — Hanru Wehmeyer",
+  title: "About | Hanru Wehmeyer",
   description:
     "Hanru Wehmeyer is a UX Designer at Genio, based in Scotland, designing admin tools that give educators real control over how they support students.",
 };

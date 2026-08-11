@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 
 /*
-  Base hero — headline, one line of positioning, two actions. Deliberately
+  Base hero, headline, one line of positioning, two actions. Deliberately
   stripped back as a starting point for a redesign. Accent colours come from
   the theme tokens, never hardcoded hexes, so they stay legible in light mode
   (mint is dark-mode only; light substitutes a deep teal).
@@ -27,7 +27,13 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="hero-surface relative overflow-hidden"
     >
-      <div className="mx-auto flex min-h-[88vh] max-w-[1120px] flex-col justify-center px-6 py-24">
+      {/* Drifting accent glow, decorative, so hidden from assistive tech. */}
+      <div aria-hidden="true" className="hero-glow">
+        <span className="hero-blob hero-blob--a" />
+        <span className="hero-blob hero-blob--b" />
+      </div>
+
+      <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-[1120px] flex-col justify-center px-6 py-24">
         <motion.div variants={container} initial="hidden" animate="show">
           <motion.h1
             id="hero-heading"
@@ -43,9 +49,9 @@ export function Hero() {
             variants={item}
             className="mt-7 max-w-[54ch] text-[1.05rem] leading-relaxed text-foreground"
           >
-            UX designer, currently at Genio and curious about what&apos;s next.
-            I care about the reasoning behind a product as much as the
-            interface — pro-AI, without letting it skip the thinking.
+            UX designer at Genio, curious about what&apos;s next. I care about{" "}
+            <strong className="font-semibold">the reasoning behind a product as
+            much as the interface</strong>.
           </motion.p>
 
           <motion.div variants={item} className="mt-10 flex flex-wrap gap-3">
@@ -59,7 +65,9 @@ export function Hero() {
               variant="outline"
               size="lg"
               nativeButton={false}
-              className="h-11 border border-border bg-transparent px-6 text-[0.95rem] text-foreground hover:bg-accent"
+              // Filled with the page ground, not transparent, otherwise the
+              // hero glow shows through and the button reads as a hole.
+              className="h-11 border border-border bg-background px-6 text-[0.95rem] text-foreground hover:bg-accent"
               render={<a href="#contact">Get in touch</a>}
             />
           </motion.div>

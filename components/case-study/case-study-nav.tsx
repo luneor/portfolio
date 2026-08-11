@@ -8,7 +8,7 @@ import type { CaseStudySection } from "@/lib/projects";
 /*
   Case-study sidebar navigation.
 
-  Structure/behaviour notes (styling is intentionally minimal — tokens only):
+  Structure/behaviour notes (styling is intentionally minimal, tokens only):
   - Desktop (>= md): a sticky, viewport-height rail. Logo + back-link on top,
     table of contents below, built from the sections actually present so a
     decision shows its own preview heading rather than "Decision 1".
@@ -23,7 +23,7 @@ import type { CaseStudySection } from "@/lib/projects";
     remains keyboard operable, and still works with JS disabled.
 */
 
-const BREAKPOINT = 768; // px — matches Tailwind's `md`
+const BREAKPOINT = 768; // px, matches Tailwind's `md`
 
 interface CaseStudyNavProps {
   sections: CaseStudySection[];
@@ -81,7 +81,7 @@ function useActiveSection(sections: CaseStudySection[]) {
 }
 
 /**
- * Link back to the portfolio index. No logo here — the sticky site header
+ * Link back to the portfolio index. No logo here: the sticky site header
  * above already carries it, so repeating it in the nested column would show
  * two logos at once.
  */
@@ -200,7 +200,7 @@ export function CaseStudyNav({ sections, title }: CaseStudyNavProps) {
 
         {isOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            {/* Outside tap closes. Inert to screen readers — the drawer's own
+            {/* Outside tap closes. Inert to screen readers: the drawer's own
                 controls provide the accessible way out. */}
             <div
               className="absolute inset-0 bg-background/80"

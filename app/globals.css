@@ -188,6 +188,36 @@
 }
 
 /*
+  The morphic navbar's segmented 1px outline, drawn with inset shadows rather
+  than borders.
+
+  Borders cannot do this job. A run of fused items needs a continuous outline
+  with no division lines inside it, which means each item's buried edges must be
+  invisible while its long edges are painted. But where two borders of DIFFERENT
+  colours meet at a corner, the browser splits that corner diagonally between
+  them, so every seam grew a visible triangular "peak". Overlapping the items to
+  hide the seam doesn't help either: the neighbour's own border lands in the
+  overlapped pixel and draws the line straight back in.
+
+  Inset shadows have neither problem. Each is a straight band along one edge, so
+  they butt together squarely and overlap cleanly at corners, and they take up no
+  layout space, so nothing shifts by a pixel.
+
+  `--ring-long` is the top and bottom pair, always painted. `--ring-start` /
+  `--ring-end` are the left and right ends, painted only where an edge is
+  exposed. Keeping all four shadows present at all times, and varying
+  only their colour, is what lets the outline TRANSITION as the highlight moves:
+  a shadow list can only interpolate against another list of the same length.
+*/
+@utility morph-ring {
+  box-shadow:
+    inset 0 1px 0 0 var(--ring-long),
+    inset 0 -1px 0 0 var(--ring-long),
+    inset 1px 0 0 0 var(--ring-start),
+    inset -1px 0 0 0 var(--ring-end);
+}
+
+/*
   Case-study sidebar rail. Pinned to the viewport so the table of contents
   holds the same top-left spot for the entire page: a sticky rail drifts
   upward once its grid row ends (the last ~240px, over the footer).
@@ -203,7 +233,13 @@
     top: 4.5rem;
     left: max(1.5rem, calc((100vw - 1120px) / 2 + 1.5rem));
     width: 15rem;
-    max-height: calc(100vh - 4.5rem);
+    /*
+      A definite height, not just a max: the rail's contact button is pushed to
+      the foot with `mt-auto`, which needs somewhere to push against. With only a
+      max-height the rail is content-tall and the button would sit directly under
+      the table of contents instead of at the bottom of the viewport.
+    */
+    height: calc(100vh - 4.5rem);
   }
 }
 
@@ -306,50 +342,303 @@
 }
 
 /*
-  Uniform light/dark cross-fade. The `.theme-transition` class is added to
-  <html> only while the theme is switching (see ThemeToggle), so EVERY element, buttons and nav included, fades its colours over the same 300ms in sync,
-  then reverts to its normal (snappy) hover transitions afterwards. The
-  !important beats component-level transition utilities (e.g. transition-all).
+  Uniform light/dark cross-fade, at the TOKEN level.
 
-  Every theme-driven property must be listed here, or it snaps while the rest
-  fade and the switch reads as a pop. Anything that changes with the theme and
-  isn't a colour (e.g. the hero glow's strength) is expressed AS a colour, see .hero-blob, so it rides background-color rather than needing `opacity`,
-  which would fight Motion's own fade-ins during the window.
+  `.theme-transition` is added to <html> only while the theme is switching (see
+  ThemeToggle) and dropped afterwards, so normal snappy hover transitions resume.
+
+  The tokens are registered below with `@property` so they become interpolable,
+  which is the whole trick. The obvious approach, transitioning `color`,
+  `background-color` and friends on every element, cannot work:
+
+    - `color` is INHERITED. A parent easing its colour changes each descendant's
+      STARTING value every frame, so each descendant cancels and restarts its own
+      transition. Measured: a transition's currentTime pinned at 0 frame after
+      frame while border-color's climbed 17 -> 117 -> 217, and the text crawled a
+      handful of shades before jumping the rest of the way at the end.
+    - The same applies in reverse to any property whose TARGET is an animating
+      variable, since a moving end value restarts a transition too.
+
+  Animating the variables sidesteps both. One transition on the root drives every
+  colour in the document and no element needs a transition of its own, so there
+  is nothing to cancel and nothing to restart.
+
+  This is also deliberately NOT the View Transitions API. That cross-fades one
+  flat snapshot of the page into another, so every element is briefly
+  double-exposed against its own old copy, reading as a single flash rather than
+  components easing, and it can't be verified per element, since the real DOM's
+  computed colours jump instantly and only the snapshot animates.
+
+  Anything theme-driven that ISN'T a colour needs handling explicitly: the hero
+  glow's strength is registered as a percentage, and the wordmark cross-fades on
+  opacity via `.theme-fade`, because swapping its `display` can't be animated.
 */
+@property --background {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fdfbf5;
+}
+@property --background-alt {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f4f0e3;
+}
+@property --foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #14131a;
+}
+@property --foreground-muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #57515f;
+}
+@property --brand-strong {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ed2a03;
+}
+@property --brand-weak {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0f6b57;
+}
+@property --brand-green {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #12775f;
+}
+@property --brand-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7a5c00;
+}
+@property --card {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ffffff;
+}
+@property --card-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #14131a;
+}
+@property --popover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ffffff;
+}
+@property --popover-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #14131a;
+}
+@property --primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ed2a03;
+}
+@property --primary-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0f0f0f;
+}
+@property --secondary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #efe9da;
+}
+@property --secondary-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3a3542;
+}
+@property --muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f4f0e3;
+}
+@property --muted-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #57515f;
+}
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #efe9da;
+}
+@property --accent-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #14131a;
+}
+@property --destructive {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: oklch(0.577 0.245 27.325);
+}
+@property --border {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d8d3c4;
+}
+@property --input {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #cfc9b8;
+}
+@property --ring {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0f6b57;
+}
+@property --chart-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ed2a03;
+}
+@property --chart-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #12775f;
+}
+@property --chart-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0f6b57;
+}
+@property --chart-4 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7a5c00;
+}
+@property --chart-5 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #57515f;
+}
+@property --sidebar {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fdfbf5;
+}
+@property --sidebar-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #14131a;
+}
+@property --sidebar-primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ed2a03;
+}
+@property --sidebar-primary-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0f0f0f;
+}
+@property --sidebar-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #efe9da;
+}
+@property --sidebar-accent-foreground {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #14131a;
+}
+@property --sidebar-border {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d8d3c4;
+}
+@property --sidebar-ring {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0f6b57;
+}
+
+/* Not a colour, but it changes with the theme, so it eases too. */
+@property --hero-glow-strength {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 16%;
+}
+
 /*
-  Preferred theme cross-fade: one snapshot of the whole page fades to the next,
-  so text, backgrounds and borders move together on identical timing. This
-  replaces per-element colour transitions, which React re-renders kept
-  cancelling and restarting mid-switch (text crawled, then snapped).
+  One transition on the root drives every colour in the document: text,
+  backgrounds, borders, the navbar's inset outline, SVG fills, the hero glow.
+  Because the tokens themselves interpolate, no element needs a transition of its
+  own, so there is nothing to cancel and restart.
 */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 300ms;
-  animation-timing-function: ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-}
-
-/* Fallback for browsers without View Transitions. */
-html.theme-transition,
-html.theme-transition *,
-html.theme-transition *::before,
-html.theme-transition *::after {
+html.theme-transition {
   transition:
-    background-color 300ms ease-in-out,
-    background-image 300ms ease-in-out,
-    border-color 300ms ease-in-out,
-    outline-color 300ms ease-in-out,
-    box-shadow 300ms ease-in-out,
-    color 300ms ease-in-out,
-    fill 300ms ease-in-out,
-    stroke 300ms ease-in-out,
-    text-decoration-color 300ms ease-in-out !important;
+    --background 300ms ease-in-out,
+    --background-alt 300ms ease-in-out,
+    --foreground 300ms ease-in-out,
+    --foreground-muted 300ms ease-in-out,
+    --brand-strong 300ms ease-in-out,
+    --brand-weak 300ms ease-in-out,
+    --brand-green 300ms ease-in-out,
+    --brand-accent 300ms ease-in-out,
+    --card 300ms ease-in-out,
+    --card-foreground 300ms ease-in-out,
+    --popover 300ms ease-in-out,
+    --popover-foreground 300ms ease-in-out,
+    --primary 300ms ease-in-out,
+    --primary-foreground 300ms ease-in-out,
+    --secondary 300ms ease-in-out,
+    --secondary-foreground 300ms ease-in-out,
+    --muted 300ms ease-in-out,
+    --muted-foreground 300ms ease-in-out,
+    --accent 300ms ease-in-out,
+    --accent-foreground 300ms ease-in-out,
+    --destructive 300ms ease-in-out,
+    --border 300ms ease-in-out,
+    --input 300ms ease-in-out,
+    --ring 300ms ease-in-out,
+    --chart-1 300ms ease-in-out,
+    --chart-2 300ms ease-in-out,
+    --chart-3 300ms ease-in-out,
+    --chart-4 300ms ease-in-out,
+    --chart-5 300ms ease-in-out,
+    --sidebar 300ms ease-in-out,
+    --sidebar-foreground 300ms ease-in-out,
+    --sidebar-primary 300ms ease-in-out,
+    --sidebar-primary-foreground 300ms ease-in-out,
+    --sidebar-accent 300ms ease-in-out,
+    --sidebar-accent-foreground 300ms ease-in-out,
+    --sidebar-border 300ms ease-in-out,
+    --sidebar-ring 300ms ease-in-out,
+    --hero-glow-strength 300ms ease-in-out;
+}
+
+/*
+  Element transitions are suspended for the length of the switch.
+
+  Any element transition whose target is one of the animating tokens is chasing a
+  moving goalpost, so it restarts every frame and drags: the navbar's
+  `transition-all` was still creeping toward its new fill at 631ms, long after
+  every other colour had settled at ~330ms. Switching them off lets those
+  properties track the token exactly, in step with everything else.
+
+  Only colours change during this window anyway. The cost is that a geometry
+  transition mid-flight (hovering the navbar while toggling) snaps rather than
+  eases, for those 300ms.
+*/
+html.theme-transition *:not(.theme-fade) {
+  transition-property: none !important;
+}
+
+/*
+  Opt-in for the few things that change with the theme but aren't a colour, so
+  they can't ride the token list: the wordmark, which is two SVGs (a dark one and
+  a light one) stacked and cross-faded, since swapping their `display` would pop
+  instantly while everything around them eased.
+*/
+html.theme-transition .theme-fade {
+  transition: opacity 300ms ease-in-out !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -357,9 +646,7 @@ html.theme-transition *::after {
     scroll-behavior: auto;
   }
   html.theme-transition,
-  html.theme-transition *,
-  html.theme-transition *::before,
-  html.theme-transition *::after {
+  html.theme-transition .theme-fade {
     transition-duration: 0ms !important;
   }
 }

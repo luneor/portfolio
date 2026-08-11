@@ -1,5 +1,5 @@
 /*
-  DIRECTION 1 — "QUERY"  (rev 2)
+  DIRECTION 1: "QUERY"  (rev 2)
   Boundary-pushing = interrogating the reasoning behind a product, whatever the
   domain. Deliberately NOT pinned to admin tooling. The descending five-whys
   stack is the signature device (universal product-decision content).
@@ -12,7 +12,7 @@ export default function QueryDirection() {
   const paper = "#ECEBE6";
   const cobalt = "#3D5AFF";
   const coral = "#FF5A47";
-  const textMid = "#A6A9B0"; // body — strong contrast on ink
+  const textMid = "#A6A9B0"; // body, strong contrast on ink
   const textDim = "#83868E"; // labels
 
   return (
@@ -58,7 +58,7 @@ export default function QueryDirection() {
             assumptions nobody actually verified.
           </p>
 
-          {/* five-whys interrogation stack — the signature device (domain-agnostic) */}
+          {/* five-whys interrogation stack, the signature device (domain-agnostic) */}
           <div className="mt-12 max-w-[600px] text-[0.82rem]" style={{ color: textMid }}>
             {[
               ["why build this?", "it's on the roadmap"],

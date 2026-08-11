@@ -2,7 +2,7 @@ import { JetBrains_Mono, Anton, Bricolage_Grotesque, Archivo } from "next/font/g
 
 /*
   Throwaway exploration routes for hero design directions. Isolated fonts,
-  isolated colors — nothing here touches the live site theme. Delete once a
+  isolated colors, so nothing here touches the live site theme. Delete once a
   direction is chosen. The <style> hides the real site header so these
   mockups can be judged clean (only applies while an /explore route is mounted).
 */

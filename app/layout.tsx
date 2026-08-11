@@ -6,11 +6,16 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
-// Body + buttons. DM Sans at Regular (400) and Bold (700) per the type spec.
+/*
+  Body + buttons. Loaded as a variable font (no explicit `weight`), which is
+  what makes weight *animatable*: with discrete faces the browser snaps to the
+  nearest one mid-transition, so a 400 -> 700 tween pops. The whole axis lets
+  it interpolate. The type spec's Regular/Bold are still what we set; we just
+  get everything between them as well.
+*/
 const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
 });
 
 // Headings only. Archivo Heavy (800/900) gives display type its weight.

@@ -6,15 +6,17 @@
  *
  * How it actually works, which is not obvious from looking at it:
  *
- *  - Every item carries the SAME solid fill, all the time. Nothing fades in
- *    or out, and there is no separate highlight layer sliding underneath.
- *  - The items sit in one `overflow-hidden` track, so with square inner
- *    corners they read as a single fused block.
+ *  - Every item carries the SAME fill, all the time. Nothing fades in or out,
+ *    and there is no separate highlight layer sliding underneath.
+ *  - Square inner corners, and an outline lit only along the block's outside,
+ *    make a run of items read as one shape inside one continuous hairline.
  *  - The highlighted item gains a horizontal margin and full corner rounding,
  *    which physically pushes it out of the block and detaches it. Its two
  *    neighbours round off the edges now facing the new gap.
- *  - `transition-all` animates the margin and the radii together, so the block
- *    appears to split fluidly and re-fuse as the highlight moves.
+ *  - `transition-all` animates margins, radii and the outline together, so the
+ *    block splits and re-fuses fluidly as the highlight moves. Nothing that
+ *    animates affects layout, which is what keeps it from snapping: see the
+ *    notes in `shapeFor`, and on the ghost span for the weight tween.
  *
  * The reference moves the highlight on click, to the active route. Here it
  * follows hover/focus instead, purely as a delight: clicking a link navigates
@@ -22,9 +24,9 @@
  * resting highlight and `aria-current`, so the real page is never signalled by
  * the animation alone.
  *
- * Below `sm` the track stacks vertically and the same mechanic runs on the
- * vertical axis: the highlight gains a vertical margin and its neighbours
- * round off their top/bottom edges instead.
+ * This is a horizontal component only. Below `sm` there isn't room for it on any
+ * surface, so callers swap it out: the header for a hamburger, the hero for a
+ * pair of CTAs.
  */
 
 import clsx from "clsx";
@@ -35,46 +37,81 @@ export interface NavItem {
   key: string;
   href: string;
   name: string;
-  /**
-   * Draws the eye with the coral accent, for the one item that should read as
-   * the primary destination.
-   */
-  accent?: boolean;
 }
 
 interface MorphicNavbarProps {
   items: NavItem[];
   /** The current page, if it's in the list. Drives the resting highlight. */
   activeKey?: string;
+  /**
+   * Which item, if any, takes the coral fill. This is a per-surface decision
+   * rather than a property of the nav data: the homepage uses it to point at
+   * Work as its call to action, and nowhere else wants that emphasis.
+   */
+  accentKey?: string;
+  /**
+   * `lg` is the hero's centred pill. `sm` is the compact version for the site
+   * header, scaled to sit level with the logo and the theme toggle.
+   */
+  size?: "sm" | "lg";
   className?: string;
 }
 
+/*
+  Padding and type scale only. Corner radius is deliberately shared: at the
+  compact size the same radius is larger than half the item's height, so CSS
+  clamps it and the item reads as a pill, which sits nicely beside the round
+  theme toggle. One set of radii, two scales, still recognisably one component.
+*/
+const SIZES = {
+  lg: "px-6 py-3 text-base sm:px-7 sm:text-lg",
+  sm: "px-3 py-1.5 text-sm sm:px-4",
+} as const;
+
 /**
- * Corner rounding and margin for one item, given which item is highlighted.
- * Rules mirror the reference exactly, including that they stack: an item can
- * be both "last in the track" and "the neighbour after the highlight".
+ * Geometry for one item: corner rounding, the detaching margin, and which ends
+ * of its outline are lit.
+ *
+ * It all comes off two questions. An item's left edge is "exposed" if it's the
+ * front of the block, the detached item itself, or the item just after the gap;
+ * its right edge likewise. An exposed edge gets rounded and gets its end of the
+ * outline painted; a buried edge stays square and unpainted, so a run of fused
+ * items reads as one block inside one continuous hairline, with no division
+ * lines inside it.
+ *
+ * The outline is drawn with inset shadows, not borders, for reasons spelled out
+ * at `morph-ring` in globals.css. The short version: borders miter, so every
+ * seam grew a visible triangular peak where two edge colours met.
+ *
+ * Everything that animates is a margin, a radius, or a shadow colour, none of
+ * which affect layout. That's what keeps the morph from snapping.
  */
 function shapeFor(index: number, highlight: number, count: number) {
-  // The highlighted item detaches: margin opens the gap, full radius frees it.
-  if (index === highlight) {
-    return "rounded-2xl max-sm:my-2 sm:mx-2";
-  }
+  const startExposed =
+    index === 0 || index === highlight || index === highlight + 1;
+  const endExposed =
+    index === count - 1 || index === highlight || index === highlight - 1;
 
-  const classes: string[] = [];
-  const roundStart = "max-sm:rounded-t-2xl sm:rounded-l-2xl";
-  const roundEnd = "max-sm:rounded-b-2xl sm:rounded-r-2xl";
-
-  // Outer ends of the track are always rounded.
-  if (index === 0) classes.push(roundStart);
-  if (index === count - 1) classes.push(roundEnd);
-  // Edges facing the gap left by the highlighted item.
-  if (index === highlight - 1) classes.push(roundEnd);
-  if (index === highlight + 1) classes.push(roundStart);
-
-  return classes.join(" ");
+  return clsx(
+    "morph-ring",
+    startExposed
+      ? "rounded-l-2xl [--ring-start:var(--border)]"
+      : "[--ring-start:transparent]",
+    endExposed
+      ? "rounded-r-2xl [--ring-end:var(--border)]"
+      : "[--ring-end:transparent]",
+    // The margin is what physically opens the gap.
+    index === highlight && "mx-2"
+  );
 }
 
-export function MorphicNavbar({ items, activeKey, className }: MorphicNavbarProps) {
+export function MorphicNavbar({
+  items,
+  activeKey,
+  accentKey,
+  size = "lg",
+  className,
+}: MorphicNavbarProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
 
@@ -84,13 +121,13 @@ export function MorphicNavbar({ items, activeKey, className }: MorphicNavbarProp
 
   return (
     <nav className={clsx("flex justify-center", className)}>
-      {/* No surface of its own: the gap left by a detaching item shows the page
-          behind, which already contrasts with the item fill (the fill is
-          `--foreground`, so it inverts against the page in either theme). */}
+      {/* No surface of its own: the gap left by a detaching item shows whatever
+          is behind, which the item fill already contrasts with in either
+          theme. */}
       <div
         ref={trackRef}
         onMouseLeave={() => setHovered(null)}
-        className="flex max-sm:flex-col max-sm:items-stretch sm:items-center"
+        className="flex items-center"
       >
         {items.map((item, index) => (
           <Link
@@ -107,30 +144,46 @@ export function MorphicNavbar({ items, activeKey, className }: MorphicNavbarProp
               }
             }}
             className={clsx(
-              "flex items-center justify-center px-6 py-3 text-center text-base whitespace-nowrap transition-all duration-300 ease-out sm:px-7 sm:text-lg",
+              "flex items-center justify-center text-center whitespace-nowrap transition-all duration-300 ease-out [--ring-long:var(--border)]",
+              SIZES[size],
               /*
-                Weight follows the real page, never hover. Only margin and
-                radius change on hover, and both interpolate smoothly; swapping
-                font-weight mid-transition does not (DM Sans ships discrete
-                weights, so 600 snaps rather than tweening) and the resulting
-                glyph-width change jolted the row as items re-fused.
+                Card, not an inverted fill: white ground with near-black type in
+                light, near-black ground with off-white type in dark. `--card`
+                sits a step off `--background` in both themes, which is what
+                lets the block read against the page at all; the border does the
+                rest of that work.
+
+                The accent item swaps in the coral fill with a near-black label,
+                the site's `--primary` pair, which clears AA at 4.50:1 in both
+                themes. Coral as *text* measured ~4.1-4.3, under the 4.5 needed
+                at this size.
               */
-              item.key === activeKey ? "font-semibold" : "font-medium",
-              /*
-                The accent item takes the coral fill with a near-black label:
-                that's the site's `--primary` / `--primary-foreground` pair,
-                which clears AA at 4.50:1 in both themes. Coral as *text* on
-                the standard fill would only have reached ~4.1-4.3, under the
-                4.5 needed at this size. Every other item inverts against the
-                foreground fill.
-              */
-              item.accent
+              item.key === accentKey
                 ? "bg-primary text-primary-foreground"
-                : "bg-foreground text-background",
+                : "bg-card text-card-foreground",
               shapeFor(index, highlight, items.length)
             )}
           >
-            {item.name}
+            {/*
+              Two stacked copies in one grid cell. The bold ghost is invisible
+              but still reserves space, so the cell is always as wide as the
+              bold text and the weight tween never resizes the item or nudges
+              its neighbours: the strokes just thicken in place.
+            */}
+            <span className="grid">
+              <span
+                aria-hidden="true"
+                className="invisible col-start-1 row-start-1 font-bold"
+              >
+                {item.name}
+              </span>
+              <span
+                className="col-start-1 row-start-1 transition-[font-weight] duration-300 ease-out"
+                style={{ fontWeight: index === highlight ? 700 : 400 }}
+              >
+                {item.name}
+              </span>
+            </span>
           </Link>
         ))}
       </div>

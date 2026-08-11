@@ -1,5 +1,5 @@
 /*
-  DIRECTION 2 — "MANIFESTO"
+  DIRECTION 2: "MANIFESTO"
   Boundary-pushing = loud, opinionated, unafraid of scale. Energy comes from
   oversized condensed type and one aggressive colour field, not decoration.
   Deliberately breaks the "quiet cream + serif" default with a big colour block.
@@ -38,7 +38,7 @@ export default function ManifestoDirection() {
 
           <div className="mt-10 flex max-w-[720px] flex-wrap items-end justify-between gap-6">
             <p className="max-w-[42ch] text-[1.05rem] leading-snug">
-              I design admin tooling for academic institutions — and I push
+              I design admin tooling for academic institutions, and I push
               teams to interrogate the <em style={{ color: tang, fontStyle: "normal" }}>why</em> behind
               a request before committing to a how. Pro-AI, wary of shortcuts
               that skip the thinking.

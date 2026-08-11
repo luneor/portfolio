@@ -5,19 +5,14 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
-// Matches the 300ms cross-fade in globals.css (both the view transition and
-// the `.theme-transition` fallback).
+// Matches the `.theme-transition` cross-fade in globals.css.
 const THEME_TRANSITION_MS = 300;
 
 /*
-  Fallback-only buffer: the class-based fade starts a frame or two after the
-  click, so removing the class at exactly 300ms would cut it off mid-flight.
+  The fade starts a frame or two after the click, so removing the class at
+  exactly 300ms would cut it off mid-flight.
 */
 const THEME_TRANSITION_BUFFER_MS = 200;
-
-type ViewTransitionDocument = Document & {
-  startViewTransition?: (callback: () => void) => unknown;
-};
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -37,39 +32,27 @@ export function ThemeToggle() {
   const toggleTheme = () => {
     const next = isDark ? "light" : "dark";
     const root = document.documentElement;
-    const doc = document as ViewTransitionDocument;
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
 
     /*
-      Preferred path: a View Transition cross-fades a snapshot of the entire
-      page in one pass, so text, backgrounds and borders all move together.
-
-      Per-element CSS transitions were unreliable here, React re-renders
-      during the switch cancelled and restarted each `color` transition
-      mid-flight, so text crawled a few shades then snapped the rest of the way
-      at the end. A single snapshot has nothing to restart.
-
-      The class is flipped inside the callback so the "new" snapshot captures
-      it; `setTheme` then persists the choice and converges on the same class.
+      Flag the switch so every element eases its colours on shared 300ms timing
+      (see `.theme-transition` in globals.css), then drop the flag so normal,
+      snappier hover transitions resume.
     */
-    if (!reducedMotion && typeof doc.startViewTransition === "function") {
-      doc.startViewTransition(() => {
-        root.classList.remove("light", "dark");
-        root.classList.add(next);
-      });
-      setTheme(next);
-      return;
-    }
-
-    // Fallback: flag the switch so elements cross-fade on shared timing, then
-    // drop the flag so normal (fast) hover transitions resume.
     root.classList.add("theme-transition");
+
+    /*
+      Force a style flush before the theme flips. A CSS transition only runs if
+      the browser has computed a "before" value with that transition already in
+      effect; adding the class and changing the colours within a single recalc
+      gives it nothing to animate from, and the switch snaps.
+    */
+    void window.getComputedStyle(root).backgroundColor;
+
     window.clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(() => {
       root.classList.remove("theme-transition");
     }, THEME_TRANSITION_MS + THEME_TRANSITION_BUFFER_MS);
+
     setTheme(next);
   };
 
@@ -93,7 +76,7 @@ export function ThemeToggle() {
             initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
             exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: THEME_TRANSITION_MS / 1000, ease: "easeInOut" }}
             className="absolute inset-0 flex items-center justify-center"
           >
             {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}

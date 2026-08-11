@@ -1,5 +1,5 @@
 /*
-  DIRECTION 3 — "LIVE SYSTEM"
+  DIRECTION 3: "LIVE SYSTEM"
   Boundary-pushing = energetic, product-native, playful-but-sharp. Light ground
   but NOT neutral: a vivid multi-accent system used functionally, nodding to the
   RAG status work (Active / At Risk / Inactive). Escapes the single-accent default
@@ -55,12 +55,12 @@ export default function SystemDirection() {
 
           <p className="mt-7 max-w-[54ch] text-[1.05rem]" style={{ color: dim }}>
             Academic institutions run on admin software. I make it something
-            considered and genuinely pleasant to use — and I keep asking{" "}
+            considered and genuinely pleasant to use, and I keep asking{" "}
             <span style={{ color: magenta, fontWeight: 600 }}>why</span> before the
             team commits to <span style={{ color: blue, fontWeight: 600 }}>how</span>.
           </p>
 
-          {/* live RAG chips — signature device nodding to Last Active work */}
+          {/* live RAG chips, signature device nodding to Last Active work */}
           <div className="mt-10 flex flex-wrap items-center gap-2.5">
             {chips.map((chip) => (
               <span

@@ -1,7 +1,10 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { CaseStudyNav } from "@/components/case-study/case-study-nav";
+import {
+  CaseStudyContact,
+  CaseStudyNav,
+} from "@/components/case-study/case-study-nav";
 import { ProjectFigure } from "@/components/case-study/project-figure";
 import {
   PROJECTS,
@@ -92,8 +95,14 @@ export default async function ProjectPage({
   const sections = getCaseStudySections(project);
   const { snapshot } = project;
 
+  /*
+    `pb-10` rather than the pb-24 the other pages use: those end with the Contact
+    section, which wants room to breathe, whereas a case study ends on its last
+    paragraph. A 96px void there just left the contact button stranded in empty
+    space. This keeps a clear gap to the footer without the dead air.
+  */
   return (
-    <main id="main" className="mx-auto w-full max-w-[1120px] px-6 pb-24">
+    <main id="main" className="mx-auto w-full max-w-[1120px] px-6 pb-10">
       <div className="flex flex-col gap-6 md:grid md:grid-cols-[15rem_minmax(0,1fr)] md:gap-12">
         <CaseStudyNav sections={sections} title={project.title} />
 
@@ -212,6 +221,14 @@ export default async function ProjectPage({
                 ))}
               </div>
             )}
+
+            {/*
+              Mobile's copy of the contact CTA. On desktop it lives at the foot
+              of the sticky rail, always in view; there's no rail here, and
+              burying it in the Contents drawer meant opening a menu to find it,
+              so it sits at the natural end of the read instead.
+            */}
+            <CaseStudyContact className="md:hidden" />
           </div>
         </article>
       </div>

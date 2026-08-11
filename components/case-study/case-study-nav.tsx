@@ -1,29 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CaseStudySection } from "@/lib/projects";
 
 /*
-  Case-study sidebar navigation.
+  Case-study sidebar navigation. Desktop only, from `md` up.
+
+  There is deliberately no mobile equivalent, not even a collapsed one. A table
+  of contents behind a "Contents" button meant opening a menu to find out where
+  you were in a document you were already scrolling, which is worse than just
+  scrolling. On narrow screens a case study is a single linear read: the site
+  header's own menu covers getting out, and the contact CTA from the foot of this
+  rail is placed at the end of the article instead (see CaseStudyContact).
 
   Structure/behaviour notes (styling is intentionally minimal, tokens only):
-  - Desktop (>= md): a sticky, viewport-height rail. Logo + back-link on top,
-    table of contents below, built from the sections actually present so a
-    decision shows its own preview heading rather than "Decision 1".
-  - Mobile (< md): the rail collapses to a single trigger button; tapping it
-    opens the same content as an overlay drawer.
-  - Scrollspy uses IntersectionObserver and marks the active item with
-    aria-current="location". The active state is signalled by MORE THAN COLOUR
-    (bold + underline + a left border accent) so it doesn't depend on colour
-    perception.
+  - A rail pinned to the viewport. Back-link on top, table of contents below,
+    built from the sections actually present so a decision shows its own preview
+    heading rather than "Decision 1", and a contact button at the foot.
+  - Scrollspy marks the active item with aria-current="location". The active
+    state is signalled by MORE THAN COLOUR (bold + underline + a left border
+    accent) so it doesn't depend on colour perception.
   - Anchors are real <a href="#id">, so clicking smooth-scrolls via the global
     `scroll-behavior: smooth` (already disabled under prefers-reduced-motion),
     remains keyboard operable, and still works with JS disabled.
 */
 
-const BREAKPOINT = 768; // px, matches Tailwind's `md`
+const RAIL_TOP_PX = 72; // 4.5rem, matches .case-study-rail's `top`
 
 interface CaseStudyNavProps {
   sections: CaseStudySection[];
@@ -81,15 +86,61 @@ function useActiveSection(sections: CaseStudySection[]) {
 }
 
 /**
+ * Keeps the fixed rail clear of the footer.
+ *
+ * The rail is `position: fixed` on purpose, so it holds the same spot in the
+ * top-left for the whole page rather than drifting away at the end. The cost is
+ * that it knows nothing about the document, so once the footer scrolls into view
+ * the rail, and especially its bottom-pinned button, would sit on top of it.
+ *
+ * So the rail's height is clamped each frame to whichever comes first, the bottom
+ * of the viewport or the top of the footer. While the footer is still off-screen
+ * this resolves to exactly the CSS height, so nothing moves until it has to.
+ */
+function useRailClearOfFooter(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const rail = ref.current;
+        if (!rail) return;
+
+        // Below `md` the rail isn't fixed (or even shown), so leave it alone.
+        if (!window.matchMedia("(min-width: 768px)").matches) {
+          rail.style.removeProperty("height");
+          return;
+        }
+
+        const footerTop =
+          document.querySelector("footer")?.getBoundingClientRect().top ??
+          Number.POSITIVE_INFINITY;
+        const limit = Math.min(window.innerHeight, footerTop);
+        rail.style.height = `${Math.max(0, limit - RAIL_TOP_PX)}px`;
+      });
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      cancelAnimationFrame(frame);
+    };
+  }, [ref]);
+}
+
+/**
  * Link back to the portfolio index. No logo here: the sticky site header
  * above already carries it, so repeating it in the nested column would show
  * two logos at once.
  */
-function BackLink({ onNavigate }: { onNavigate?: () => void }) {
+function BackLink() {
   return (
     <Link
       href="/work"
-      onClick={onNavigate}
       className="w-fit text-sm text-foreground-muted underline decoration-brand-strong underline-offset-4 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
     >
       ← Back to work
@@ -97,17 +148,40 @@ function BackLink({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-/** The table of contents itself. Shared by rail and drawer. */
+/**
+ * Secondary contact CTA. At the foot of the rail on desktop, so the offer to
+ * talk stays in view at any depth of a long case study; placed at the end of the
+ * article on mobile, where there is no rail.
+ *
+ * Points at `/#contact` rather than a bare `#contact`: case-study pages don't
+ * carry a Contact section of their own, so a local anchor would go nowhere.
+ */
+export function CaseStudyContact({ className }: { className?: string }) {
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      nativeButton={false}
+      // Filled with the page background, matching the hero's secondary action:
+      // an outline button with no fill reads as a ghost.
+      className={cn(
+        "w-full shrink-0 border border-border bg-background text-foreground hover:bg-accent",
+        className
+      )}
+      render={<Link href="/#contact">Get in touch</Link>}
+    />
+  );
+}
+
+/** The table of contents. */
 function NavList({
   sections,
   activeId,
   title,
-  onNavigate,
 }: {
   sections: CaseStudySection[];
   activeId: string;
   title: string;
-  onNavigate?: () => void;
 }) {
   if (sections.length === 0) return null;
 
@@ -121,7 +195,6 @@ function NavList({
             <li key={section.id}>
               <a
                 href={`#${section.id}`}
-                onClick={onNavigate}
                 // aria-current tells assistive tech which section is in view.
                 aria-current={isActive ? "location" : undefined}
                 className={cn(
@@ -145,97 +218,22 @@ function NavList({
 
 export function CaseStudyNav({ sections, title }: CaseStudyNavProps) {
   const activeId = useActiveSection(sections);
-  const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
 
-  const close = useCallback(() => setIsOpen(false), []);
-
-  // Close the drawer on Escape, and if the viewport grows past the breakpoint
-  // (so it can't stay "open" behind the desktop rail).
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-        triggerRef.current?.focus();
-      }
-    };
-    const onResize = () => {
-      if (window.innerWidth >= BREAKPOINT) setIsOpen(false);
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    window.addEventListener("resize", onResize);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [isOpen]);
+  useRailClearOfFooter(railRef);
 
   return (
-    <>
-      {/* Desktop: rail pinned to the viewport (see .case-study-rail). The
-          aside keeps the grid column so the article never slides underneath. */}
-      <aside className="hidden md:block">
-        <div className="case-study-rail flex flex-col gap-6 py-8 pr-4">
-          <BackLink />
-          <NavList sections={sections} activeId={activeId} title={title} />
-        </div>
-      </aside>
-
-      {/* Mobile: trigger + overlay drawer. */}
-      <div className="md:hidden">
-        <button
-          ref={triggerRef}
-          type="button"
-          onClick={() => setIsOpen(true)}
-          aria-expanded={isOpen}
-          aria-controls="case-study-drawer"
-          className="sticky top-[4.5rem] z-30 inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
-        >
-          <span aria-hidden="true">☰</span>
-          <span>Contents</span>
-        </button>
-
-        {isOpen && (
-          <div className="fixed inset-0 z-50 md:hidden">
-            {/* Outside tap closes. Inert to screen readers: the drawer's own
-                controls provide the accessible way out. */}
-            <div
-              className="absolute inset-0 bg-background/80"
-              onClick={close}
-              aria-hidden="true"
-            />
-            <div
-              id="case-study-drawer"
-              role="dialog"
-              aria-modal="true"
-              aria-label={`Sections of ${title}`}
-              className="absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col gap-6 overflow-y-auto border-r border-border bg-background p-6"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <BackLink onNavigate={close} />
-                <button
-                  type="button"
-                  onClick={close}
-                  className="rounded-md border border-border px-2 py-1 text-sm text-foreground-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
-                >
-                  <span className="sr-only">Close contents</span>
-                  <span aria-hidden="true">✕</span>
-                </button>
-              </div>
-              {/* Clicking a section closes the drawer. */}
-              <NavList
-                sections={sections}
-                activeId={activeId}
-                title={title}
-                onNavigate={close}
-              />
-            </div>
-          </div>
-        )}
+    // The aside keeps the grid column so the article never slides underneath
+    // the rail (see .case-study-rail, which takes it out of flow).
+    <aside className="hidden md:block">
+      <div
+        ref={railRef}
+        className="case-study-rail flex flex-col gap-6 py-8 pr-4"
+      >
+        <BackLink />
+        <NavList sections={sections} activeId={activeId} title={title} />
+        <CaseStudyContact className="mt-auto" />
       </div>
-    </>
+    </aside>
   );
 }

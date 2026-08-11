@@ -9,18 +9,26 @@ import {
 } from "@/components/project-art";
 
 /**
- * Snapshot / header block for a case study: the at-a-glance facts plus a
- * one-line problem → outcome statement. Every field is optional; unknown
- * facts are simply left out rather than invented.
+ * Snapshot / header block for a case study.
+ *
+ * Snapshot is the WHOLE PROJECT SUMMARISED, for a reader who wants to understand
+ * what happened without reading the rest of the page. So it has to carry the
+ * outcome, not just the premise: if it only sets up the problem it duplicates the
+ * Problem section that follows it and tells that reader nothing.
+ *
+ * Every field is optional; unknown facts are left out rather than invented.
  */
 export interface CaseStudySnapshot {
   role?: string;
   timeline?: string;
   team?: string;
   tools?: string;
-  /** One-line problem → outcome statement. */
+  /** One line: what the project was and what came of it. */
   statement?: React.ReactNode;
-  /** Optional short overview paragraph (relocated from older "Overview" copy). */
+  /**
+   * The summary proper, a few sentences: the context, the key move, and how it
+   * turned out. Ends on a result, never on the setup.
+   */
   overview?: React.ReactNode;
 }
 
@@ -161,10 +169,33 @@ export const PROJECTS: Project[] = [
       // TODO: timeline, team, tools
       statement: (
         <>
-          The standard answer here was a date picker. Instead I let each
-          institution set its own ranges for what Active, At risk and Inactive
-          mean, A/B tested against the date picker with real admins, and now at
-          25.4% adoption.
+          Admins couldn&apos;t tell who had genuinely gone quiet, so I let each
+          institution define what Active, At risk and Inactive mean for them,
+          chosen over the obvious date picker after testing both with real
+          admins. <Emph>Adoption sits at 25.4% and is still growing.</Emph>
+        </>
+      ),
+      overview: (
+        <>
+          <p>
+            Genio Admin&apos;s user table reported last activity as a fixed,
+            binary status, so neither the students who had stopped engaging nor
+            the ones drifting toward it could be isolated. The obvious fix was a
+            date picker, which would have made every admin do the arithmetic
+            themselves and still not agree on what &quot;active&quot; meant.
+          </p>
+          <p>
+            Instead the thresholds became <Emph>admin-defined</Emph>: each
+            institution sets its own week boundaries for the four states, filters
+            on them, and edits them in place. I put that against the date picker
+            in an A/B survey and in prototype calls before building it.
+          </p>
+          <p>
+            It shipped as a Last Active filter with an Edit Ranges editor.{" "}
+            <Emph>Admins recorded and shared videos praising it unprompted</Emph>,
+            and their wish to act on a filtered group rather than just see it
+            pushed CSV export up the roadmap.
+          </p>
         </>
       ),
     },
@@ -359,24 +390,40 @@ export const PROJECTS: Project[] = [
       team: "TODO, confirm names and roles",
       statement: (
         <>
-          Admins needed to turn AI features on and off for individual students,
-          but the request arrived as two incompatible asks: a competitor-style
-          profile system from marketing and exec, and the groups system the
-          squad had already built. Shipped as an extension of groups: an
-          org-wide baseline with group-level overrides.
+          A request for per-student AI controls arrived as two incompatible asks,
+          and shipped as{" "}
+          <Emph>an org-wide baseline with group-level overrides</Emph>, built on
+          the groups system that already existed rather than the parallel profile
+          architecture originally proposed.
         </>
       ),
       overview: (
         <>
           <p>
             Genio Admin is the tooling academic institutions use to manage how
-            their students are supported. This work covered per-student control
-            of the AI features in Genio Notes, plus filtered exports for
-            reporting.
+            their students are supported. The AI features in Genio Notes can cut
+            across a course&apos;s academic policy, while some students rely on
+            them to work at all, and admins had no way to draw that line.
+          </p>
+          <p>
+            The ask came in two forms that couldn&apos;t both be built: a
+            competitor-style profile system from marketing and exec, and the
+            groups system the squad had already shipped. Settling that model was
+            most of the work. An organisation sets a baseline per feature, groups
+            override it where needed, and reporting comes from filtered exports.
+          </p>
+          <p>
+            The result is that{" "}
+            <Emph>
+              an institution can restrict a feature without handling exceptions
+              one student at a time
+            </Emph>
+            , and a student who needs the support isn&apos;t blocked by a policy
+            set elsewhere in the organisation. No parallel architecture was built.
           </p>
           <Placeholder>
-            Product, role, timeline and stakeholder list to confirm, names,
-            dates and exact titles.
+            Adoption or usage figures, plus timeline and stakeholder names, to
+            confirm.
           </Placeholder>
         </>
       ),
@@ -640,17 +687,41 @@ export const PROJECTS: Project[] = [
       tools: "Figma, Pendo, a custom bubble playground prototype",
       statement: (
         <>
-          Ahead of a VPAT submission, Genio Notes’ audio bubbles failed WCAG 2.1
-          AA contrast, brought into compliance with a border-based fix that
-          kept the interface quiet, rather than raising saturation until the
-          numbers passed.
+          Genio Notes&apos; audio bubbles failed WCAG 2.1 AA contrast ahead of a
+          VPAT submission.{" "}
+          <Emph>
+            AA was reached before the deadline by moving contrast into the border
+            and the weight rather than the fill
+          </Emph>
+          , so the element stayed as quiet as it was meant to be.
         </>
       ),
       overview: (
         <>
-          Genio Notes uses small “audio bubbles” (with connecting lines) in the
-          audio tab to let students navigate and annotate recorded lectures. The
-          trigger was an upcoming VPAT (accessibility conformance report).
+          <p>
+            Genio Notes uses small “audio bubbles”, with connecting lines, in the
+            audio tab to let students navigate and annotate recorded lectures. An
+            external audit ahead of a VPAT found most of their colours short of
+            AA, and the obvious fix, more saturation, would have dragged a
+            background element into the foreground.
+          </p>
+          <p>
+            Contrast went into the border and the weight instead. Along the way an
+            external ruling that the connecting lines were{" "}
+            <Emph>functional rather than decorative</Emph> reversed an earlier
+            call of mine, and the direction was checked with an AI cross-check and
+            a small five-person survey, a sample stated as the limitation it is.
+          </p>
+          <p>
+            It shipped compliant and visually unchanged in character, with usage
+            logging left in place to argue any deeper investment in the audio tab
+            from data. What began as a colour swap became{" "}
+            <Emph>
+              a lesson in accessibility improving a design rather than
+              constraining it
+            </Emph>
+            .
+          </p>
         </>
       ),
     },
@@ -981,11 +1052,22 @@ export const PROJECTS: Project[] = [
       role: "Independent concept, self-directed",
       // TODO: timeline, team, tools
       statement:
-        "Passive reading builds little real understanding, so this concept reveals one idea at a time and asks students why it matters.",
+        "An independent concept for turning passive reading into something active: reveal one idea at a time, then ask the student why it matters.",
       overview: (
         <>
-          <em>Working title.</em> An independent concept exploration, not a
-          shipped or employer-attributed project.
+          <p>
+            Reading front to back is passive, and a student can finish a page
+            having absorbed very little of it. This concept borrows the{" "}
+            <Emph>“5 Whys”</Emph> root-cause technique and applies it to
+            studying: material is revealed a concept at a time, and each reveal
+            asks the student to articulate <em>why</em> that piece matters before
+            moving on.
+          </p>
+          <p>
+            <em>Working title.</em> An exploration on my own time, taken as far as
+            the interaction model rather than a build, so there are no adoption
+            figures to report. It is not a shipped or employer-attributed project.
+          </p>
         </>
       ),
     },
@@ -1027,9 +1109,32 @@ export const PROJECTS: Project[] = [
       role: "Concept, research, UX & UI design, self-directed",
       // TODO: timeline, team, tools
       statement:
-        "Productivity apps reinforce guilt by maximising output, so Memor reframes the calendar as a fluid, mindful shape with a voice that talks to you like a friend.",
-      overview:
-        "A conceptual app for overcoming productivity guilt. In place of rigid schedules, it pairs a fluid calendar with interchangeable tone-of-voice profiles, keeping the focus on well-being over output.",
+        "My honours project: a conceptual app that treats productivity guilt as the problem, replacing the calendar grid with a fluid shape and app-speak with a voice that talks to you like a friend.",
+      overview: (
+        <>
+          <p>
+            Productivity apps tend to reinforce guilt by optimising for output.
+            Research sharpened the tension rather than resolving it: digital
+            calendars offer flexibility, physical ones visibility, and running
+            IDEO&apos;s “Five Whys” kept surfacing the same roots, productivity,
+            not letting people down, and wanting to feel in control.
+          </p>
+          <p>
+            Memor answers it with{" "}
+            <Emph>a fluid 0 to 23 clock-calendar</Emph> whose events bleed into
+            the base shape to suggest flexible timing, animated event management,
+            and three interchangeable tone-of-voice profiles in place of
+            relentless niceness.
+          </p>
+          <p>
+            Testing found the calendar{" "}
+            <Emph>innovative, easy to understand and effective against feeling
+            overwhelmed</Emph>, with the Brutally Honest voice landing hardest.
+            It also found the profiles hard to tell apart and the grey events
+            unappealing.
+          </p>
+        </>
+      ),
     },
     problem: (
       <p>
@@ -1153,17 +1258,35 @@ export const PROJECTS: Project[] = [
       statement: (
         <>
           After graduating I was <Emph>contacted to continue a neonatal project
-          I&apos;d worked on as a student</Emph>, taking it from a paper
-          prototype to a working voice-recording prototype, tested with six
-          parents who had lived through NICU care.
+          I&apos;d worked on as a student</Emph>, taking it from a paper prototype
+          to a working voice-recording prototype, testing it with six parents who
+          had lived through NICU care and writing it up as a full research report.
         </>
       ),
       overview: (
-        <p>
-          Tell Me A Story lets parents record stories and messages for their baby
-          in a Neonatal Intensive Care Unit, so their voice reaches the cot when
-          they can&apos;t be there.
-        </p>
+        <>
+          <p>
+            Tell Me A Story lets parents record stories and messages for their
+            baby in a Neonatal Intensive Care Unit, so their voice reaches the cot
+            when they can&apos;t be there. A paired university project in 2023 had
+            taken the idea as far as a paper prototype; I was asked to continue it
+            afterwards.
+          </p>
+          <p>
+            What I added was the thing the concept had never been able to prove:{" "}
+            <Emph>a working prototype that actually records</Emph>, built in
+            Bubble.io with onboarding, a story-type fork, playback and a stories
+            library, then tested with parents and documented as a research report.
+          </p>
+          <p>
+            Feedback was <Emph>overwhelmingly positive</Emph>. Parents said they
+            would have valued it during their own stay, and the tone landed as
+            intended, described as compassionate and sensitive where existing
+            neonatal apps had not been. Testing produced six themes with design
+            implications and five recommendations, plus nurse-side requirements
+            that fell outside this scope.
+          </p>
+        </>
       ),
     },
     problem: (

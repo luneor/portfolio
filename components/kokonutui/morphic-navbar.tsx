@@ -85,8 +85,20 @@ const SIZES = {
  *
  * Everything that animates is a margin, a radius, or a shadow colour, none of
  * which affect layout. That's what keeps the morph from snapping.
+ *
+ * `isCurrent` recolours one item's ring to brand-strong: the page the reader
+ * is actually on, as opposed to `highlight`, which just follows hover. Its
+ * top/bottom edges (`--ring-long`, set alongside this on the Link itself)
+ * carry that colour unconditionally, so the current item keeps a visible red
+ * hairline even while hover morphs the block around it and buries one or both
+ * of its side edges.
  */
-function shapeFor(index: number, highlight: number, count: number) {
+function shapeFor(
+  index: number,
+  highlight: number,
+  count: number,
+  isCurrent: boolean
+) {
   const startExposed =
     index === 0 || index === highlight || index === highlight + 1;
   const endExposed =
@@ -95,10 +107,14 @@ function shapeFor(index: number, highlight: number, count: number) {
   return clsx(
     "morph-ring",
     startExposed
-      ? "rounded-l-2xl [--ring-start:var(--border)]"
+      ? isCurrent
+        ? "rounded-l-2xl [--ring-start:var(--brand-strong)]"
+        : "rounded-l-2xl [--ring-start:var(--border)]"
       : "[--ring-start:transparent]",
     endExposed
-      ? "rounded-r-2xl [--ring-end:var(--border)]"
+      ? isCurrent
+        ? "rounded-r-2xl [--ring-end:var(--brand-strong)]"
+        : "rounded-r-2xl [--ring-end:var(--border)]"
       : "[--ring-end:transparent]",
     // The margin is what physically opens the gap.
     index === highlight && "mx-2"
@@ -144,7 +160,10 @@ export function MorphicNavbar({
               }
             }}
             className={clsx(
-              "flex items-center justify-center text-center whitespace-nowrap transition-all duration-300 ease-out [--ring-long:var(--border)]",
+              "flex items-center justify-center text-center whitespace-nowrap transition-all duration-300 ease-out",
+              item.key === activeKey
+                ? "[--ring-long:var(--brand-strong)]"
+                : "[--ring-long:var(--border)]",
               SIZES[size],
               /*
                 Card, not an inverted fill: white ground with near-black type in
@@ -161,7 +180,7 @@ export function MorphicNavbar({
               item.key === accentKey
                 ? "bg-primary text-primary-foreground"
                 : "bg-card text-card-foreground",
-              shapeFor(index, highlight, items.length)
+              shapeFor(index, highlight, items.length, item.key === activeKey)
             )}
           >
             {/*

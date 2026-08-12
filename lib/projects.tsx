@@ -349,6 +349,20 @@ export const PROJECTS: Project[] = [
           shared videos unprompted showing appreciation for the feature, validation that wasn’t solicited.
         </p>
         <p>
+          It also took time out of the job it replaced. Isolating the students
+          who had gone quiet used to mean reading the table row by row, or
+          exporting it and doing the date arithmetic by hand, and repeating that
+          every time someone asked. The ranges get set once, after which the four
+          states are a checkbox, so the same question is{" "}
+          <Emph>answered in a few clicks</Emph> rather than a manual pass over
+          the table.
+        </p>
+        <Placeholder>
+          the before and after time figures for isolating an inactive or at-risk
+          cohort, and where they came from, a timed task on the prototype calls
+          or an admin estimate.
+        </Placeholder>
+        <p>
           The calls also moved the roadmap: wanting to act on a filtered group,
           not just see it, pushed CSV export of filtered lists further up the
           order. A first step toward a bigger solution rather than the whole of

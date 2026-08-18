@@ -10,12 +10,12 @@
  * `SpotlightCard`, so it can drop into a section that already has its own
  * heading and grid (see `components/sections/ai.tsx`), and toned down to suit
  * a quieter site:
- *  - One colour, not six, and it only shows up on hover: the card is the
- *    site's plain default chrome at rest, then glows brand-strong red, the
- *    same red in both themes rather than swapping with the light/dark accent
- *    the rest of the site uses. Red already means "look here" everywhere else
- *    it appears (the current nav tab, CTAs); a themed swap would blend the
- *    highlight into the background instead of standing out as one.
+ *  - Two colours, not six: brand-weak (the site's cool accent, teal on cream,
+ *    mint on near-black) on the border at rest, swapping to brand-strong red
+ *    on hover, which also brings in the radial glow. The glow is hover-only:
+ *    having it at rest too made the hover state read as barely different, so
+ *    it's held in reserve as the one thing that shows up when a card actually
+ *    gets attention, instead of just swapping which colour is already there.
  *  - Tilt kept, since it's what makes a flat card feel like it's under a
  *    spotlight, but shallower (4° vs the reference's 9°), and skipped
  *    entirely under prefers-reduced-motion.
@@ -50,6 +50,9 @@ export function SpotlightCard({ className, children }: SpotlightCardProps) {
 
   const rotateX = useSpring(rawRotateX, TILT_SPRING);
   const rotateY = useSpring(rawRotateY, TILT_SPRING);
+  // 0 = resting (no glow), 1 = hovered (red glow). The border has its own
+  // rest colour via CSS below; this only drives the glow, which has nothing
+  // to show at rest.
   const glowOpacity = useSpring(0, GLOW_SPRING);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -82,13 +85,13 @@ export function SpotlightCard({ className, children }: SpotlightCardProps) {
       }}
       transition={{ duration: 0.18, ease: "easeOut" }}
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-card p-5",
+        "relative overflow-hidden rounded-xl border border-brand-weak/50 bg-card p-5",
         "transition-colors duration-300 hover:border-brand-strong",
         className
       )}
     >
-      {/* Red shine: invisible at rest, brought in on hover only. Same colour
-          in both themes, see the file header for why. */}
+      {/* Red shine: invisible at rest, brought in on hover only, see the
+          file header for why. */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"

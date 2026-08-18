@@ -164,6 +164,12 @@ export const PROJECTS: Project[] = [
       width: 1600,
       height: 900,
     },
+    cover: {
+      src: "/work/last-active/final-ranges-in-context.png",
+      alt: "The Last Active Ranges dialog open over the users table, defining the range for each status alongside the filter panel.",
+      width: 1600,
+      height: 900,
+    },
     snapshot: {
       role: "UX Designer, Genio Admin (BEAR Squad)",
       // TODO: timeline, team, tools
@@ -333,14 +339,6 @@ export const PROJECTS: Project[] = [
         caption:
           "Shipped: the range editor: each status spelled out as a sentence that updates with the week values.",
       },
-      {
-        src: "/work/last-active/final-ranges-in-context.png",
-        alt: "The Last Active Ranges dialog open over the users table, defining the range for each status alongside the filter panel.",
-        width: 1600,
-        height: 900,
-        caption:
-          "Shipped, setting the ranges in context, over the table whose statuses they re-colour.",
-      },
     ],
     outcome: (
       <>
@@ -397,6 +395,12 @@ export const PROJECTS: Project[] = [
       width: 1600,
       height: 900,
     },
+    cover: {
+      src: "/work/feature-toggles/final-org-form.png",
+      alt: "The shipped Edit Organisation screen, with a Manage Features block marked New! listing Study Notes, QuizMe and Outlines, alongside general details and sharing policy.",
+      width: 1600,
+      height: 900,
+    },
     snapshot: {
       // TODO: exact timeline dates and stakeholder names/roles to confirm.
       role: "UX Designer, Genio Admin (BEAR Squad)",
@@ -435,10 +439,6 @@ export const PROJECTS: Project[] = [
             , and a student who needs the support isn&apos;t blocked by a policy
             set elsewhere in the organisation. No parallel architecture was built.
           </p>
-          <Placeholder>
-            Adoption or usage figures, plus timeline and stakeholder names, to
-            confirm.
-          </Placeholder>
         </>
       ),
     },
@@ -484,10 +484,6 @@ export const PROJECTS: Project[] = [
           different architecture from the groups system the squad had already
           built.
         </p>
-        <Placeholder>
-          Exact names, dates and roles for the review and the
-          marketing/exec ask.
-        </Placeholder>
       </>
     ),
     decisions: [
@@ -508,10 +504,6 @@ export const PROJECTS: Project[] = [
               what could ship without discarding work underway. That gave the
               squad a scope to commit to rather than a priority to interpret.
             </p>
-            <Placeholder>
-              The specific asks and who they came from, quotes or notes from
-              the quarterly review, and what was displaced on the roadmap.
-            </Placeholder>
           </>
         ),
       },
@@ -536,11 +528,6 @@ export const PROJECTS: Project[] = [
               architectural, not functional, no profile system, but the
               capability the request was after.
             </p>
-            <Placeholder>
-              The synthesis artefact, profile system vs. groups extension,
-              weighed against what exec and marketing actually needed. To find
-              or rebuild.
-            </Placeholder>
           </>
         ),
         media: [
@@ -612,10 +599,6 @@ export const PROJECTS: Project[] = [
               rather than fit the toggles into the existing page structure, I
               built a new layout for them.
             </p>
-            <Placeholder>
-              Context for this section, what the delight opportunity actually
-              was, and what specifically the new layout set out to fix.
-            </Placeholder>
           </>
         ),
         media: [
@@ -657,16 +640,11 @@ export const PROJECTS: Project[] = [
       },
     ],
     outcome: (
-      <>
-        <p>
-          <Emph>A student who needs the support isn’t blocked by a blanket
-          policy</Emph> set elsewhere in the organisation, and an institution can
-          restrict a feature without handling exceptions one student at a time.
-        </p>
-        <Placeholder>
-          Adoption or usage figures, if any are available.
-        </Placeholder>
-      </>
+      <p>
+        <Emph>A student who needs the support isn’t blocked by a blanket
+        policy</Emph> set elsewhere in the organisation, and an institution can
+        restrict a feature without handling exceptions one student at a time.
+      </p>
     ),
     reflection: (
       <>

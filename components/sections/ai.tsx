@@ -28,10 +28,27 @@ export function Ai() {
     <section id="ai" aria-labelledby="ai-heading" className="py-24">
       <div className="mx-auto max-w-[1120px] px-6">
         <SectionHeading title="On AI" headingId="ai-heading">
-          <p>
-            I&apos;m <strong className="font-semibold">genuinely pro-AI</strong>. I just
-            won&apos;t let it skip the parts of design that matter.
-          </p>
+          <div className="flex flex-col gap-3">
+            <p>
+              I&apos;m <strong className="font-semibold">genuinely pro-AI</strong>. I just
+              won&apos;t let it skip the parts of design that matter.
+            </p>
+            <p>
+              It&apos;s part of how I actually work: AI-assisted prototyping
+              in Figma, Claude and Claude Code for research synthesis and for
+              helping build parts of this very site, Google AI Studio for
+              exploring ideas quickly. I reach for it because good design
+              needs speed, iterating fast, testing more ideas, throwing more
+              away.
+            </p>
+            <p>
+              But speed that skips the thinking isn&apos;t a win, it&apos;s
+              just a faster way to be wrong. It moves fast, and rewards
+              curiosity over caution. I&apos;ve learned where it actually
+              helps and where it doesn&apos;t, and these are the principles I
+              hold to when it&apos;s in the loop:
+            </p>
+          </div>
         </SectionHeading>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

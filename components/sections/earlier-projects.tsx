@@ -9,9 +9,9 @@ export function EarlierProjects() {
   return (
     /*
       Page ground, deliberately not the lifted `bg-background-alt` used by
-      Genio Admin above: current work sits on a raised surface, the archive
-      recedes to the base. The two sections are adjacent, so sharing a surface
-      merged them into one slab.
+      Recent Projects above: current work sits on a raised surface, the
+      archive recedes to the base. The two sections are adjacent, so sharing a
+      surface merged them into one slab.
     */
     <div
       aria-labelledby="earlier-projects-heading"

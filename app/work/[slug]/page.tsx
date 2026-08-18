@@ -138,7 +138,7 @@ export default async function ProjectPage({
             )}
 
             {/* Cover sits under the snapshot rather than above it. */}
-            <div className="overflow-hidden rounded-2xl border border-border bg-background-alt">
+            <div className="overflow-hidden rounded-xl border border-border bg-background-alt">
               {project.cover ? (
                 <Image
                   src={project.cover.src}

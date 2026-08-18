@@ -7,18 +7,21 @@ const projects = PROJECTS.filter((project) => project.section === "genio-admin")
 
 export function GenioAdmin() {
   return (
-    <div aria-labelledby="genio-admin-heading" className="bg-background-alt py-24">
+    <div aria-labelledby="recent-projects-heading" className="bg-background-alt py-24">
       <div className="mx-auto max-w-[1120px] px-6">
         <SectionHeading
-          title="Genio Admin"
-          headingId="genio-admin-heading"
+          title="Recent Projects"
+          headingId="recent-projects-heading"
         >
           <p>
-            <strong className="font-semibold">Admin tooling for academic
-            institutions</strong>: the software that gives university staff
-            control over how their students are supported. I&apos;m pushing it
-            past a purely utilitarian feel, for everyone from internal support
-            staff to organisation admins.
+            <strong className="font-semibold">
+              Genio Admin is the B2B SaaS platform
+            </strong>{" "}
+            academic institutions use to manage their access to Genio Notes,
+            our flagship product for students, giving university staff real
+            control over how those students are supported. I&apos;m pushing
+            it past a purely utilitarian feel, for everyone from internal
+            support staff to organisation admins.
           </p>
         </SectionHeading>
 

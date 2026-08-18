@@ -261,6 +261,16 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  /*
+    Contact's background is the same flat `--background` the hero sits on;
+    the only thing that reads as "hero" is this glow. Without a mask it's
+    `overflow: hidden` that ends it, a hard clip exactly on the section
+    edge, so the tint appears to cut off rather than settle into Contact.
+    Fading it out well before that edge means it's already back to flat
+    colour by the time the section ends, so there's nothing left to clip.
+  */
+  mask-image: linear-gradient(to bottom, black 40%, transparent 92%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 92%);
 }
 
 .hero-blob {

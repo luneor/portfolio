@@ -70,7 +70,11 @@ export function ThemeToggle() {
       className="glass relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-foreground-muted/40 text-foreground transition-colors hover:border-brand-strong"
     >
       {mounted && (
-        <AnimatePresence mode="wait" initial={false}>
+        // No `mode="wait"`: the outgoing icon and the incoming one animate at
+        // the same time, cross-fading like everything else the theme switch
+        // touches, instead of a sequential exit-then-enter that took twice as
+        // long as the rest of the 300ms swap.
+        <AnimatePresence initial={false}>
           <motion.span
             key={isDark ? "sun" : "moon"}
             initial={{ opacity: 0, rotate: -90, scale: 0.5 }}

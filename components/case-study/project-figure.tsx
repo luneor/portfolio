@@ -92,7 +92,7 @@ export function ProjectFigure({ media }: { media: ProjectMedia }) {
   if (media.kind === "video") {
     return (
       <figure className="flex flex-col gap-3">
-        <div className="overflow-hidden rounded-xl border border-border bg-background-alt">
+        <div className="overflow-hidden rounded-lg border border-border bg-background-alt">
           {/*
             Never autoplayed: nothing moves until the reader presses play, so
             the page stays calm and reduced-motion needs no special case. These
@@ -168,7 +168,7 @@ export function ProjectFigure({ media }: { media: ProjectMedia }) {
     difference, but a narrow portrait floated in the middle of the measure breaks
     the reading edge the rest of the article holds to.
   */
-  const frame = "block overflow-hidden rounded-xl border border-border bg-background-alt";
+  const frame = "block overflow-hidden rounded-lg border border-border bg-background-alt";
 
   return (
     <figure className="flex flex-col gap-3">
@@ -223,7 +223,7 @@ export function ProjectFigure({ media }: { media: ProjectMedia }) {
                 height={media.height}
                 sizes="92vw"
                 style={{ width: lightboxWidth }}
-                className="h-auto rounded-xl border border-border"
+                className="h-auto rounded-lg border border-border"
               />
               {media.caption && (
                 <p className="max-w-[70ch] text-center font-mono text-[0.72rem] leading-relaxed tracking-[0.03em] text-foreground">

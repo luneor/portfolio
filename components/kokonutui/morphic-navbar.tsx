@@ -161,6 +161,18 @@ export function MorphicNavbar({
             }}
             className={clsx(
               "flex items-center justify-center text-center whitespace-nowrap transition-all duration-300 ease-out",
+              /*
+                Focus indicator, not the sitewide `focus-visible:ring-*`: a
+                ring is a `box-shadow`, and this element's `box-shadow` is
+                already spoken for by `morph-ring` above. Two utilities
+                writing the same CSS property don't compose, whichever
+                compiles later would just win and silently erase the other.
+                `outline` is a distinct property, so it layers over the ring
+                for free, and every modern browser already clips it to
+                whichever corners are rounded at the moment, following the
+                shape as it morphs.
+              */
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
               item.key === activeKey
                 ? "[--ring-long:var(--brand-strong)]"
                 : "[--ring-long:var(--border)]",

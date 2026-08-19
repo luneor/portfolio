@@ -109,8 +109,16 @@ export default async function ProjectPage({
         {/*
           `pt-8` matches the rail's own top padding, so the h1 starts on the
           same line as "Back to work" in the sidebar.
+
+          No `max-w` cap: the column is already bounded by the grid track
+          (`minmax(0,1fr)` beside the rail's fixed 15rem), so it naturally
+          fills to the same right edge as the header above it, the theme
+          toggle included, both sitting in the same `max-w-[1120px]`
+          container. A hardcoded cap here left a ~100px gap unused on wide
+          viewports; prose lines run a little longer now, but the page reads
+          less cramped for it.
         */}
-        <article className="min-w-0 max-w-[680px] pt-8">
+        <article className="min-w-0 pt-8">
           {/*
             Title block, outside the TOC sections, it's the page's h1. Neither
             the tag nor the one-line `summary` is repeated here: the tag is card
@@ -145,7 +153,7 @@ export default async function ProjectPage({
                   alt={project.cover.alt}
                   width={project.cover.width}
                   height={project.cover.height}
-                  sizes="(max-width: 768px) 100vw, 680px"
+                  sizes="(max-width: 768px) 100vw, 784px"
                   className="h-auto w-full"
                   priority
                 />
@@ -202,7 +210,7 @@ export default async function ProjectPage({
             )}
 
             {project.outcome && (
-              <Section id="outcome" heading="Outcome">
+              <Section id="impact" heading="Impact">
                 <Prose>{project.outcome}</Prose>
               </Section>
             )}

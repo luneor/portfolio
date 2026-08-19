@@ -109,7 +109,7 @@ export interface Project {
   decisions?: Decision[];
   /** 4. Shipped: the final solution. */
   shipped?: React.ReactNode;
-  /** 5. Outcome: result / impact. */
+  /** 5. Impact: result / outcome. Field kept as `outcome`; renders as "Impact". */
   outcome?: React.ReactNode;
   /** 6. Reflection: one line on what you'd change or learned. */
   reflection?: React.ReactNode;
@@ -133,20 +133,6 @@ export interface Project {
  */
 function Emph({ children }: { children: React.ReactNode }) {
   return <strong className="font-semibold text-foreground">{children}</strong>;
-}
-
-/**
- * A deliberately visible gap in a write-up: a fact, artefact or asset still to
- * be supplied. Loud on purpose: nothing here should reach a published page, so
- * it should be obvious in review rather than blending into the copy.
- */
-function Placeholder({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="rounded-lg border border-dashed border-brand-strong px-4 py-3 font-mono text-[0.78rem] leading-relaxed text-foreground-muted">
-      <strong className="font-bold text-brand-strong">TO ADD, </strong>
-      {children}
-    </p>
-  );
 }
 
 export const PROJECTS: Project[] = [
@@ -175,91 +161,96 @@ export const PROJECTS: Project[] = [
       // TODO: timeline, team, tools
       statement: (
         <>
-          Admins couldn&apos;t tell who had genuinely gone quiet, so I let each
-          institution define what Active, At risk and Inactive mean for them,
-          chosen over the obvious date picker after testing both with real
-          admins. <Emph>Adoption sits at 25.4% and is still growing.</Emph>
-        </>
-      ),
-      overview: (
-        <>
-          <p>
-            Genio Admin&apos;s user table reported last activity as a fixed,
-            binary status, so neither the students who had stopped engaging nor
-            the ones drifting toward it could be isolated. The obvious fix was a
-            date picker, which would have made every admin do the arithmetic
-            themselves and still not agree on what &quot;active&quot; meant.
-          </p>
-          <p>
-            Instead the thresholds became <Emph>admin-defined</Emph>: each
-            institution sets its own week boundaries for the four states, filters
-            on them, and edits them in place. I put that against the date picker
-            in an A/B survey and in prototype calls before building it.
-          </p>
-          <p>
-            It shipped as a Last Active filter with an Edit Ranges editor.{" "}
-            <Emph>Admins recorded and shared videos praising it unprompted</Emph>,
-            and their wish to act on a filtered group rather than just see it
-            pushed CSV export up the roadmap.
-          </p>
+          Admins couldn&apos;t tell which students were genuinely falling out
+          of using Genio Notes, and couldn&apos;t follow up with them
+          correctly. I let each institution define what Active, At risk and
+          Inactive mean to them, giving them more control.{" "}
+          <Emph>
+            Adoption sits at 25.4% and growing, with vocal video appreciation
+            from our customers.
+          </Emph>
         </>
       ),
     },
     problem: (
       <>
         <p>
-          Admins needed to find <Emph>who was genuinely inactive</Emph>, to bulk
-          deactivate them, and <Emph>who was genuinely at risk</Emph>, to get in
-          touch. The “last active” data was stagnant and binary, so neither group
-          was easy to isolate.
+          Admins needed more accurate Last Active statuses to manage licenses
+          more efficiently. <Emph>There was no way to filter by Last Active
+          status at all</Emph>, and our existing RAG (Red, Amber, Green)
+          statuses were fixed and invisible.
         </p>
         <p>
-          RAG statuses existed, but <Emph>their thresholds were fixed and
-          invisible</Emph>, 0–7 days green, 7–14 amber, 14+ red. My read was that
-          few admins knew what the colours meant, which makes a status hard to act
-          on.
+          0–7 days (Green), 7–14 days (Amber), 14+ days (Red). My gut told me
+          that <Emph>few admins knew what the colours actually meant</Emph>,
+          which makes the data hard to act on.
         </p>
       </>
     ),
     decisions: [
       {
-        heading: "Pass on the date picker for custom ranges",
+        heading: "Why not a date picker?",
         body: (
           <>
             <p>
-              The standard answer is a date picker: pick a cut-off, filter
-              against it. But <Emph>it hands over no more control than the fixed
-              thresholds did</Emph>, you still have to know which date matters
-              first.
+              Typically, a date picker works for this: pick a cut-off date,
+              and act on those users based on that usage info. However,
+              admins still had to know what date to pick first: day of the
+              week mattered, what time of year it was, and other factors.
             </p>
             <p>
-              The statuses were the thing admins couldn’t see inside, so the
-              opportunity was to make those definitions editable rather than
-              route around them: the admin sets what Active, At risk and
-              Inactive mean, and the statuses start reflecting their own
-              institution.
+              I saw a gap for a stronger solution:{" "}
+              <Emph>
+                let admins choose what the RAG statuses meant to them
+              </Emph>{" "}
+              by deciding the ranges for each status themselves. That extra
+              control meant they could set ranges to match their own
+              understanding of what active meant to them.
             </p>
             <p>
-              I <Emph>A/B tested both in a survey with admins who actually use
-              Genio</Emph>. They preferred custom ranges, and the reason they gave
-              was the sense of control it offered, not the filtering itself.
+              <Emph>
+                I A/B tested both solutions in a survey with our Admin
+                Insiders group
+              </Emph>
+              . They preferred custom ranges, and the reason they gave was
+              the sense of control it offered, not the filtering itself.
             </p>
           </>
         ),
-      },
-      {
-        heading: 'Let admins define what "active" means',
-        body:
-          'I introduced four RAG-coded status categories (Active, At Risk, Inactive, No Data) and, critically, let admins set their own week-thresholds for each one, rather than imposing a single fixed definition of "active" across every institution.',
         media: [
           {
-            src: "/work/last-active/ideation-icons.png",
-            alt: "Five variants of an Activity filter card, each showing the four states, Active, At risk, Inactive, No data, with differently weighted status icons.",
-            width: 820,
-            height: 565,
-            caption:
-              "Ideation, icon treatments for the four states, compared at the size they'd actually be read at in the filter.",
+            src: "/work/last-active/ideation-filter-date.png",
+            alt: "The users table with a filter panel open, showing a Last Active date picker with a January 2026 calendar.",
+            width: 1280,
+            height: 720,
+            caption: "Option A, a traditional date picker.",
           },
+          {
+            src: "/work/last-active/ideation-filter-status.png",
+            alt: "The users table with a filter panel open, showing a Filter by Last Active Status dropdown listing Green (Active), Amber (At Risk) and Red (Inactive).",
+            width: 1280,
+            height: 720,
+            caption: "Option B, filtering by last active statuses.",
+          },
+        ],
+      },
+      {
+        heading: "Exploring how admins set the ranges",
+        body: (
+          <>
+            <p>
+              I wanted the custom ranges to be easy to use and understand,
+              and settled on using weeks as a unit of time rather than days
+              or months. I did some ideation around visualising the ranges,
+              and the interaction of setting them.
+            </p>
+            <p>
+              I eventually <Emph>decided against a visualisation</Emph>, as
+              I felt it wasn&apos;t needed to understand the set ranges.
+            </p>
+          </>
+        ),
+        media: [
           {
             src: "/work/last-active/ideation-thresholds-inputs.png",
             alt: "Threshold editor using numeric stepper inputs, with a segmented colour bar above and a plain-language summary of the resulting logic.",
@@ -277,38 +268,38 @@ export const PROJECTS: Project[] = [
               "Ideation: the same thresholds as draggable markers on a timeline, with each range read back underneath.",
           },
           {
-            src: "/work/last-active/ideation-filter-date.png",
-            alt: "The users table with a filter panel open, showing a Last Active date picker with a January 2026 calendar.",
-            width: 1280,
-            height: 720,
+            src: "/work/last-active/ideation-icons.png",
+            alt: "Five variants of an Activity filter card, each showing the four states, Active, At risk, Inactive, No data, with icon and colour treatments checked against colour contrast requirements.",
+            width: 820,
+            height: 565,
             caption:
-              "Ideation, filtering the table by a specific last-active date.",
+              "A small accessibility mini-project alongside the main work: now that the RAG colours carried real meaning, they needed to pass colour contrast too, not just read well as icons.",
           },
           {
-            src: "/work/last-active/ideation-filter-status.png",
-            alt: "The users table with a filter panel open, showing a Filter by Last Active Status dropdown listing Green (Active), Amber (At Risk) and Red (Inactive).",
-            width: 1280,
-            height: 720,
+            src: "/work/last-active/final-ranges-modal.png",
+            alt: "The Edit Last Active Ranges dialog, with week inputs for Active, At risk and Inactive and a reset to default option.",
+            width: 608,
+            height: 431,
             caption:
-              "Ideation, filtering by status rather than by date, which is what the thresholds make possible.",
+              "Final solution: two input boxes with a middle range that auto-adjusts. The wording precisely communicates exactly what setting that range means.",
           },
         ],
       },
       {
-        heading: "Run the prototype as scenarios, not a demo",
+        heading: "What do admins really think about it?",
         body: (
           <>
             <p>
-              On the customer calls I handed the prototype to the admin rather
-              than driving it, and read out scenarios, “you want to see who’s at
-              risk so you can contact them: set the inactive range to 2–4 weeks
-              and filter by inactive.” That tests whether the model works under a
-              real intent, not whether a walkthrough is persuasive.
+              For extra validation, we got in touch with admins who use Genio
+              to test the prototype. Rather than taking them through it,{" "}
+              <Emph>I put them in the driver&apos;s seat</Emph> with a
+              high-fidelity prototype I created.
             </p>
             <p>
               It landed well, and surfaced what a demo wouldn’t: <Emph>once admins
               could isolate a group they wanted to act on it</Emph>, export, email,
-              bulk deactivate. That shaped the roadmap beyond this feature.
+              bulk deactivate. This also helped shape the roadmap beyond this
+              feature.
             </p>
           </>
         ),
@@ -331,43 +322,20 @@ export const PROJECTS: Project[] = [
         caption:
           "Shipped: the Last Active filter, with Edit Ranges sitting next to the states it defines.",
       },
-      {
-        src: "/work/last-active/final-ranges-modal.png",
-        alt: "The Edit Last Active Ranges dialog, with week inputs for Active, At risk and Inactive and a reset to default option.",
-        width: 608,
-        height: 431,
-        caption:
-          "Shipped: the range editor: each status spelled out as a sentence that updates with the week values.",
-      },
     ],
     outcome: (
       <>
         <p>
-          <Emph>Adoption currently sits at 25.4%*</Emph>, and admins recorded and
-          shared videos unprompted showing appreciation for the feature, validation that wasn’t solicited.
+          <Emph>Adoption currently sits at 25.4% and growing.</Emph> Admins
+          shared appreciation for the feature during calls with customer
+          success.
         </p>
         <p>
-          It also took time out of the job it replaced. Isolating the students
-          who had gone quiet used to mean reading the table row by row, or
-          exporting it and doing the date arithmetic by hand, and repeating that
-          every time someone asked. The ranges get set once, after which the four
-          states are a checkbox, so the same question is{" "}
-          <Emph>answered in a few clicks</Emph> rather than a manual pass over
-          the table.
-        </p>
-        <Placeholder>
-          the before and after time figures for isolating an inactive or at-risk
-          cohort, and where they came from, a timed task on the prototype calls
-          or an admin estimate.
-        </Placeholder>
-        <p>
-          The calls also moved the roadmap: wanting to act on a filtered group,
-          not just see it, pushed CSV export of filtered lists further up the
-          order. A first step toward a bigger solution rather than the whole of
-          it.
-        </p>
-        <p className="font-mono text-[0.78rem] text-foreground-muted">
-          * Still growing.
+          It helped us define the next projects on the roadmap.{" "}
+          <Emph>
+            Giving admins control and the ability to isolate a group
+          </Emph>{" "}
+          left them wanting to action it quickly.
         </p>
       </>
     ),
@@ -1600,7 +1568,7 @@ export function getCaseStudySections(project: Project): CaseStudySection[] {
   });
 
   if (project.shipped) sections.push({ id: "shipped", label: "Shipped" });
-  if (project.outcome) sections.push({ id: "outcome", label: "Outcome" });
+  if (project.outcome) sections.push({ id: "impact", label: "Impact" });
   if (project.reflection) {
     sections.push({ id: "reflection", label: "Reflection" });
   }

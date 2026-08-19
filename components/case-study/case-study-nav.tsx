@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CaseStudySection } from "@/lib/projects";
@@ -20,9 +20,11 @@ import type { CaseStudySection } from "@/lib/projects";
   - A rail pinned to the viewport. Back-link on top, table of contents below,
     built from the sections actually present so a decision shows its own preview
     heading rather than "Decision 1", and a contact button at the foot.
-  - Scrollspy marks the active item with aria-current="location". The active
-    state is signalled by MORE THAN COLOUR (bold + underline + a left border
-    accent) so it doesn't depend on colour perception.
+  - Scrollspy marks the active item with aria-current="location", pinned to
+    whichever link was just clicked for a beat so a short section near the
+    end can't get skipped in favour of its neighbour (see `useActiveSection`).
+    The active state is signalled by MORE THAN COLOUR (bold + underline + a
+    left border accent) so it doesn't depend on colour perception.
   - Anchors are real <a href="#id">, so clicking smooth-scrolls via the global
     `scroll-behavior: smooth` (already disabled under prefers-reduced-motion),
     remains keyboard operable, and still works with JS disabled.
@@ -36,13 +38,49 @@ interface CaseStudyNavProps {
   title: string;
 }
 
+// A fixed offset, not a fraction of the viewport: this rail only ever shows
+// on desktop-ish widths (`hidden md:block`), and a percentage of viewport
+// HEIGHT scales without bound on a tall screen. At ~1100px+ of viewport
+// height, 30% is already 330px+, deeper than Impact's own ~230px of content,
+// so the reading line could land past Impact and into Reflection the instant
+// an anchor click's scroll (which clears the sticky header, ~scroll-mt-24)
+// finishes, before the reader has looked at anything. A small fixed offset
+// keeps the "roughly where the reader's eyes are" idea without that blowup.
+const READING_LINE_OFFSET_PX = 160;
+
+// How long a click's own pin overrides the scroll-driven guess, roughly the
+// smooth-scroll animation's own duration. Long enough that the anchor jump
+// finishes before scroll events can fight it, short enough that scrolling
+// straight on afterwards resumes normal tracking almost immediately.
+const CLICK_PIN_MS = 700;
+
 /**
- * Tracks which section is currently in view. Picks the last section whose top
- * has passed the reading line, which keeps the final section selectable even
- * when it's too short to fill the viewport.
+ * Tracks which section is currently in view: whichever section's own span,
+ * from its top to the next section's top, actually contains the reading
+ * line (scrollY + READING_LINE_OFFSET_PX).
+ *
+ * That "contains", not just "started before", is the other half of the same
+ * fix: picking "the last section whose top has passed the line" sounds
+ * equivalent, but isn't once a section is shallower than the lookahead.
+ * Requiring the NEXT section to not have started yet keeps a short section
+ * (Impact, two short paragraphs) attributable to itself for the whole
+ * scroll range where it's what's actually on screen, rather than ceding to
+ * whatever comes right after it.
+ *
+ * Neither of those saves the case where several short sections (Impact,
+ * Reflection, plus the footer) together add up to less than one viewport:
+ * the page runs out of room to scroll before the reading line can reach the
+ * later ones, so clicking Impact's OR Reflection's own link can both land on
+ * the exact same clamped scrollY. At that point scroll position alone can't
+ * tell which one the reader meant, full stop, since there's nothing left to
+ * distinguish them by. `pin` sidesteps the whole question: a click sets the
+ * active id directly and holds it for CLICK_PIN_MS, so intent comes from
+ * which link was actually clicked rather than being reconstructed from where
+ * the anchor jump happened to run out of page.
  */
 function useActiveSection(sections: CaseStudySection[]) {
   const [activeId, setActiveId] = useState<string>("");
+  const pinnedUntilRef = useRef(0);
 
   useEffect(() => {
     if (sections.length === 0) return;
@@ -51,22 +89,41 @@ function useActiveSection(sections: CaseStudySection[]) {
     const onScroll = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        const line = window.scrollY + window.innerHeight * 0.3;
-        let current = sections[0].id;
+        if (Date.now() < pinnedUntilRef.current) return;
 
-        for (const section of sections) {
+        const line = window.scrollY + READING_LINE_OFFSET_PX;
+        const tops = sections.map((section) => {
           const el = document.getElementById(section.id);
-          if (!el) continue;
-          if (el.getBoundingClientRect().top + window.scrollY <= line) {
-            current = section.id;
-          }
+          return el ? el.getBoundingClientRect().top + window.scrollY : null;
+        });
+
+        let current = sections[0].id;
+        for (let i = 0; i < sections.length; i++) {
+          const top = tops[i];
+          if (top === null || top > line) continue;
+          const nextTop = tops[i + 1];
+          if (nextTop != null && nextTop <= line) continue;
+          current = sections[i].id;
         }
 
-        // At the very bottom the last section always wins, even if short.
+        // Near the very bottom the reading line can stall before it ever
+        // reaches the last section(s), for the same "not enough room left
+        // to scroll" reason `pin` exists for. Falling back to whichever
+        // section is topmost among the ones actually on screen beats
+        // forcing the last section outright, at least for a reader who
+        // arrived by scrolling rather than by a click `pin` already caught.
         const atBottom =
           window.innerHeight + window.scrollY >=
           document.documentElement.scrollHeight - 4;
-        if (atBottom) current = sections[sections.length - 1].id;
+        if (atBottom) {
+          const visible = sections.find((section) => {
+            const el = document.getElementById(section.id);
+            if (!el) return false;
+            const top = el.getBoundingClientRect().top;
+            return top >= -20 && top < window.innerHeight;
+          });
+          current = visible ? visible.id : sections[sections.length - 1].id;
+        }
 
         setActiveId(current);
       });
@@ -82,7 +139,12 @@ function useActiveSection(sections: CaseStudySection[]) {
     };
   }, [sections]);
 
-  return activeId;
+  const pin = useCallback((id: string) => {
+    pinnedUntilRef.current = Date.now() + CLICK_PIN_MS;
+    setActiveId(id);
+  }, []);
+
+  return { activeId, pin };
 }
 
 /**
@@ -177,10 +239,12 @@ export function CaseStudyContact({ className }: { className?: string }) {
 function NavList({
   sections,
   activeId,
+  onNavigate,
   title,
 }: {
   sections: CaseStudySection[];
   activeId: string;
+  onNavigate: (id: string) => void;
   title: string;
 }) {
   if (sections.length === 0) return null;
@@ -195,6 +259,7 @@ function NavList({
             <li key={section.id}>
               <a
                 href={`#${section.id}`}
+                onClick={() => onNavigate(section.id)}
                 // aria-current tells assistive tech which section is in view.
                 aria-current={isActive ? "location" : undefined}
                 className={cn(
@@ -217,7 +282,7 @@ function NavList({
 }
 
 export function CaseStudyNav({ sections, title }: CaseStudyNavProps) {
-  const activeId = useActiveSection(sections);
+  const { activeId, pin } = useActiveSection(sections);
   const railRef = useRef<HTMLDivElement>(null);
 
   useRailClearOfFooter(railRef);
@@ -231,7 +296,12 @@ export function CaseStudyNav({ sections, title }: CaseStudyNavProps) {
         className="case-study-rail flex flex-col gap-6 py-8 pr-4"
       >
         <BackLink />
-        <NavList sections={sections} activeId={activeId} title={title} />
+        <NavList
+          sections={sections}
+          activeId={activeId}
+          onNavigate={pin}
+          title={title}
+        />
         <CaseStudyContact className="mt-auto" />
       </div>
     </aside>

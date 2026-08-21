@@ -1135,7 +1135,7 @@ export const PROJECTS: Project[] = [
     topics: ["Human-centred Design", "User Research"],
     title: "Tell Me a Story",
     summary:
-      "Continuing a neonatal project from paper to a tested, working prototype.",
+      "A way for parents to keep bonding with their baby during a NICU stay.",
     cardImage: {
       src: "/work/stori/tmas-build-special.png",
       alt: "Five screens of the Tell Me A Story prototype in a dark purple night-sky theme.",
@@ -1152,50 +1152,32 @@ export const PROJECTS: Project[] = [
       role: "UX Designer (internship), sole designer on the continuation",
       timeline: "Jan – Jun 2025, continuing a 2023 university project",
       team:
-        "Sponsored by Sarra Hoy · Dr. Lauren Shaw (Senior Neonatal Nurse) · DJCAD & School of Medicine · Ninewells Hospital NICU",
+        "Sponsored by Sarra Hoy (Bliss ambassador) · Dr. Lauren Shaw (Senior Neonatal Nurse) · DJCAD & School of Medicine · Ninewells Hospital NICU",
       tools: "Figma (low-fidelity), Bubble.io (high-fidelity)",
       statement: (
         <>
-          After graduating I was <Emph>contacted to continue a neonatal project
-          I&apos;d worked on as a student</Emph>, taking it from a paper prototype
-          to a working voice-recording prototype, testing it with six parents who
-          had lived through NICU care and writing it up as a full research report.
+          In a Neonatal Intensive Care Unit (NICU),{" "}
+          <Emph>
+            the bond between parent and newborn is disrupted exactly when it
+            matters most
+          </Emph>
+          : you go from birth, to touching your baby through an incubator, to
+          leaving them overnight.
         </>
       ),
       overview: (
         <>
           <p>
-            In a NICU the bond between parent and newborn is disrupted exactly
-            when it matters most: you go from birth, to touching your baby
-            through an incubator, to leaving them overnight.{" "}
-            <Emph>Parents get updates but have no way to reach their baby</Emph>
-            , and a parent&apos;s voice is one of the few things known to
-            support both brain development and bonding.
+            A parent&apos;s voice is one of the few known things that support
+            brain development and bonding. Tell Me a Story lets parents
+            record stories and messages for their baby in a NICU, which
+            nurses can then play for the baby when parents can&apos;t be
+            there.
           </p>
           <p>
-            Tell Me A Story lets parents record stories and messages for their
-            baby in a Neonatal Intensive Care Unit, so their voice reaches the
-            cot when they can&apos;t be there. A paired 2023 third-year project
-            I&apos;d built with Pavlin Petev, informed by a DJCAD and School of
-            Medicine study on the Ninewells neonatal ward, had taken the idea as
-            far as a paper prototype, shown to six experts who pointed at four
-            areas to develop: recording support, memories and metadata, a
-            custom avatar, and signposting to support information. I was asked
-            to continue it afterwards.
-          </p>
-          <p>
-            What I added was the thing the concept had never been able to prove:{" "}
-            <Emph>a working prototype that actually records</Emph>, built in
-            Bubble.io with onboarding, a story-type fork, playback and a stories
-            library, then tested with parents and documented as a research report.
-          </p>
-          <p>
-            Feedback was <Emph>overwhelmingly positive</Emph>. Parents said they
-            would have valued it during their own stay, and the tone landed as
-            intended, described as compassionate and sensitive where existing
-            neonatal apps had not been. Testing produced six themes with design
-            implications and five recommendations, plus nurse-side requirements
-            that fell outside this scope.
+            Feedback was <Emph>overwhelmingly positive</Emph>. Parents with
+            real neonatal experience said they would have valued it during
+            their own stay.
           </p>
         </>
       ),
@@ -1229,19 +1211,23 @@ export const PROJECTS: Project[] = [
     ),
     decisions: [
       {
-        heading: "Continue the paired concept, don’t restart it",
+        heading: "Using what I already knew",
         body: (
           <>
             <p>
-              The 2023 project already had a defensible core, record a story,
-              send it to the ward, play it at the cot. Rather than redesign that,
-              I <Emph>treated it as the starting position</Emph> and spent the
-              time on what it still lacked: a real recording flow, an emotional
-              register, and evidence from parents.
+              In my 3rd year of University, our class took on this project to
+              provide some early proof of concept. I worked with a classmate
+              of mine, <Emph>Pavlin Petev</Emph>. We created a simple design,
+              record a story, send it to the hospital to play.
             </p>
             <p>
-              First move was a <Emph>paper prototype</Emph>, to make the concept
-              tangible enough to react to before committing to a build.
+              All of our classes projects were shared with nurses and those
+              involved in the accompanying research project, which{" "}
+              <Emph>
+                gave me the strengths and weaknesses of all the projects to
+                start from
+              </Emph>
+              .
             </p>
           </>
         ),
@@ -1254,68 +1240,60 @@ export const PROJECTS: Project[] = [
             caption:
               "Before: the 2023 third-year project built with Pavlin Petev, the concept I was asked to continue.",
           },
-          {
-            src: "/work/stori/tmas-lofi-wireframes.png",
-            alt: "Five hand-drawn wireframe screens covering recording, saving a story and a journal of recordings.",
-            width: 2000,
-            height: 750,
-            caption:
-              "The low-fidelity paper prototype, cheap to change, and the base the high-fidelity build grew from.",
-          },
         ],
       },
       {
-        heading: "Split recording into a story and a quick message",
+        heading: "A special story, and a sweet message",
         body: (
           <>
             <p>
-              Testing the paper version made it clear that{" "}
+              Testing early versions made it clear that{" "}
               <Emph>one recording flow couldn&apos;t serve both intents</Emph>. A
-              parent reading a book needs to pause, restart and hear it back. A
+              parent reading a book needs to pause, restart, and hear it back. A
               parent saying goodnight before they leave needs one tap.
             </p>
             <p>
-              So the flow forks: <Emph>Special Story</Emph> carries the full
-              controls, <Emph>Sweet Message</Emph> behaves like a voice note.
-              Which one you pick depends less on the feature than on how much you
-              have left in you that day.
+              So I created two types of recordings: <Emph>Special Story</Emph>{" "}
+              carries the full controls, <Emph>Sweet Message</Emph> behaves like
+              a voice note. Which one a parent picks depends less on the
+              feature, and more on how much you have left in you that day.
             </p>
           </>
         ),
         media: [
           {
-            src: "/work/stori/tmas-build-special.png",
+            src: "/work/stori/tmas-build-special-4up.png",
             alt: "The Special Story recording flow with restart, pause and stop controls and a live waveform.",
-            width: 2000,
+            width: 1600,
             height: 746,
             caption:
               "Special Story, pause, restart and playback, for reading a book.",
           },
           {
-            src: "/work/stori/tmas-build-sweet.png",
+            src: "/work/stori/tmas-build-sweet-4up.png",
             alt: "The Sweet Message recording flow with a single stop control.",
-            width: 2000,
+            width: 1600,
             height: 746,
             caption: "Sweet Message, one tap, for saying goodnight.",
           },
         ],
       },
       {
-        heading: "Design it away from anything medical",
+        heading: "Make it warm, not medical",
         body: (
           <>
             <p>
-              The Ninewells NICU is deliberately softened with illustrations by
-              Freya Cumming, and I took the same line:{" "}
-              <Emph>nothing that reads as clinical or cold</Emph>. Red was ruled
-              out entirely, in that environment it means emergency.
+              The Ninewells NICU in Dundee is deliberately softened with
+              illustrations. I took a similar line:{" "}
+              <Emph>nothing that reads as clinical or cold</Emph>. Red was
+              ruled out entirely; in that environment, it means emergency.
             </p>
             <p>
               The reference point became children&apos;s books, and the design
               settled on a <Emph>night sky with a glowing yellow</Emph>. The
               onboarding does the expectation-setting the nurse asked for, and
               one of her phrases, “anything that leaves that little heartstring
-              of attachment”, made it into the app itself.
+              of attachment,” made it into the app itself.
             </p>
           </>
         ),
@@ -1335,32 +1313,25 @@ export const PROJECTS: Project[] = [
             caption:
               "The nurse’s phrase, carried straight into the product copy.",
           },
-          {
-            src: "/work/stori/tmas-onboarding-7.jpg",
-            alt: "Onboarding screen titled Before You Start, explaining that nurses may not be able to play every recording.",
-            width: 399,
-            height: 801,
-            caption:
-              "Setting the expectation honestly: quiet sleep matters, and nurses may not manage every recording.",
-          },
         ],
       },
       {
-        heading: "Recruit parents who’ve been through it, never those still in it",
+        heading: "Talking to parents who have been through it",
         body: (
           <>
             <p>
-              Asking a parent to evaluate a prototype while their baby is in
-              intensive care would have been invasive, so{" "}
-              <Emph>current NICU parents were ruled out</Emph>. Recruitment was
-              limited to parents within five years of their experience, recent
-              enough to recall clearly, and to the UK, since the NHS was the
-              target context.
+              We ruled out talking to any parents who had a baby currently in
+              the NICU,{" "}
+              <Emph>it would&apos;ve been invasive and inappropriate</Emph>.
+              Recruitment was limited to parents within five years of their
+              experience, recent enough to recall.
             </p>
             <p>
-              <Emph>17 people showed interest, 11 completed ethics, 6 tested</Emph>{" "}: a 35% conversion with no incentive offered beyond interest in the
-              project. Sessions ran up to an hour as semi-structured interviews
-              around the prototype. All six participants were female and UK-based.
+              <Emph>17 people showed interest, 11 completed ethics, 6 tested</Emph>
+              : a 35% conversion with no incentive offered beyond interest in
+              the project. Sessions ran up to an hour as semi-structured
+              interviews around the prototype. All six participants were
+              female and UK-based as it was targeted for the NHS.
             </p>
           </>
         ),
@@ -1383,14 +1354,6 @@ export const PROJECTS: Project[] = [
     ),
     gallery: [
       {
-        src: "/work/stori/tmas-build-1.png",
-        alt: "The full prototype flow: onboarding, story type selection, recording, stories and home.",
-        width: 2000,
-        height: 748,
-        caption:
-          "The tested flow: onboarding → story type → record → stories → home.",
-      },
-      {
         src: "/work/stori/tmas-onboarding-3.jpg",
         alt: "Onboarding screen explaining how recording helps the baby's development.",
         width: 405,
@@ -1403,13 +1366,6 @@ export const PROJECTS: Project[] = [
         width: 399,
         height: 798,
         caption: "And why it matters for the parent.",
-      },
-      {
-        src: "/work/stori/tmas-onboarding-5.jpg",
-        alt: "Onboarding screen offering a test recording to check device permissions.",
-        width: 402,
-        height: 801,
-        caption: "A test recording, so device permissions fail early rather than mid-story.",
       },
       {
         src: "/work/stori/tmas-onboarding-6.jpg",
@@ -1430,28 +1386,30 @@ export const PROJECTS: Project[] = [
           visually pleasing system”.
         </p>
         <p>
-          Testing produced <Emph>six themes with design implications</Emph>, bonding through audio, the need for normalcy, language, emotional load,
-          guilt, and visual design, plus five recommendations and a feature
-          shortlist (a priority “special request”, and stories from wider family).
-          Three further participants were tested after the internship ended.
+          I wrote a report on the findings which brought light to{" "}
+          <Emph>6 design implications</Emph>. Bonding through audio, the need
+          for normalcy, language, emotional load, guilt, and visual design. I
+          created five recommendations and a feature shortlist for the future
+          of the project.
         </p>
       </>
     ),
     reflection: (
       <>
         <p>
-          The most useful finding was the one I hadn&apos;t designed for:{" "}
-          <Emph>parents didn&apos;t always know what to say</Emph>. “I felt really
-          self-conscious about talking or reading,” one said; another wanted
-          “something to jog your brain a little bit so you get comfy.” The app
-          made recording possible without making it easy to start, prompts would
-          be the first thing I&apos;d add.
+          This is <Emph>the most human-centred project I&apos;ve ever worked
+          on</Emph>. Working so closely with Sarra Hoy, who sponsored the
+          project and had not only gone through the experience herself but
+          also advocates for others through the Bliss charity, was truly
+          special.
         </p>
         <p>
-          The nurse-side interface also fell out of scope as the parent flow grew,
-          and it&apos;s the half that decides whether any of this works on a ward.
-          My part is complete; the wider initiative has slowed since, so I treat
-          it as <Emph>paused rather than abandoned</Emph>.
+          Testing it with parents who were{" "}
+          <Emph>
+            so genuinely invested in the project&apos;s success
+          </Emph>
+          , and who wished they&apos;d had something like it at the time, was
+          probably the most rewarding experience of my career so far.
         </p>
       </>
     ),

@@ -48,6 +48,15 @@ interface CaseStudyNavProps {
 // keeps the "roughly where the reader's eyes are" idea without that blowup.
 const READING_LINE_OFFSET_PX = 160;
 
+// How much of the final scroll distance the reading line's offset ramps
+// over, from READING_LINE_OFFSET_PX up to a full viewport height, so it can
+// still reach short trailing sections that would otherwise sit below its
+// normal reach once the page runs out of room to scroll (see
+// `useActiveSection`). Comfortably bigger than any one section is likely to
+// be, so the ramp is already well underway by the time a short section's
+// own top comes into play.
+const BOTTOM_RAMP_PX = 500;
+
 // How long a click's own pin overrides the scroll-driven guess, roughly the
 // smooth-scroll animation's own duration. Long enough that the anchor jump
 // finishes before scroll events can fight it, short enough that scrolling
@@ -57,7 +66,7 @@ const CLICK_PIN_MS = 700;
 /**
  * Tracks which section is currently in view: whichever section's own span,
  * from its top to the next section's top, actually contains the reading
- * line (scrollY + READING_LINE_OFFSET_PX).
+ * line (scrollY + an offset below the viewport's top).
  *
  * That "contains", not just "started before", is the other half of the same
  * fix: picking "the last section whose top has passed the line" sounds
@@ -67,16 +76,24 @@ const CLICK_PIN_MS = 700;
  * scroll range where it's what's actually on screen, rather than ceding to
  * whatever comes right after it.
  *
- * Neither of those saves the case where several short sections (Impact,
+ * The offset itself isn't fixed. Held at READING_LINE_OFFSET_PX it can't
+ * reach the end of the page whenever the last few sections (Impact,
  * Reflection, plus the footer) together add up to less than one viewport:
- * the page runs out of room to scroll before the reading line can reach the
- * later ones, so clicking Impact's OR Reflection's own link can both land on
- * the exact same clamped scrollY. At that point scroll position alone can't
- * tell which one the reader meant, full stop, since there's nothing left to
- * distinguish them by. `pin` sidesteps the whole question: a click sets the
- * active id directly and holds it for CLICK_PIN_MS, so intent comes from
- * which link was actually clicked rather than being reconstructed from where
- * the anchor jump happened to run out of page.
+ * scrolling maxes out before a line that low could ever cross into them, so
+ * whichever of them happens to sit right at the offset gets stuck as
+ * "current" forever, and the other(s) never light up at all, no matter how
+ * slowly someone scrolls. `BOTTOM_RAMP_PX` fixes that at the source: over the
+ * final stretch of scroll the offset itself ramps from its normal position up
+ * towards the BOTTOM of the viewport, so the line keeps sweeping through
+ * short trailing sections instead of stalling, and lands exactly on the
+ * document's true end at max scroll, an offset of a full viewport height,
+ * guaranteeing the last section wins once there's nowhere further to go.
+ * Everywhere else on the page (more than BOTTOM_RAMP_PX of scroll still left)
+ * this resolves to the plain fixed offset, unchanged.
+ *
+ * `pin` still matters on top of that: a click jumps straight there rather
+ * than waiting for the ramp to catch up, and holds the clicked section active
+ * for CLICK_PIN_MS so the anchor's own smooth-scroll can't fight it.
  */
 function useActiveSection(sections: CaseStudySection[]) {
   const [activeId, setActiveId] = useState<string>("");
@@ -91,7 +108,17 @@ function useActiveSection(sections: CaseStudySection[]) {
       frame = requestAnimationFrame(() => {
         if (Date.now() < pinnedUntilRef.current) return;
 
-        const line = window.scrollY + READING_LINE_OFFSET_PX;
+        const maxScrollY = Math.max(
+          0,
+          document.documentElement.scrollHeight - window.innerHeight
+        );
+        const distanceFromBottom = Math.max(0, maxScrollY - window.scrollY);
+        const rampT = 1 - Math.min(1, distanceFromBottom / BOTTOM_RAMP_PX);
+        const offset =
+          READING_LINE_OFFSET_PX +
+          rampT * (window.innerHeight - READING_LINE_OFFSET_PX);
+        const line = window.scrollY + offset;
+
         const tops = sections.map((section) => {
           const el = document.getElementById(section.id);
           return el ? el.getBoundingClientRect().top + window.scrollY : null;
@@ -104,25 +131,6 @@ function useActiveSection(sections: CaseStudySection[]) {
           const nextTop = tops[i + 1];
           if (nextTop != null && nextTop <= line) continue;
           current = sections[i].id;
-        }
-
-        // Near the very bottom the reading line can stall before it ever
-        // reaches the last section(s), for the same "not enough room left
-        // to scroll" reason `pin` exists for. Falling back to whichever
-        // section is topmost among the ones actually on screen beats
-        // forcing the last section outright, at least for a reader who
-        // arrived by scrolling rather than by a click `pin` already caught.
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.documentElement.scrollHeight - 4;
-        if (atBottom) {
-          const visible = sections.find((section) => {
-            const el = document.getElementById(section.id);
-            if (!el) return false;
-            const top = el.getBoundingClientRect().top;
-            return top >= -20 && top < window.innerHeight;
-          });
-          current = visible ? visible.id : sections[sections.length - 1].id;
         }
 
         setActiveId(current);

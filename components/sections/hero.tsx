@@ -145,9 +145,22 @@ export function Hero() {
             reader to be told afterwards and no live region here; the label
             says plainly what pressing it does. Rendered only when the field is
             actually running, since the CSS fallback has nothing to reshuffle.
+
+            Its own `initial`/`animate` rather than the shared `item` variant,
+            so it lands after the nav pill above it has finished arriving.
+            Being last in the stagger only bought it 0.1s, which reads as
+            simultaneous; and because `canRandomize` flips in an effect this
+            block mounts a beat after its siblings, by which point the parent's
+            orchestration has already run and it would simply appear. An
+            explicit delay is the only thing that sequences it reliably.
           */}
           {canRandomize && (
-            <motion.div variants={item} className="mt-6 max-sm:hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.85 }}
+              className="mt-6 max-sm:hidden"
+            >
               {/*
                 Filled with `--card`, the same step off the page ground the nav
                 pill above it uses, rather than `--background`: the two sit

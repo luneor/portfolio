@@ -73,9 +73,29 @@ export interface ProjectVideo {
   height: number;
   description: string;
   caption?: string;
+  /**
+   * Plays muted, looping, on load, GIF-style, rather than the default
+   * click-to-play. For a short silent loop that IS the content (not a
+   * recorded walkthrough), waiting for a click adds friction for nothing.
+   * Controls stay on so it can still be paused.
+   */
+  loop?: boolean;
 }
 
-export type ProjectMedia = ProjectImage | ProjectVideo;
+/**
+ * An embedded YouTube video, for footage that lives off-site rather than as
+ * a local file (e.g. a longer edited video with a voiceover or music, where
+ * self-hosting would mean losing that). `id` is just the video id from the
+ * watch URL, not the full link.
+ */
+export interface ProjectYouTubeVideo {
+  kind: "youtube";
+  id: string;
+  title: string;
+  caption?: string;
+}
+
+export type ProjectMedia = ProjectImage | ProjectVideo | ProjectYouTubeVideo;
 
 export interface Project {
   slug: string;
@@ -112,6 +132,12 @@ export interface Project {
   decisions?: Decision[];
   /** 4. Shipped: the final solution. */
   shipped?: React.ReactNode;
+  /**
+   * Heading override for the Shipped section, for projects that never went
+   * out the door, e.g. "Submitted" for a coursework/honours piece. Defaults
+   * to "Shipped".
+   */
+  shippedLabel?: string;
   /** 5. Impact: result / outcome. Field kept as `outcome`; renders as "Impact". */
   outcome?: React.ReactNode;
   /** 6. Reflection: one line on what you'd change or learned. */
@@ -529,10 +555,11 @@ export const PROJECTS: Project[] = [
     ],
     shipped: (
       <p>
-        Feature toggles shipped as an extension of the existing groups system:
-        an org-wide baseline for each of the three AI features in Notes, with
-        group-level overrides on top, alongside the filtered exports admins
-        needed for reporting. No parallel profile architecture was built.
+        Feature toggles shipped as an extension of the existing Groups
+        system: an org-wide baseline for each of the three AI features in
+        Notes, with group-level overrides on top. Utilising a system they
+        were already familiar with to give them the ability to cater to
+        their academic AI policies.
       </p>
     ),
     gallery: [
@@ -546,25 +573,34 @@ export const PROJECTS: Project[] = [
       },
     ],
     outcome: (
-      <p>
-        <Emph>A student who needs the support isn’t blocked by a blanket
-        policy</Emph> set elsewhere in the organisation, and an institution can
-        restrict a feature without handling exceptions one student at a time.
-      </p>
+      <>
+        <p>
+          <Emph>A student who needs the support isn’t blocked by a blanket
+          policy</Emph> set elsewhere in the organisation, and an institution
+          can restrict a feature without handling exceptions one student at
+          a time.
+        </p>
+        <p>
+          <Emph>Adoption reached 11.8% within the first month</Emph>, with 52
+          unique admins taking action on it. It shipped during summer break,
+          when most institutions are quiet, so we expect adoption to grow
+          significantly as term starts.
+        </p>
+      </>
     ),
     reflection: (
       <>
         <p>
-          Most of this wasn’t interface work. Leadership set the timing,
-          marketing and exec set the architecture, they pointed different ways,
-          and the person who’d normally reconcile them was on leave. What I did
-          was turn that into one direction the team could commit to.
+          This wasn&apos;t a heavy UX project, it was PM work: taking in
+          varying stakeholder feedback and steering it toward the right
+          approach.
         </p>
         <p>
-          The useful question turned out not to be “profiles or groups” but
-          “what is the profile system actually for”: the request named a
-          solution, and its intent was reachable another way. Asking that sooner
-          would have got us here faster.
+          The useful question turned out to be{" "}
+          <Emph>“Do we really need a profile system?”</Emph>{" "}
+          Once I asked that, it became clear the same solution was reachable
+          through an existing system. Clarifying that sooner would&apos;ve
+          made the project far more streamlined.
         </p>
       </>
     ),
@@ -883,122 +919,210 @@ export const PROJECTS: Project[] = [
     summary:
       "A conceptual app focused on reducing productivity guilt and promoting mindfulness.",
     cover: {
-      src: "/work/memor/m-13.png",
-      alt: "Overview of Memor's screens: the fluid clock-calendar, blunt notifications, a weekly view, and the three tone-of-voice profiles.",
-      width: 1200,
-      height: 675,
+      src: "/work/memor/m-14.jpg",
+      alt: "The Memor prototype open on a phone on a stand, showing the fluid clock-calendar with red and blue event circles, beside a laptop on a desk.",
+      width: 2000,
+      height: 1333,
     },
     snapshot: {
       role: "Concept, research, UX & UI design, self-directed",
       // TODO: timeline, team, tools
       statement:
-        "My honours project: a conceptual app that treats productivity guilt as the problem, replacing the calendar grid with a fluid shape and app-speak with a voice that talks to you like a friend.",
-      overview: (
-        <>
-          <p>
-            Productivity apps tend to reinforce guilt by optimising for output.
-            Research sharpened the tension rather than resolving it: digital
-            calendars offer flexibility, physical ones visibility, and running
-            IDEO&apos;s “Five Whys” kept surfacing the same roots, productivity,
-            not letting people down, and wanting to feel in control.
-          </p>
-          <p>
-            Memor answers it with{" "}
-            <Emph>a fluid 0 to 23 clock-calendar</Emph> whose events bleed into
-            the base shape to suggest flexible timing, animated event management,
-            and three interchangeable tone-of-voice profiles in place of
-            relentless niceness.
-          </p>
-          <p>
-            Testing found the calendar{" "}
-            <Emph>innovative, easy to understand and effective against feeling
-            overwhelmed</Emph>, with the Brutally Honest voice landing hardest.
-            It also found the profiles hard to tell apart and the grey events
-            unappealing.
-          </p>
-        </>
-      ),
+        "My honours project: a conceptual app that treats productivity guilt as the problem. Replacing the calendar grid with a fluid shape and using tone of voice profiles that talk to you like a friend. Focused on making you mindful of how you're spending your time with custom interventions.",
     },
     decisions: [
       {
+        heading: "Digital and physical calendars",
+        body: (
+          <>
+            <p>
+              One of the first things I did was walk around the studio and
+              ask people, do you use a calendar? I got a mixture of physical
+              and digital calendars.
+            </p>
+            <p>
+              What&apos;s the positive of each? Along with some initial
+              research I had come to a key insight:{" "}
+              <Emph>
+                Digital calendars offer more flexibility than physical
+                calendars - however, physical calendars offer more
+                visibility than digital calendars.
+              </Emph>
+            </p>
+            <p>
+              My aim quickly became to create something in the middle
+              ground. Creating something which utilised digital flexibility,
+              but leans into physical visibility would be the best of both
+              worlds for a new innovated calendar. This lead to looking into
+              data visualisation, and how we can represent our calendars in
+              a new, fluid way.
+            </p>
+          </>
+        ),
+        media: [
+          {
+            src: "/work/memor/m-02.jpg",
+            alt: "An iPhone on a stand displaying a calendar app, propped on a windowsill overlooking a city view.",
+            width: 2048,
+            height: 1365,
+            caption:
+              "One of the digital calendars found during the studio walkaround.",
+          },
+          {
+            src: "/work/memor/m-03.jpg",
+            alt: "A physical paper desk calendar with handwritten notes propped on a windowsill.",
+            width: 1200,
+            height: 800,
+            caption:
+              "One of the physical calendars found during the studio walkaround.",
+          },
+        ],
+      },
+      {
         heading: "Make the calendar a fluid shape, not a grid",
-        body: "A static grid became a fluid, organic shape, keeping a clock face so it stays familiar rather than alien. Events sit as circles at their scheduled hours and bleed into the base shape to suggest flexible timing; bigger circle, longer event. A 0–23 scale replaces 12/24-hour to discourage rigidity about time.",
+        body: (
+          <>
+            <p>
+              I started conceptualising how to transform geometric, static
+              layouts into fluid and organic shapes while still representing
+              a familiar calendar. The first step is shaping the design into
+              a fluid yet readable form. To keep it familiar and avoid an
+              &quot;alien&quot; feel, I incorporated a clock face into the
+              initial concept.{" "}
+              <Emph>
+                This was a very strong starting point
+              </Emph>{" "}
+              and allowed me to iterate towards the final look.
+            </p>
+            <p>
+              Achieving the look I wanted was tough, I had to use{" "}
+              <Emph>Adobe After Effects</Emph> to generate short clips which
+              would be used in the prototyping software Protopie. This was a
+              mixture of software I did not intend to explore, but it worked
+              really well.
+            </p>
+          </>
+        ),
+        media: [
+          {
+            src: "/work/memor/fluid-shape-strip.png",
+            alt: "Three panels showing the shape's progression: four separate squares, the squares melting into an outlined organic blob, and the final blob shape inside a 12-hour clock face.",
+            width: 1673,
+            height: 600,
+            caption:
+              "The shape's progression: rigid squares, softened into an organic blob, then set inside the familiar clock face.",
+          },
+          {
+            src: "/work/memor/fluid-shape-iteration.png",
+            alt: "Three framed panels: a dark calendar concept with a glowing outline and event labels, a small dark green-and-white blob study, and the blue-and-orange blob on white.",
+            width: 1903,
+            height: 600,
+            caption:
+              "Iterating the look in After Effects.",
+          },
+          {
+            kind: "video",
+            src: "/work/memor/calendar-loop.mp4",
+            width: 1080,
+            height: 1080,
+            loop: true,
+            description:
+              "Silent looping animation of the fluid clock-calendar, showing events blending into the base shape.",
+            caption: "Adding and removing an event from the fluid calendar.",
+          },
+        ],
       },
       {
         heading: "Drop \"App Talk\" for a brutally honest voice",
-        body: "I pushed back on \"App Talk\", relentless niceness that does little for real motivation, for a brutally honest voice, like a friend who keeps you in check. Since bluntness won't suit everyone, three interchangeable profiles: The Brutally Honest, The Bestie, and The Storyteller.",
+        body: (
+          <>
+            <p>
+              I decided against the usual &quot;app talk&quot;,{" "}
+              <Emph>it&apos;s niceness that does little for real motivation</Emph>
+              . I instead opted for a brutally honest voice, like a friend who
+              keeps you in check.
+            </p>
+            <p>
+              I did later add two other profiles for those who didn&apos;t
+              want the bluntness: one which spoke to you like a supportive
+              bestie, and another that told your story in third person.
+            </p>
+          </>
+        ),
+        media: [
+          {
+            src: "/work/memor/m-05.png",
+            alt: "Two Memor notifications written in a brutally honest tone telling the user to go for a walk.",
+            width: 794,
+            height: 510,
+            caption: "The Brutally Honest voice in action, motivation that reads like a friend keeping you in check.",
+          },
+        ],
       },
       {
-        heading: "Stack the daily shape into a week",
-        body: "To compete with existing calendars I added a weekly view by stacking the daily shape into a swipeable week, rather than inventing a second visual language. That unexpectedly made weekly trends visible.",
+        heading: "How do we visualise a week?",
+        body: "To compete with existing calendars I added a weekly view by stacking the daily shape into a visually stacked week. This unexpectedly made weekly trends visible - easier to spot your busiest and quietest times in a week.",
+        media: [
+          {
+            src: "/work/memor/weekly-radial-view.jpg",
+            alt: "A radial weekly calendar built by stacking each day's organic shape, with Monday highlighted in blue against the six other days in grey.",
+            width: 1041,
+            height: 1038,
+            caption: "The weekly view, stacking daily shapes made weekly trends visible at a glance.",
+          },
+        ],
       },
     ],
-    shipped:
-      "High-fidelity prototypes: the fluid 0–23 clock-calendar with event circles, animated event management, three tone-of-voice profiles, a stacked weekly view, and notes.",
-    outcome: (
-      <p>
-        Testing praised the calendar as <Emph>innovative, easy to understand, and
-        effective against feeling overwhelmed</Emph>. The Brutally Honest voice
-        landed hardest, though the profiles were hard to tell apart, and grey
-        events felt unappealing.
-      </p>
+    shipped: (
+      <>
+        <p>
+          High-fidelity prototypes: the fluid 0–23 clock-calendar with event
+          circles, animated event management, three tone-of-voice profiles, a
+          stacked weekly view, and notes.
+        </p>
+        <p>I created 3 different scenarios for the final prototype.</p>
+        <ul className="flex list-disc flex-col gap-1.5 pl-5">
+          <li>
+            The user is scrolling on social media and is prompted to do
+            something better with their time
+          </li>
+          <li>The user is working and is prompted to take a break</li>
+          <li>
+            The user wants to add an event to an already busy day, and the
+            calendar rejects it
+          </li>
+        </ul>
+        <p>
+          I also had to create a final video showing what the project really
+          stands for, showing experiencing productivity guilt and where the
+          app would come in to help alleviate that.
+        </p>
+      </>
     ),
+    shippedLabel: "Submitted",
     reflection: (
       <p>
-        <Emph>The three tone-of-voice profiles were hard to tell apart</Emph> in
-        testing, given another pass I’d differentiate them much more sharply, and
-        revisit the grey used for events.
+        This was a very fun conceptual project,{" "}
+        <Emph>
+          pushing the limits of how I could represent a calendar visually
+        </Emph>
+        , exploring tone of voice led to a project I&apos;m seriously happy
+        with.
       </p>
     ),
     gallery: [
       {
-        src: "/work/memor/m-04.png",
-        alt: "A chat-style exchange applying the Five Whys technique to why people use calendars.",
-        width: 1055,
-        height: 1200,
-        caption: "Research, running IDEO's \"Five Whys\" to reach the real reasons behind calendar use.",
-      },
-      {
-        src: "/work/memor/m-03.jpg",
-        alt: "A physical paper desk calendar with handwritten notes propped on a windowsill.",
+        src: "/work/memor/m-13.png",
+        alt: "A grid of Memor's screens and assets: the main menu, notifications, event recommendations, the calendar with notes, and the tone-of-voice picker.",
         width: 1200,
-        height: 800,
-        caption: "Physical calendars trade flexibility for visibility: the tension Memor set out to resolve.",
+        height: 675,
+        caption: "A collection of screens and assets from the final version.",
       },
       {
-        src: "/work/memor/m-08.png",
-        alt: "A blue organic blob sitting inside a twelve-point clock face.",
-        width: 974,
-        height: 975,
-        caption: "Turning a static, geometric layout into a fluid organic shape, kept familiar by the clock face.",
-      },
-      {
-        src: "/work/memor/m-01.png",
-        alt: "Memor's main screen: the fluid clock-calendar with a blunt message and a main menu.",
-        width: 540,
-        height: 1200,
-        caption: "The main screen, events as circles around the hours, with a characteristically blunt nudge.",
-      },
-      {
-        src: "/work/memor/m-05.png",
-        alt: "Two Memor notifications written in a brutally honest tone telling the user to go for a walk.",
-        width: 794,
-        height: 510,
-        caption: "The Brutally Honest voice in action, motivation that reads like a friend keeping you in check.",
-      },
-      {
-        src: "/work/memor/m-11.png",
-        alt: "A radial weekly calendar built by stacking each day's organic shape.",
-        width: 1200,
-        height: 1200,
-        caption: "The weekly view, stacking daily shapes made weekly trends visible at a glance.",
-      },
-      {
-        src: "/work/memor/m-10.png",
-        alt: "Over-the-shoulder photo of a participant using the Memor prototype on a phone.",
-        width: 800,
-        height: 1200,
-        caption: "User testing the prototype flow.",
+        kind: "youtube",
+        id: "xL4u8T9JiBE",
+        title: "Memor project video",
+        caption: "The project video, walking through the concept end to end.",
       },
     ],
   },
@@ -1372,7 +1496,9 @@ export function getCaseStudySections(project: Project): CaseStudySection[] {
     sections.push({ id: decisionId(index), label: decision.heading });
   });
 
-  if (project.shipped) sections.push({ id: "shipped", label: "Shipped" });
+  if (project.shipped) {
+    sections.push({ id: "shipped", label: project.shippedLabel ?? "Shipped" });
+  }
   if (project.outcome) sections.push({ id: "impact", label: "Impact" });
   if (project.reflection) {
     sections.push({ id: "reflection", label: "Reflection" });

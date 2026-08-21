@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import { type ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /*
@@ -15,6 +16,8 @@ interface ProjectCardProps {
   summary: string;
   media: ReactNode;
   className?: string;
+  /** Short skill/theme labels, shown as pills at the foot of the card. */
+  topics?: string[];
 }
 
 export function ProjectCard({
@@ -23,6 +26,7 @@ export function ProjectCard({
   summary,
   media,
   className,
+  topics,
 }: ProjectCardProps) {
   return (
     <motion.div
@@ -59,6 +63,17 @@ export function ProjectCard({
             <p className="line-clamp-2 text-sm text-foreground">
               {summary}
             </p>
+            {/* `mt-auto` pins topics to the card's foot regardless of how
+                many lines the summary above takes up. */}
+            {topics && topics.length > 0 && (
+              <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+                {topics.map((topic) => (
+                  <Badge key={topic} variant="outline" className="text-brand-weak">
+                    {topic}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         </Link>
       </div>

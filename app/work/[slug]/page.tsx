@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
@@ -53,11 +52,11 @@ function Section({
     >
       <h2
         id={`${id}-heading`}
-        className="text-[1.05rem] font-bold tracking-wide text-brand-weak uppercase"
+        className="text-xl font-bold tracking-wide text-brand-weak"
       >
         {heading}
       </h2>
-      <div className="mt-3 flex flex-col gap-4 text-foreground">
+      <div className="mt-5 flex flex-col gap-4 text-foreground">
         {children}
       </div>
     </section>
@@ -145,24 +144,21 @@ export default async function ProjectPage({
               </Section>
             )}
 
-            {/* Cover sits under the snapshot rather than above it. */}
-            <div className="overflow-hidden rounded-xl border border-border bg-background-alt">
-              {project.cover ? (
-                <Image
-                  src={project.cover.src}
-                  alt={project.cover.alt}
-                  width={project.cover.width}
-                  height={project.cover.height}
-                  sizes="(max-width: 768px) 100vw, 784px"
-                  className="h-auto w-full"
-                  priority
-                />
-              ) : (
-                <div className="aspect-video [&>svg]:h-full [&>svg]:w-full">
-                  <Art />
-                </div>
-              )}
-            </div>
+            {/*
+              Cover sits under the snapshot rather than above it, rendered
+              through ProjectFigure so it gets the same click-to-zoom
+              lightbox as every other image in the case study, rather than
+              being the one exception. `priority` skips lazy-loading: this
+              is the first real image on the page, so it's almost always
+              the LCP element.
+            */}
+            {project.cover ? (
+              <ProjectFigure media={project.cover} priority />
+            ) : (
+              <div className="aspect-video overflow-hidden rounded-lg border border-border bg-background-alt [&>svg]:h-full [&>svg]:w-full">
+                <Art />
+              </div>
+            )}
 
             {project.problem && (
               <Section id="problem" heading="Problem">

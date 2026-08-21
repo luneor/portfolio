@@ -36,6 +36,7 @@ export function EarlierProjects() {
                 slug={project.slug}
                 title={project.title}
                 summary={project.summary}
+                topics={project.topics}
                 media={<ProjectThumb project={project} />}
               />
             );

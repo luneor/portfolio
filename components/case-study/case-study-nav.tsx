@@ -201,12 +201,15 @@ function useRailClearOfFooter(ref: React.RefObject<HTMLDivElement | null>) {
  */
 function BackLink() {
   return (
-    <Link
-      href="/work"
-      className="w-fit text-sm text-foreground-muted underline decoration-brand-strong underline-offset-4 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
-    >
-      ← Back to work
-    </Link>
+    <Button
+      variant="outline"
+      size="sm"
+      nativeButton={false}
+      // Same border treatment as the "Get in touch" button below, so the
+      // rail's two buttons read as a matching pair.
+      className="w-fit justify-start border border-border bg-background text-foreground hover:bg-accent"
+      render={<Link href="/work">← Back to work</Link>}
+    />
   );
 }
 

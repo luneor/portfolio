@@ -46,7 +46,16 @@ function useLightboxEnabled() {
   Escape closes, the backdrop closes, focus moves in and returns to the trigger,
   and the page behind it cannot scroll.
 */
-export function ProjectFigure({ media }: { media: ProjectMedia }) {
+export function ProjectFigure({
+  media,
+  priority,
+}: {
+  media: ProjectMedia;
+  /** For the one figure above the fold, the Snapshot cover: skips lazy
+   * loading so it doesn't delay LCP. Never needed by a gallery figure
+   * further down the page. */
+  priority?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const lightboxEnabled = useLightboxEnabled();
@@ -124,6 +133,7 @@ export function ProjectFigure({ media }: { media: ProjectMedia }) {
       height={media.height}
       sizes={`(max-width: 768px) 100vw, ${media.width}px`}
       className="h-auto w-full"
+      priority={priority}
     />
   );
 

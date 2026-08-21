@@ -19,9 +19,10 @@ export function GenioAdmin() {
             </strong>{" "}
             academic institutions use to manage their access to Genio Notes,
             our flagship product for students, giving university staff real
-            control over how those students are supported. I&apos;m pushing
-            it past a purely utilitarian feel, for everyone from internal
-            support staff to organisation admins.
+            control over how those students are supported. As design lead
+            within the squad, working closely with a Product Manager, Tech
+            Lead, and Product Marketing Manager, I own UX for the platform
+            end to end.
           </p>
         </SectionHeading>
 
@@ -33,6 +34,7 @@ export function GenioAdmin() {
                 slug={project.slug}
                 title={project.title}
                 summary={project.summary}
+                topics={project.topics}
                 media={<ProjectThumb project={project} />}
               />
             );

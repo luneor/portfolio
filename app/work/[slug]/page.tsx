@@ -185,7 +185,10 @@ export default async function ProjectPage({
                 {decision.media && decision.media.length > 0 && (
                   <div className="mt-4 flex flex-col gap-10">
                     {decision.media.map((media) => (
-                      <ProjectFigure key={media.src} media={media} />
+                      <ProjectFigure
+                        key={media.kind === "youtube" ? media.id : media.src}
+                        media={media}
+                      />
                     ))}
                   </div>
                 )}
@@ -193,12 +196,15 @@ export default async function ProjectPage({
             ))}
 
             {project.shipped && (
-              <Section id="shipped" heading="Shipped">
+              <Section id="shipped" heading={project.shippedLabel ?? "Shipped"}>
                 <Prose>{project.shipped}</Prose>
                 {project.gallery && project.gallery.length > 0 && (
                   <div className="mt-4 flex flex-col gap-10">
                     {project.gallery.map((media) => (
-                      <ProjectFigure key={media.src} media={media} />
+                      <ProjectFigure
+                        key={media.kind === "youtube" ? media.id : media.src}
+                        media={media}
+                      />
                     ))}
                   </div>
                 )}
@@ -221,7 +227,10 @@ export default async function ProjectPage({
             {!project.shipped && project.gallery && project.gallery.length > 0 && (
               <div className="flex flex-col gap-10">
                 {project.gallery.map((media) => (
-                  <ProjectFigure key={media.src} media={media} />
+                  <ProjectFigure
+                    key={media.kind === "youtube" ? media.id : media.src}
+                    media={media}
+                  />
                 ))}
               </div>
             )}

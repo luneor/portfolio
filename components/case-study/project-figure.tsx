@@ -103,10 +103,13 @@ export function ProjectFigure({
       <figure className="flex flex-col gap-3">
         <div className="overflow-hidden rounded-lg border border-border bg-background-alt">
           {/*
-            Never autoplayed: nothing moves until the reader presses play, so
-            the page stays calm and reduced-motion needs no special case. These
-            recordings are silent, so `description` is the accessible name and
-            there's no audio to caption.
+            Recorded walkthroughs default to never autoplaying: nothing moves
+            until the reader presses play, so the page stays calm and
+            reduced-motion needs no special case. `loop` opts a short silent
+            clip into GIF-style behaviour instead (autoplay, muted, looping),
+            for a clip that IS the content rather than a recording of a flow.
+            Either way these are silent, so `description` is the accessible
+            name and there's no audio to caption.
           */}
           <video
             src={media.src}
@@ -115,9 +118,32 @@ export function ProjectFigure({
             height={media.height}
             controls
             playsInline
+            autoPlay={media.loop}
+            muted={media.loop}
+            loop={media.loop}
             preload="metadata"
             aria-label={media.description}
             className="h-auto w-full"
+          />
+        </div>
+        {caption}
+      </figure>
+    );
+  }
+
+  if (media.kind === "youtube") {
+    return (
+      <figure className="flex flex-col gap-3">
+        {/* youtube-nocookie.com: no tracking cookie until the reader actually
+            presses play, and no `autoplay=1` param, so nothing moves on its own. */}
+        <div className="aspect-video overflow-hidden rounded-lg border border-border bg-background-alt">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${media.id}`}
+            title={media.title}
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+            className="h-full w-full"
           />
         </div>
         {caption}

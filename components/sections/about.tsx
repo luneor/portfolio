@@ -21,22 +21,21 @@ export function About() {
             Hi, I&apos;m Hanru.
           </h2>
           <p className="mb-4 text-foreground">
-            I ask why more than I ask how. Before a feature, a workflow, or a
-            piece of AI-generated output gets signed off, I want to know why
-            we&apos;re doing it this way, and whether that reasoning
-            actually holds up. That same instinct shapes how I use AI: I
-            lean into it for the speed it offers, but I stay wary of what
-            speed quietly skips, authentic collaboration between people, and
-            decisions that hold up because they&apos;ve been checked, not
-            just assumed.
-          </p>
-          <p className="mb-4 text-foreground">
             I&apos;m 26, based in Scotland, and I&apos;ve been a UX Designer
             at Genio since June 2025, designing admin tools that give
             educators real control over how they support students.
           </p>
+          <p className="mb-4 text-foreground">
+            I&apos;ve always been interested in art and visuals growing up,
+            which took me from an art college course to developing an
+            interest in UX design, and eventually a career in it. I&apos;m
+            keen to keep developing my skillset, think creatively, and push
+            for collaboration.
+          </p>
           <p className="text-foreground">
-            Outside of work: graphic design, video games, and field hockey.
+            Outside of work, I&apos;ve been playing field hockey my whole
+            life, and recently ran my first half marathon. I&apos;m also a
+            keen gamer, my usual way to unwind.
           </p>
         </div>
       </div>

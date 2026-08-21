@@ -91,14 +91,16 @@ export function SpotlightCard({ className, children }: SpotlightCardProps) {
       )}
     >
       {/* Red shine: invisible at rest, brought in on hover only, see the
-          file header for why. */}
+          file header for why. An inset glow hugging all four edges rather
+          than a single radial spot in one corner, and dialled down so it
+          reads as a subtle lift rather than a coloured wash. */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 rounded-xl"
         style={{
           opacity: glowOpacity,
-          background:
-            "radial-gradient(ellipse at 20% 15%, color-mix(in srgb, var(--brand-strong) 18%, transparent), transparent 65%)",
+          boxShadow:
+            "inset 0 0 48px color-mix(in srgb, var(--brand-strong) 10%, transparent)",
         }}
       />
 

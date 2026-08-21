@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MorphicNavbar } from "@/components/kokonutui/morphic-navbar";
 import { MobileNav } from "@/components/mobile-nav";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { HEADER_NAV, SITE_NAV, activeNavKey } from "@/lib/nav";
 
 /*
@@ -17,24 +16,44 @@ import { HEADER_NAV, SITE_NAV, activeNavKey } from "@/lib/nav";
   in a row don't fit and stacking them into a column would leave a sticky header
   tall enough to swallow the viewport.
 
-  No coral accent on Work here. That highlight is the homepage's call to action;
-  in the header the nav is just navigation.
-
-  The whole thing is omitted on the homepage, where the hero's full-size pill is
-  the main event and a second copy up here would just be a duplicate.
+  The nav is omitted on the homepage, where the hero's full-size pill is the
+  main event and a second copy up here would just be a duplicate. The logo and
+  the hamburger stay.
 */
 export function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
   /*
-    Solid fill, not a translucent one: as a sticky bar it sits over the article
-    the whole way down, and at 92% opacity content stayed faintly visible sliding
-    underneath it. `backdrop-blur` goes with it, since there's nothing left to
-    see through.
+    Two different bars.
+
+    Everywhere else: sticky, with a solid fill and a bottom rule. Solid, not
+    translucent, because as a sticky bar it sits over the article the whole way
+    down, and at 92% opacity content stayed faintly visible sliding underneath.
+
+    On the homepage: no fill and no rule, so the hero's gradient field runs all
+    the way up behind the logo instead of stopping at a hard line under it. It
+    also switches from `sticky` to `fixed`, which is the part that actually lets
+    that happen: a sticky bar still occupies its row in the flow, so the hero
+    would begin below it and there would be nothing behind the header to see.
+    Taken out of flow, the hero starts at the top of the viewport and the field
+    fills the whole thing.
+
+    Except below `sm`, where the fill comes back. The bare version only works
+    while there's hero behind it; on a phone the page is short enough that you
+    scroll past the hero almost immediately, and from then on the logo and the
+    hamburger are sitting on whatever text happens to be passing underneath.
+    The homepage also has nothing else up here to hide behind, since its nav
+    lives in the hero.
   */
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background">
+    <header
+      className={
+        isHome
+          ? "fixed inset-x-0 top-0 z-50 max-sm:border-b max-sm:border-border max-sm:bg-background"
+          : "sticky top-0 z-50 border-b border-border bg-background"
+      }
+    >
       <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-6 py-4">
         {/*
           Two SVGs, driven by the `.dark` class already on <html>, so the swap
@@ -80,7 +99,12 @@ export function SiteHeader() {
         )}
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          {/*
+            The theme toggle is parked, not deleted: the site is dark-only for
+            now (see `forcedTheme` in app/layout.tsx). ThemeToggle and the whole
+            light palette are still in the tree, so putting it back is this line
+            plus dropping `forcedTheme`.
+          */}
           {/*
             The hamburger is on every page, the homepage included: below `sm`
             the hero shows CTAs instead of the nav pill, so this is the only way

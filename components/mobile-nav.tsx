@@ -65,7 +65,14 @@ export function MobileNav({
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? "Close menu" : "Open menu"}
-        className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-brand-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+        /*
+          No hover state. This whole component is `sm:hidden`, so it only ever
+          exists on touch, where hover isn't a state anyone enters deliberately:
+          a tap latches it and it stays latched until something else is
+          touched, which reads as the control being stuck. `focus-visible`
+          stays, since that's what a keyboard actually needs.
+        */
+        className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
       >
         {open ? (
           <X aria-hidden="true" className="size-4" />
@@ -97,7 +104,9 @@ export function MobileNav({
                     className={clsx(
                       // The current page is marked by weight and a rule, never
                       // by colour alone.
-                      "block border-l-2 py-2.5 pl-3 text-base transition-colors hover:text-brand-weak focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+                      // No hover state here either, for the reason on the
+                      // button above.
+                      "block border-l-2 py-2.5 pl-3 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
                       isCurrent
                         ? "border-brand-strong font-bold text-foreground"
                         : "border-transparent font-normal text-foreground"

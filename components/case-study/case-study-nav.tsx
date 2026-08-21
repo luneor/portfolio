@@ -213,8 +213,9 @@ function BackLink() {
       variant="outline"
       size="sm"
       nativeButton={false}
-      // Same border treatment as the "Get in touch" button below, so the
-      // rail's two buttons read as a matching pair.
+      // A plain border, not the brand gradient ring. The rail already carries
+      // the gradient on the contents list beside it, and putting it on the
+      // buttons too made a narrow column of small elements all compete.
       className="w-fit justify-start border border-border bg-background text-foreground hover:bg-accent"
       render={<Link href="/work">← Back to work</Link>}
     />
@@ -235,8 +236,8 @@ export function CaseStudyContact({ className }: { className?: string }) {
       variant="outline"
       size="sm"
       nativeButton={false}
-      // Filled with the page background, matching the hero's secondary action:
-      // an outline button with no fill reads as a ghost.
+      // Matches the back-link above: plain border, page-background fill (an
+      // outline button with no fill reads as a ghost).
       className={cn(
         "w-full shrink-0 border border-border bg-background text-foreground hover:bg-accent",
         className
@@ -275,10 +276,18 @@ function NavList({
                 aria-current={isActive ? "location" : undefined}
                 className={cn(
                   "block border-l-2 py-1.5 pl-3 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none",
-                  // Active state is carried by weight + underline + border,
-                  // never by colour alone.
+                  // Active state is carried by weight + border + colour, never
+                  // by colour alone: the label goes mint AND bold AND gains a
+                  // lit left edge, so the current section is still obvious
+                  // without relying on hue being perceived.
+                  //
+                  // Mint, not the brand gradient the buttons and the header nav
+                  // use: this rail is a dense column of small text, and a
+                  // five-colour gradient repeated down every hairline was
+                  // louder than the content beside it. One flat accent marks
+                  // the position without competing.
                   isActive
-                    ? "border-brand-strong font-bold text-foreground underline decoration-brand-strong underline-offset-4"
+                    ? "border-brand-weak font-bold text-brand-weak"
                     : "border-border font-normal text-foreground-muted hover:border-foreground-muted hover:text-foreground"
                 )}
               >

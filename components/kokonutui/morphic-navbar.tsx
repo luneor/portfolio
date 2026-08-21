@@ -44,11 +44,11 @@ interface MorphicNavbarProps {
   /** The current page, if it's in the list. Drives the resting highlight. */
   activeKey?: string;
   /**
-   * Which item, if any, takes the coral fill. This is a per-surface decision
-   * rather than a property of the nav data: the homepage uses it to point at
-   * Work as its call to action, and nowhere else wants that emphasis.
+   * Casts a shadow under the whole block, for a nav sitting on something busy
+   * enough that a flat block reads as painted onto it, which in practice means
+   * the hero's gradient field. See `.morph-raised`.
    */
-  accentKey?: string;
+  onField?: boolean;
   /**
    * `lg` is the hero's centred pill. `sm` is the compact version for the site
    * header, scaled to sit level with the logo and the theme toggle.
@@ -97,23 +97,33 @@ function shapeFor(
   index: number,
   highlight: number,
   count: number,
-  isCurrent: boolean
+  gradientRing: boolean
 ) {
   const startExposed =
     index === 0 || index === highlight || index === highlight + 1;
   const endExposed =
     index === count - 1 || index === highlight || index === highlight - 1;
 
+  /*
+    The gradient ring is a real ring drawn round the whole pill, so the inset
+    shadows have to get out of its way entirely, or the item carries two
+    outlines at once.
+
+    Written out as whole literal class names rather than interpolated: Tailwind
+    finds classes by scanning source text, so a name assembled at runtime
+    (`[--ring-start:${x}]`) never appears in the build and the property is
+    simply never emitted.
+  */
   return clsx(
     "morph-ring",
     startExposed
-      ? isCurrent
-        ? "rounded-l-2xl [--ring-start:var(--brand-strong)]"
+      ? gradientRing
+        ? "rounded-l-2xl [--ring-start:transparent]"
         : "rounded-l-2xl [--ring-start:var(--border)]"
       : "[--ring-start:transparent]",
     endExposed
-      ? isCurrent
-        ? "rounded-r-2xl [--ring-end:var(--brand-strong)]"
+      ? gradientRing
+        ? "rounded-r-2xl [--ring-end:transparent]"
         : "rounded-r-2xl [--ring-end:var(--border)]"
       : "[--ring-end:transparent]",
     // The margin is what physically opens the gap.
@@ -124,7 +134,7 @@ function shapeFor(
 export function MorphicNavbar({
   items,
   activeKey,
-  accentKey,
+  onField = false,
   size = "lg",
   className,
 }: MorphicNavbarProps) {
@@ -143,13 +153,33 @@ export function MorphicNavbar({
       <div
         ref={trackRef}
         onMouseLeave={() => setHovered(null)}
-        className="flex items-center"
+        className={clsx("flex items-center", onField && "morph-raised")}
       >
-        {items.map((item, index) => (
+        {items.map((item, index) => {
+          const isCurrent = item.key === activeKey;
+          /*
+            The gradient ring goes on the highlighted item, which is the one
+            that has just detached from the block: hover if there is one, the
+            current page otherwise.
+
+            Not on the hero, though. There the block already sits on the
+            gradient field, and a gradient hairline on top of it was two
+            statements of the same idea competing an inch apart; the field
+            behind carries it, and the plain hairline is enough to draw the
+            detached item. So the ring is the header's way of marking the
+            highlight, and the field is the hero's.
+
+            Either way the current page gets no colour of its own: at rest it's
+            the highlighted item, which is the "you are here" signal, and
+            `aria-current` carries it regardless.
+          */
+          const gradientRing = index === highlight && !onField;
+
+          return (
           <Link
             key={item.key}
             href={item.href}
-            aria-current={item.key === activeKey ? "page" : undefined}
+            aria-current={isCurrent ? "page" : undefined}
             onMouseEnter={() => setHovered(index)}
             onFocus={() => setHovered(index)}
             onBlur={(event) => {
@@ -173,8 +203,8 @@ export function MorphicNavbar({
                 shape as it morphs.
               */
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-              item.key === activeKey
-                ? "[--ring-long:var(--brand-strong)]"
+              gradientRing
+                ? "[--ring-long:transparent]"
                 : "[--ring-long:var(--border)]",
               SIZES[size],
               /*
@@ -189,10 +219,14 @@ export function MorphicNavbar({
                 themes. Coral as *text* measured ~4.1-4.3, under the 4.5 needed
                 at this size.
               */
-              item.key === accentKey
-                ? "bg-primary text-primary-foreground"
-                : "bg-card text-card-foreground",
-              shapeFor(index, highlight, items.length, item.key === activeKey)
+              "bg-card text-card-foreground",
+              /*
+                `--brand-ring-fill` has to be restated as the card colour:
+                .brand-ring otherwise paints its own fill in the page ground,
+                which is a step darker than the block around it.
+              */
+              gradientRing && "brand-ring [--brand-ring-fill:var(--card)]",
+              shapeFor(index, highlight, items.length, gradientRing)
             )}
           >
             {/*
@@ -216,7 +250,8 @@ export function MorphicNavbar({
               </span>
             </span>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </nav>
   );

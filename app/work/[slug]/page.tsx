@@ -52,7 +52,7 @@ function Section({
     >
       <h2
         id={`${id}-heading`}
-        className="text-xl font-bold tracking-wide text-brand-weak"
+        className="text-xl font-bold tracking-wide text-foreground"
       >
         {heading}
       </h2>

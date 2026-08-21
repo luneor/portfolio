@@ -58,18 +58,25 @@ export default function RootLayout({
           Skip to main content
         </a>
         {/*
-          Dark is the default look, but light is a real theme now, no
-          forcedTheme. `disableTransitionOnChange` is deliberately NOT set: the
-          toggle drives the 500ms cross-fade defined in globals.css.
+          Dark only, for now. `forcedTheme` pins every visitor to it regardless
+          of what's in localStorage, so anyone who picked light earlier isn't
+          stranded on a half-tuned palette while the new brand gradient work
+          settles.
 
-          `enableSystem` is explicitly off: the toggle only ever picks "light"
-          or "dark", "system" isn't a state a visitor can reach, so there's no
-          reason for next-themes to watch `prefers-color-scheme` or treat it
-          as a possible resolved value. A first-time visitor always lands on
-          `defaultTheme` below; only an explicit toggle click ever moves them
-          off it, and that choice then persists via localStorage as normal.
+          Parked rather than removed: the light tokens, the 500ms cross-fade,
+          and ThemeToggle itself are all still in the tree. Bringing the toggle
+          back is dropping this one prop and un-commenting it in
+          components/site-header.tsx.
+
+          `enableSystem` stays off for the same reason it always was: "system"
+          isn't a state a visitor can reach here.
         */}
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          forcedTheme="dark"
+          enableSystem={false}
+        >
           <MotionConfig reducedMotion="user">
             <SiteHeader />
             {children}

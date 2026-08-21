@@ -128,8 +128,46 @@
   --sidebar-border: #d8d3c4;
   --sidebar-ring: #0f6b57;
 
-  /* Deep teal on cream needs a lighter touch than mint on near-black. */
-  --hero-glow-strength: 16%;
+  /*
+    The brand gradient: the five colours of the reference artwork, in order
+    around the wheel. These are the site's OWN palette (coral, yellow, teal,
+    mint, cream) rather than five new hexes, because the reference swatches
+    turned out to be that palette already, give or take a couple of points of
+    saturation.
+
+    Deliberately NOT re-declared under `.dark`, unlike every accent above.
+    The accents flip between papers so they stay legible as text and
+    hairlines; this gradient is one fixed identity, closer to a logo, and
+    swapping half its stops per theme would make it read as two different
+    marks. Contrast is not at stake either way: it only ever paints a 1px
+    ring and an out-of-focus glow, never text.
+  */
+  --brand-grad-1: #ed2a03;
+  --brand-grad-2: #fae419;
+  --brand-grad-3: #24a182;
+  --brand-grad-4: #44ccbe;
+  --brand-grad-5: #f5f3ec;
+
+  /*
+    The ring's stop list, held as one value so the hairline and its glow can't
+    drift apart: they are different elements and would otherwise each carry
+    their own copy.
+
+    Four of the five, not all of them. Cream is left out: against the dark fills
+    these rings sit on it reads as a plain white segment rather than as part of
+    the sweep, and it broke the run of colour. It stays defined above because
+    the hero shader still mixes it into the middle of the field, where it lands
+    as a highlight rather than a gap.
+
+    Closes on its start colour so the rotation has no seam to carry round.
+  */
+  --brand-grad-stops:
+    var(--brand-grad-1) 0%,
+    var(--brand-grad-2) 27%,
+    var(--brand-grad-3) 54%,
+    var(--brand-grad-4) 78%,
+    var(--brand-grad-1) 100%;
+
 }
 
 .dark {
@@ -172,8 +210,6 @@
   --sidebar-accent-foreground: #f5f3ec;
   --sidebar-border: #2a2a2a;
   --sidebar-ring: #44ccbe;
-
-  --hero-glow-strength: 30%;
 }
 
 /*
@@ -217,6 +253,32 @@
     inset -1px 0 0 0 var(--ring-end);
 }
 
+
+/*
+  Lifts the whole nav block off whatever is behind it. Only the hero asks for
+  this: it sits on the gradient field, where a flat block reads as painted onto
+  the colour, while the site header sits on a solid bar and needs nothing.
+
+  `filter: drop-shadow` on the TRACK, deliberately, rather than a box-shadow on
+  each item. Two reasons:
+
+  - It follows the rendered silhouette, so it picks up the rounded and square
+    corners exactly as `shapeFor` morphs them, and the gap that opens when an
+    item detaches gets its own edges shadowed. A box-shadow would need the
+    radius restated, and would go wrong the moment the two disagreed.
+  - Per-item shadows would fall on each other. Fused neighbours are flush, so
+    each item's shadow would land on the one beside it, and since siblings
+    paint in order the later one would draw a dark seam down the join, which is
+    the exact division the fused block exists to avoid.
+
+  Two stacked shadows: a tight one for the edge and a wide soft one for the
+  lift, which reads as depth rather than as a dark outline.
+*/
+.morph-raised {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.34))
+    drop-shadow(0 8px 18px rgb(0 0 0 / 0.42));
+}
+
 /*
   Case-study sidebar rail. Pinned to the viewport so the table of contents
   holds the same top-left spot for the entire page: a sticky rail drifts
@@ -244,13 +306,10 @@
 }
 
 /*
-  Hero / landing surface. Just the page ground plus the cool accent, two soft
-  blobs that drift slowly behind the content, so the gradient is alive rather
-  than a static wash. The colour is `--brand-weak`, so it follows the theme
-  rule for free: mint on near-black, teal on cream. No second hue.
-
-  Motion is transform-only (cheap to composite) and the blobs sit under the
-  content, which keeps body text on flat colour.
+  Hero / landing surface: the page ground behind a field of drifting coloured
+  orbs, in the five brand gradient colours. Positions, motion and pointer
+  response all live in components/hero-glow.tsx, which owns each orb's
+  `transform`; everything here is the paint.
 */
 .hero-surface {
   background: var(--background);
@@ -269,60 +328,184 @@
     Fading it out well before that edge means it's already back to flat
     colour by the time the section ends, so there's nothing left to clip.
   */
-  mask-image: linear-gradient(to bottom, black 40%, transparent 92%);
-  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 92%);
+  /*
+    Fades out well before the section ends, so the field is already back to
+    flat colour by the boundary and there's nothing left for `overflow: hidden`
+    to clip: without it the tint cuts off on a hard line rather than settling
+    into Contact.
+
+    Held off until 62% rather than 40%, which is what the first version used.
+    A mask that starts eating the field a third of the way down also eats most
+    of the pointer response, and the bottom half of the hero read as the effect
+    having stopped working rather than as the glow moving.
+  */
+  mask-image: linear-gradient(to bottom, black 62%, transparent 99%);
+  -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 99%);
 }
 
-.hero-blob {
+/*
+  One orb. Round, heavily blurred, and painted as a radial gradient rather than
+  a flat fill so the falloff is smooth all the way out instead of an ellipse
+  edge that only blur is hiding. Colour and strength arrive per element.
+*/
+.hero-orb {
   position: absolute;
   display: block;
+  aspect-ratio: 1;
   border-radius: 50%;
   /*
-    Strength lives in the colour, not `opacity`, so the theme switch fades it
-    as a background-color rather than snapping a non-transitioned property.
+    Individual `translate`, NOT part of `transform`: it centres the orb on its
+    home point and stays clear of the `transform` the script writes every
+    frame, which the browser then composes on top of it.
   */
-  background: color-mix(in srgb, var(--brand-weak) var(--hero-glow-strength), transparent);
-  filter: blur(90px);
+  translate: -50% -50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--orb-colour) var(--orb-strength), transparent),
+    transparent
+  );
   will-change: transform;
 }
 
-.hero-blob--a {
-  width: 62%;
-  height: 72%;
-  top: -22%;
-  left: -12%;
-  animation: hero-drift-a 26s ease-in-out infinite alternate;
+/*
+  The WebGL field itself. Grain is generated inside the shader rather than
+  layered over the top here: a CSS grain overlay can only composite onto what's
+  underneath, which lifts a black ground to grey, while the shader adds signed
+  noise per pixel and the negative half simply clamps off against black.
+*/
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.hero-blob--b {
-  width: 56%;
-  height: 66%;
-  right: -14%;
-  bottom: -26%;
-  animation: hero-drift-b 34s ease-in-out infinite alternate;
+/*
+  Vignette, sitting over the field in the page's own background colour.
+
+  The reference does the same thing, with black gradient panels pinned top and
+  bottom of its canvas, and it's doing real work: a shader tuned bright enough
+  to be interesting in the middle will always reach the edges somewhere as the
+  warp moves, and without this the colour would meet the header and the next
+  section on a hard line. Painting the frame back to `--background` means the
+  hero always resolves into the page no matter what the field is doing that
+  second, and it keeps a dark band behind the headline.
+*/
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  background:
+    /*
+      Note this never reaches fully transparent, even dead centre. The field is
+      bright enough in places to put the headline on yellow, and white on
+      yellow is nowhere near readable; a flat scrim across the whole thing
+      costs a little vividness and buys back the contrast everywhere at once,
+      which beats trying to keep the colour away from the text as it moves.
+    */
+    radial-gradient(
+      ellipse 78% 62% at 50% 45%,
+      color-mix(in srgb, var(--background) 46%, transparent) 0%,
+      color-mix(in srgb, var(--background) 50%, transparent) 45%,
+      color-mix(in srgb, var(--background) 82%, transparent) 78%,
+      var(--background) 100%
+    ),
+    /*
+      The top band is held at full background for a stretch before it starts
+      fading, rather than easing straight off from 0%. The header sits over this
+      page with no fill of its own, so that stretch is what keeps colour from
+      running right up to the top edge and behind the logo: it reads as the page
+      beginning in black and the field arriving underneath, instead of the
+      gradient being cropped by the top of the window.
+    */
+    linear-gradient(
+      to bottom,
+      var(--background) 0%,
+      var(--background) 7%,
+      transparent 30%,
+      transparent 72%,
+      var(--background) 100%
+    );
 }
 
-@keyframes hero-drift-a {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
+/*
+  Brand gradient ring, after the pill on resend.com: a hairline of the brand
+  gradient, dim at rest and brightening on hover.
+
+  Two things worth knowing about the construction:
+
+  - The ring is a masked pseudo-element, NOT `background-clip: border-box` with
+    a transparent border. The clip trick is shorter, but the button base class
+    already sets `bg-clip-padding`, and two rules writing background-clip don't
+    compose, so it would be a fight over which stylesheet ordering wins. A
+    mask-composite ring writes no property the button already uses.
+  - The rotation is a single animated `--angle` per element rather than a
+    moving background-position, so the gradient turns in place instead of
+    sliding, and the stop list closes on its start colour so there's no seam
+    seam passing through on each revolution.
+*/
+@keyframes brand-ring-spin {
   to {
-    transform: translate3d(9%, 7%, 0) scale(1.16);
+    --angle: 360deg;
   }
 }
 
-@keyframes hero-drift-b {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(-8%, -6%, 0) scale(1.1);
-  }
+.brand-ring {
+  position: relative;
+  /* The fill inside the ring. Overridable per surface; defaults to the page. */
+  background: var(--brand-ring-fill, var(--background));
+  border-color: transparent;
+  color: var(--foreground);
+}
+
+/* The hairline. */
+.brand-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(var(--angle), var(--brand-grad-stops));
+  animation: brand-ring-spin 18s linear infinite;
+  padding: 1px;
+  /*
+    Punches the middle out, leaving only the 1px pad painted.
+
+    Shorthands FIRST, then the composite longhands. `-webkit-mask` is an alias
+    for the same shorthand, so declaring it after `mask-composite` resets the
+    composite back to `add` — which unions the two layers into a solid block
+    and paints the whole button as a gradient slab instead of a hairline.
+  */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.55;
+  transition: opacity 300ms ease-out;
+}
+
+/*
+  Hover and focus are carried by the hairline alone: it comes up to full
+  strength and that's the whole state change. There was a blurred copy of the
+  gradient blooming out from behind the pill as well, which is what the
+  reference does, but next to the hero's own field it was one glow too many.
+*/
+.brand-ring:hover::before,
+.brand-ring:focus-visible::before {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-blob {
+  .brand-ring::before {
+    /* Held at a fixed diagonal, so the full spread of colours still shows. */
     animation: none;
+    --angle: 120deg;
   }
 }
 
@@ -569,11 +752,15 @@
   initial-value: #0f6b57;
 }
 
-/* Not a colour, but it changes with the theme, so it eases too. */
-@property --hero-glow-strength {
-  syntax: "<percentage>";
-  inherits: true;
-  initial-value: 16%;
+/*
+  Drives the brand gradient's rotation. `inherits: false` matters: the ring and
+  its glow are separate elements that each animate their own copy, and an
+  inheriting angle would also leak into anything nested inside a ringed button.
+*/
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
 /*
@@ -620,8 +807,7 @@ html.theme-transition {
     --sidebar-accent 300ms ease-in-out,
     --sidebar-accent-foreground 300ms ease-in-out,
     --sidebar-border 300ms ease-in-out,
-    --sidebar-ring 300ms ease-in-out,
-    --hero-glow-strength 300ms ease-in-out;
+    --sidebar-ring 300ms ease-in-out;
 }
 
 /*

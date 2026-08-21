@@ -10,12 +10,13 @@
  * `SpotlightCard`, so it can drop into a section that already has its own
  * heading and grid (see `components/sections/ai.tsx`), and toned down to suit
  * a quieter site:
- *  - Two colours, not six: brand-weak (the site's cool accent, teal on cream,
- *    mint on near-black) on the border at rest, swapping to brand-strong red
- *    on hover, which also brings in the radial glow. The glow is hover-only:
- *    having it at rest too made the hover state read as barely different, so
- *    it's held in reserve as the one thing that shows up when a card actually
- *    gets attention, instead of just swapping which colour is already there.
+ *  - Mint at rest, the site's brand gradient hairline on hover (`.brand-ring`
+ *    plus `.brand-ring-card` in globals.css). Three of these sit side by side
+ *    and are meant to be read as prose, so carrying the full gradient at rest
+ *    read as decoration competing with the text inside them; held back for
+ *    hover it's the thing that shows up when a card actually gets attention.
+ *  - The inner glow is hover-only for the same reason: at rest as well, the
+ *    hover state read as barely different from the resting one.
  *  - Tilt kept, since it's what makes a flat card feel like it's under a
  *    spotlight, but shallower (4° vs the reference's 9°), and skipped
  *    entirely under prefers-reduced-motion.
@@ -85,22 +86,25 @@ export function SpotlightCard({ className, children }: SpotlightCardProps) {
       }}
       transition={{ duration: 0.18, ease: "easeOut" }}
       className={cn(
-        "relative overflow-hidden rounded-xl border border-brand-weak/50 bg-card p-5",
-        "transition-colors duration-300 hover:border-brand-strong",
+        // `brand-ring` supplies the gradient hairline (globals.css). The card
+        // sets its own fill through the variable that class paints from, so it
+        // keeps sitting a step off the page ground like every other card.
+        "brand-ring brand-ring-card overflow-hidden rounded-xl p-5 [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]",
         className
       )}
     >
-      {/* Red shine: invisible at rest, brought in on hover only, see the
-          file header for why. An inset glow hugging all four edges rather
-          than a single radial spot in one corner, and dialled down so it
-          reads as a subtle lift rather than a coloured wash. */}
+      {/* Inner glow: invisible at rest, brought in on hover only. An inset
+          glow hugging all four edges rather than a single radial spot in one
+          corner, and deliberately faint. There are three of these side by
+          side and they're meant to be read as prose, so the hover wants to
+          be felt more than seen. */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-xl"
         style={{
           opacity: glowOpacity,
           boxShadow:
-            "inset 0 0 48px color-mix(in srgb, var(--brand-strong) 10%, transparent)",
+            "inset 0 0 36px color-mix(in srgb, var(--brand-grad-4) 12%, transparent)",
         }}
       />
 

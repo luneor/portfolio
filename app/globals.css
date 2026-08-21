@@ -486,7 +486,13 @@
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.55;
+  /*
+    Overridable per surface. A single button can carry the gradient at full
+    strength and read as one accent; repeated across a row of cards the same
+    value reads as decoration competing with the text inside them, so those
+    turn it down.
+  */
+  opacity: var(--brand-ring-rest, 0.55);
   transition: opacity 300ms ease-out;
 }
 
@@ -499,6 +505,42 @@
 .brand-ring:hover::before,
 .brand-ring:focus-visible::before {
   opacity: 1;
+}
+
+/*
+  Card variant: mint at rest, the brand gradient only on hover.
+
+  A second ring stacked over the first and cross-faded against it, rather than
+  swapping the one ring's background from a colour to a gradient. Background
+  images don't interpolate between a flat colour and a gradient, so that would
+  snap on hover; two rings each animating their own opacity gives an actual
+  fade in both directions.
+
+  Paired with `--brand-ring-rest: 0` on the element, so the gradient underneath
+  is fully out of the way until this one lifts.
+*/
+.brand-ring-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background: color-mix(in srgb, var(--brand-weak) 55%, transparent);
+  transition: opacity 300ms ease-out;
+}
+
+.brand-ring-card:hover::after,
+.brand-ring-card:focus-visible::after {
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -54,7 +54,18 @@ export function SiteHeader() {
           : "sticky top-0 z-50 border-b border-border bg-background"
       }
     >
-      <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-6 py-4">
+      {/*
+        `min-h-16` keeps the row the height it has everywhere else even on the
+        homepage, which renders no nav pill. Without it the row is only as tall
+        as the logo there, and since everything is centred the logo sat 2px
+        higher on the homepage than on every other page, so it visibly hopped
+        on each navigation to or from it.
+
+        16 (64px), not 8: `box-sizing` is border-box, so a min-height of 32px
+        is already met by `py-4`'s padding alone and does nothing. The figure
+        has to be the whole row, padding included.
+      */}
+      <div className="mx-auto flex min-h-16 max-w-[1120px] items-center justify-between gap-4 px-6 py-4">
         {/*
           Two SVGs, driven by the `.dark` class already on <html>, so the swap
           needs no theme-detection JS and can't flash the wrong mark on first

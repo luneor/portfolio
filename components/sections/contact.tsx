@@ -6,15 +6,56 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-export function Contact() {
-  const [status, setStatus] = useState("");
+type Status =
+  | { state: "idle" }
+  | { state: "sending" }
+  | { state: "sent" }
+  | { state: "error"; message: string };
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+const GENERIC_ERROR = "Sorry, something went wrong sending that. Please email directly instead.";
+
+export function Contact() {
+  const [status, setStatus] = useState<Status>({ state: "idle" });
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus(
-      "This form isn't wired up to a backend yet, please reach out directly via email or LinkedIn below in the meantime."
-    );
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const payload = {
+      name: String(data.get("name") ?? ""),
+      email: String(data.get("email") ?? ""),
+      message: String(data.get("message") ?? ""),
+    };
+
+    setStatus({ state: "sending" });
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        setStatus({ state: "error", message: body?.error || GENERIC_ERROR });
+        return;
+      }
+
+      setStatus({ state: "sent" });
+      form.reset();
+    } catch {
+      setStatus({ state: "error", message: GENERIC_ERROR });
+    }
   }
+
+  const isSending = status.state === "sending";
+  const statusMessage =
+    status.state === "sent"
+      ? "Thanks, that's sent. I'll get back to you soon."
+      : status.state === "error"
+        ? status.message
+        : "";
 
   return (
     <section id="contact" aria-labelledby="contact-heading" className="py-24">
@@ -52,28 +93,43 @@ export function Contact() {
           </ul>
         </div>
         <div>
-          {/* Front-end only: this form has no backend wired up yet.
-              Connect a service such as Formspree, Basin, or Netlify Forms
-              before deploying, e.g. by setting the form action to your
-              Formspree endpoint and adding a name attribute per field. */}
           <form onSubmit={handleSubmit} noValidate className="grid gap-4">
             <div className="grid gap-1.5">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" autoComplete="name" required />
+              <Input id="name" name="name" autoComplete="name" required disabled={isSending} />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" autoComplete="email" required />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                disabled={isSending}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="message">Message</Label>
-              <Textarea id="message" name="message" required className="min-h-[130px]" />
+              <Textarea
+                id="message"
+                name="message"
+                required
+                disabled={isSending}
+                className="min-h-[130px]"
+              />
             </div>
-            <Button type="submit" className="w-fit px-6">
-              Send message
+            <Button type="submit" className="w-fit px-6" disabled={isSending}>
+              {isSending ? "Sending…" : "Send message"}
             </Button>
-            <p role="status" aria-live="polite" className="min-h-[1.2em] text-[0.9rem] text-brand-weak">
-              {status}
+            <p
+              role="status"
+              aria-live="polite"
+              className={`min-h-[1.2em] text-[0.9rem] ${
+                status.state === "error" ? "text-destructive" : "text-brand-weak"
+              }`}
+            >
+              {statusMessage}
             </p>
           </form>
         </div>

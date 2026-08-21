@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, DM_Sans, Space_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -75,6 +76,7 @@ export default function RootLayout({
             <SiteFooter />
           </MotionConfig>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

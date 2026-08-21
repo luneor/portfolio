@@ -2,6 +2,8 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { HeroGlow } from "@/components/hero-glow";
 import { MorphicNavbar } from "@/components/kokonutui/morphic-navbar";
 import { Button } from "@/components/ui/button";
 import { SITE_NAV } from "@/lib/nav";
@@ -28,19 +30,36 @@ const item = {
 };
 
 export function Hero() {
+  /*
+    Filled in by HeroGradient once its WebGL context is up, and left null if
+    that never happens (the CSS fallback has nothing to reshuffle), which is
+    what the button's `disabled` reads.
+  */
+  const randomizeRef = useRef<(() => void) | null>(null);
+  const [canRandomize, setCanRandomize] = useState(false);
+
+  useEffect(() => {
+    // The ref is populated inside a child effect, which runs before this one,
+    // so by now it either exists or never will.
+    setCanRandomize(randomizeRef.current !== null);
+  }, []);
+
   return (
     <section
       id="home"
       aria-labelledby="hero-heading"
       className="hero-surface relative overflow-hidden"
     >
-      {/* Drifting accent glow, decorative, so hidden from assistive tech. */}
-      <div aria-hidden="true" className="hero-glow">
-        <span className="hero-blob hero-blob--a" />
-        <span className="hero-blob hero-blob--b" />
-      </div>
+      {/* The gradient field. */}
+      <HeroGlow randomizeRef={randomizeRef} />
 
-      <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-[1120px] flex-col items-center justify-center px-6 py-24 text-center">
+      {/*
+        Full viewport, not the 88vh it used to be. The header is out of flow on
+        this page (see SiteHeader), so the hero starts at the very top and has
+        to cover the height the header used to take as well, or the field would
+        stop short of the fold.
+      */}
+      <div className="relative z-10 mx-auto flex min-h-svh max-w-[1120px] flex-col items-center justify-center px-6 py-24 text-center">
         <motion.div
           variants={container}
           initial="hidden"
@@ -58,15 +77,7 @@ export function Hero() {
             */
             className="text-[clamp(1.5rem,7vw,4.2rem)] leading-[1.1] font-extrabold tracking-tight whitespace-nowrap text-foreground"
           >
-            Hi, I&apos;m{" "}
-            {/*
-              Coral is normally kept off text, because at body sizes it lands
-              around 4.1-4.3:1 and misses AA. Here it's display type at 38px+ and
-              extrabold, which is "large text" under WCAG and needs only 3:1, so
-              it clears the bar on both papers. Same exception the old headline's
-              accent word used.
-            */}
-            <span className="text-brand-strong">Hanru Wehmeyer</span>
+            Hi, I&apos;m Hanru Wehmeyer
           </motion.h1>
 
           <motion.p
@@ -92,30 +103,69 @@ export function Hero() {
           */}
           {/* Set well below the text block, so the page reads as two groups. */}
           <motion.div variants={item} className="mt-14 flex flex-wrap justify-center gap-3 sm:hidden">
-            <Button
-              size="lg"
-              nativeButton={false}
-              className="h-11 px-6 text-[0.95rem]"
-              render={<Link href="/work">See the work →</Link>}
-            />
             {/*
-              Filled with the page background, not transparent: an outline
-              button over the hero's glow reads as a ghost otherwise.
+              Both plain, neither carrying the coral fill. Work used to take it
+              as the page's call to action, but over a field that is itself
+              coral half the time the button stopped reading as the emphasised
+              one and just read as another patch of the background.
+
+              `ghost` with the border added by hand, not `outline`: the outline
+              variant carries a `dark:bg-input/30`, and a dark-variant rule
+              outranks a plain `bg-card`, so the fill lands at 30% alpha with
+              the field showing through. Ghost declares no base background, so
+              the one set here is the only one in play.
             */}
             <Button
-              variant="outline"
+              variant="ghost"
               size="lg"
               nativeButton={false}
-              className="h-11 border border-border bg-background px-6 text-[0.95rem] text-foreground hover:bg-accent"
+              className="h-11 border border-border bg-card px-6 text-[0.95rem] text-card-foreground hover:bg-accent!"
+              render={<Link href="/work">See the work →</Link>}
+            />
+            <Button
+              variant="ghost"
+              size="lg"
+              nativeButton={false}
+              className="h-11 border border-border bg-card px-6 text-[0.95rem] text-card-foreground hover:bg-accent!"
               render={<Link href="#contact">Get in touch</Link>}
             />
           </motion.div>
 
           <motion.div variants={item} className="mt-20 max-sm:hidden">
-            {/* Coral on Work only here: on the homepage it's the call to
-                action. Elsewhere the nav is just navigation. */}
-            <MorphicNavbar items={SITE_NAV} accentKey="work" size="lg" />
+            <MorphicNavbar items={SITE_NAV} size="lg" onField />
           </motion.div>
+
+          {/*
+            Sits under the nav pill, and shares its `max-sm:hidden`: below `sm`
+            the pill is replaced by the two CTAs above, and a toy button in
+            among the only two real routes into the site would be competing for
+            the tap rather than sitting beside it.
+
+            It only rearranges decoration, so there's nothing for a screen
+            reader to be told afterwards and no live region here; the label
+            says plainly what pressing it does. Rendered only when the field is
+            actually running, since the CSS fallback has nothing to reshuffle.
+          */}
+          {canRandomize && (
+            <motion.div variants={item} className="mt-6 max-sm:hidden">
+              {/*
+                Filled with `--card`, the same step off the page ground the nav
+                pill above it uses, rather than `--background`: the two sit
+                directly on top of each other over a moving field, and two
+                different dark fills there read as a mistake rather than as a
+                hierarchy.
+              */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => randomizeRef.current?.()}
+                className="border border-border bg-card px-4 text-card-foreground hover:bg-accent!"
+              >
+                Press me!
+              </Button>
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </section>

@@ -16,7 +16,7 @@ export function About() {
         <div>
           <h2
             id="about-heading"
-            className="mb-4 text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-brand-weak"
+            className="mb-4 text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-foreground"
           >
             Hi, I&apos;m Hanru.
           </h2>

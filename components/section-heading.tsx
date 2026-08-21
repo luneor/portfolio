@@ -13,7 +13,7 @@ export function SectionHeading({
     <div className="mb-10">
       <h2
         id={headingId}
-        className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-brand-weak"
+        className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-foreground"
       >
         {title}
       </h2>

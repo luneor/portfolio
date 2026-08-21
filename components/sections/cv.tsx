@@ -6,27 +6,27 @@
 const genioBullets = [
   {
     label: "Stakeholder management",
-    body: `Worked on a project where I had to cover PM responsibilities during a teammate's leave. Pushed back against an initial complex solution from leadership stakeholders in favour of something simpler, balancing stakeholder needs against product complexity. The first customer group was live within hours of deploy, and 27 organisations adopted the feature within days.`,
+    body: `Stepped up to cover our PM's responsibilities mid-project and pushed back on an overcomplicated leadership-proposed solution in favour of a simpler one. The feature was adopted across 27 organisations within days.`,
   },
   {
     label: "Team collaboration and process improvement",
-    body: `Introduced a lightweight, asynchronous feedback workflow for the UX team, replacing the in-person "quick question" habit lost to remote work. I purposefully built it around clearly framing the problem and exactly what feedback is needed.`,
+    body: `Built a lightweight asynchronous feedback workflow for the UX team to replace the in-person "quick question" habit that remote working couldn't offer. It's structured around clearly framing the problem and defining exactly what feedback is needed.`,
   },
   {
     label: "Accessibility & inclusive design",
-    body: `Took on multiple projects within a major company-wide push for WCAG 2.1 AA compliance, working with stakeholders, including the CEO, on a redesign for our core "audio-capture" interface, balancing colour contrast requirements against cognitive load, while staying available to advise on trickier accessibility issues elsewhere.`,
+    body: `Contributed to accessibility work across multiple projects in a company-wide push for WCAG 2.1 AA compliance. This included redesigning our core "audio-capture" interface to balance colour contrast requirements against cognitive load, with input from stakeholders including the CEO.`,
   },
   {
     label: "Research-led design decisions",
-    body: `Took a unique approach to a user-facing filtering feature, offering flexible custom ranges rather than fixed presets. Built a high-fidelity prototype and tested it directly with customers through scenario-based calls, alongside supporting survey data.`,
+    body: `Pitched and validated a flexible custom-range filtering approach over a date picker, backing it with a high-fidelity prototype, scenario-based customer testing, and survey data.`,
   },
   {
     label: "Data-informed problem solving",
-    body: `Designed several enhancements to the Admin platform. Created a custom effort-modelling calculator to measure user effort on a complex flow via keystrokes, which surfaced edge cases and keyboard-accessibility gaps.`,
+    body: `Built a custom effort-modelling calculator to measure user effort across a complex Admin flow, surfacing edge cases and keyboard-accessibility gaps that shaped the redesign.`,
   },
   {
     label: "Design systems",
-    body: `Contributed to the design system beyond my own feature work: designed the Pill component (now used platform-wide for beta labelling), corrected legacy Admin components to current design system standards, and collaborated with engineering on a new table component.`,
+    body: `Designed the platform-wide Pill component, corrected legacy Admin components to current standards, and partnered with engineering on a new table component.`,
   },
   {
     label: "Senior coverage",
@@ -37,11 +37,11 @@ const genioBullets = [
 const storiBullets = [
   {
     label: "Human-centred design",
-    body: `Designed a calming, user-friendly recording process using gentle colours inspired by children's books and avoiding colours like red, which have negative medical connotations. Created a sensitive onboarding process aimed at offering comfort during a difficult time.`,
+    body: `Designed a calming recording process using colour psychology (avoiding red's medical connotations, drawing on children's book palettes) and a sensitive onboarding flow for a difficult moment in parents' lives.`,
   },
   {
     label: "User research & prototyping",
-    body: `Designed low- and high-fidelity prototypes and ran user interviews, including with a head neonatal nurse who raised concerns about integrating the tool into existing NHS digital systems, a risk I flagged in my full research report on impact.`,
+    body: `Ran user interviews, including with a head neonatal nurse, and built low- to high-fidelity prototypes; flagged the NHS digital-integration risk she raised in my research report.`,
   },
 ];
 
@@ -94,11 +94,12 @@ export function Cv() {
             there's no stray rule floating above the first section or
             below the last.
           */}
-          <div className="divide-y-2 divide-brand-strong">
+          <div className="divide-y-2 divide-brand-weak">
             <div className="pb-8">
               <CvBlockHeading>Designer Identity</CvBlockHeading>
               <p className="text-foreground">
-                I push the boundaries of UX/UI with innovative, human-centred
+                I strive to push the boundaries of UX/UI with innovative,
+                human-centred
                 solutions, own problems end to end and balance what users
                 need against business goals and technical constraints,
                 always starting from why we&apos;re building something and

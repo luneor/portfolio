@@ -7,6 +7,7 @@ import {
   MemorArt,
   StoriArt,
 } from "@/components/project-art";
+import { ProjectFigure } from "@/components/case-study/project-figure";
 
 /**
  * Snapshot / header block for a case study.
@@ -86,6 +87,8 @@ export interface Project {
   art: ComponentType;
   tag: string;
   tagMuted?: boolean;
+  /** Short skill/theme labels shown at the foot of the work card, 2–3 per project. */
+  topics?: string[];
   title: string;
   /** Short one-liner shown on the compact card. */
   summary: string;
@@ -141,6 +144,7 @@ export const PROJECTS: Project[] = [
     section: "genio-admin",
     art: LastActiveArt,
     tag: "Case study",
+    topics: ["Innovation", "User Testing"],
     title: "Last Active Filtering",
     summary:
       'Custom, admin-defined thresholds for what "active" means at each institution.',
@@ -163,7 +167,7 @@ export const PROJECTS: Project[] = [
         <>
           Admins couldn&apos;t tell which students were genuinely falling out
           of using Genio Notes, and couldn&apos;t follow up with them
-          correctly. I let each institution define what Active, At risk and
+          correctly. I let each institution define what Active, At Risk and
           Inactive mean to them, giving them more control.{" "}
           <Emph>
             Adoption sits at 25.4% and growing, with vocal video appreciation
@@ -171,22 +175,24 @@ export const PROJECTS: Project[] = [
           </Emph>
         </>
       ),
+      overview: (
+        <>
+          <p>
+            Admins needed more accurate Last Active statuses to manage
+            licenses more efficiently.{" "}
+            <Emph>There was no way to filter by Last Active status at all</Emph>
+            , and our existing RAG (Red, Amber, Green) statuses were fixed at
+            0–7 days (Green), 7–14 days (Amber) and 14+ days (Red), and
+            invisible to admins.
+          </p>
+          <p>
+            My gut told me that{" "}
+            <Emph>few admins knew what the colours actually meant</Emph>,
+            which makes the data hard to act on.
+          </p>
+        </>
+      ),
     },
-    problem: (
-      <>
-        <p>
-          Admins needed more accurate Last Active statuses to manage licenses
-          more efficiently. <Emph>There was no way to filter by Last Active
-          status at all</Emph>, and our existing RAG (Red, Amber, Green)
-          statuses were fixed and invisible.
-        </p>
-        <p>
-          0–7 days (Green), 7–14 days (Amber), 14+ days (Red). My gut told me
-          that <Emph>few admins knew what the colours actually meant</Emph>,
-          which makes the data hard to act on.
-        </p>
-      </>
-    ),
     decisions: [
       {
         heading: "Why not a date picker?",
@@ -341,11 +347,15 @@ export const PROJECTS: Project[] = [
     ),
     reflection: (
       <p>
-        The date picker would have been defensible, and would have left the part
-        actually blocking admins untouched: a status whose definition they
-        couldn’t see. The useful move was doubting those fixed thresholds meant
-        anything to the people relying on them, then A/B testing that hunch
-        against the obvious answer instead of shipping on it.
+        The obvious fix, a date picker, would&apos;ve only solved half the
+        problem. I dug into what was actually blocking admins: they
+        didn&apos;t know what the statuses meant, and had no way to say what
+        &ldquo;Last Active&rdquo; should mean for them.{" "}
+        <Emph>
+          Trusting my gut led to a solution that fixed the real issue.
+        </Emph>{" "}
+        A/B testing and talking to customers backed up my instinct, so we
+        shipped a full solution rather than something half-baked.
       </p>
     ),
   },
@@ -354,6 +364,7 @@ export const PROJECTS: Project[] = [
     section: "genio-admin",
     art: FeatureTogglesArt,
     tag: "Case study",
+    topics: ["Stakeholder Management", "Systems Thinking"],
     title: "Feature Toggles for AI Tools",
     summary:
       "A two-tier control model so institution-wide policy doesn't block the students who need support.",
@@ -376,125 +387,63 @@ export const PROJECTS: Project[] = [
       team: "TODO, confirm names and roles",
       statement: (
         <>
-          A request for per-student AI controls arrived as two incompatible asks,
-          and shipped as{" "}
-          <Emph>an org-wide baseline with group-level overrides</Emph>, built on
-          the groups system that already existed rather than the parallel profile
-          architecture originally proposed.
+          Genio Notes&apos; AI tools help students, but they can sometimes
+          conflict with a school&apos;s academic policies. Admins had no way
+          to control who could access which tools, so schools were stuck
+          choosing between blocking AI outright or leaving it wide open.{" "}
+          <Emph>
+            I built an org-wide setting with group-level overrides
+          </Emph>
+          , giving admins full control using a Groups system they already
+          know.
         </>
       ),
       overview: (
-        <>
-          <p>
-            Genio Admin is the tooling academic institutions use to manage how
-            their students are supported. The AI features in Genio Notes can cut
-            across a course&apos;s academic policy, while some students rely on
-            them to work at all, and admins had no way to draw that line.
-          </p>
-          <p>
-            The ask came in two forms that couldn&apos;t both be built: a
-            competitor-style profile system from marketing and exec, and the
-            groups system the squad had already shipped. Settling that model was
-            most of the work. An organisation sets a baseline per feature, groups
-            override it where needed, and reporting comes from filtered exports.
-          </p>
-          <p>
-            The result is that{" "}
-            <Emph>
-              an institution can restrict a feature without handling exceptions
-              one student at a time
-            </Emph>
-            , and a student who needs the support isn&apos;t blocked by a policy
-            set elsewhere in the organisation. No parallel architecture was built.
-          </p>
-        </>
+        <p>
+          Our PM was on leave, so I had to cover PM responsibilities and deal
+          with varying stakeholder input, including an initial request for a
+          more complex profiles system.
+        </p>
       ),
     },
-    problem: (
-      <>
-        <p>
-          AI tools in Genio Notes can conflict with a course’s academic policy,
-          while <Emph>some students genuinely need that support to work</Emph>.
-          Admins had no way to draw the line, they needed to switch AI features
-          on and off per student, plus filtered exports showing where they were
-          on.
-        </p>
-        <p>
-          Partway through, <Emph>the shape of the work changed rather than the
-          problem</Emph>. Our PM went on leave, priorities moved while they were
-          out, and the input arriving in their absence pointed two ways:
-          leadership on when the work should happen, marketing and exec on what
-          form it should take.
-        </p>
-      </>
-    ),
-    constraints: (
-      <>
-        <p>
-          <Emph>
-            The roadmap was already locked in.
-          </Emph>{" "}
-          Our PM had nailed it down before going on leave. Feature toggles were
-          on it, but further out.
-        </p>
-        <p>
-          <Emph>
-            A quarterly review moved them up.
-          </Emph>{" "}
-          Leadership signalled that toggles were now the priority, with no PM
-          in the room to translate that into something the squad could act on.
-        </p>
-        <p>
-          <Emph>
-            Marketing and exec wanted to match a competitor.
-          </Emph>{" "}
-          They wanted feature management as a standalone “profile” system: a
-          different architecture from the groups system the squad had already
-          built.
-        </p>
-      </>
-    ),
     decisions: [
       {
-        heading: "Turn an ambiguous priority signal into scoped work",
+        heading: "A change in priority",
         body: (
           <>
             <p>
-              The review produced a direction, not a brief: toggles matter more
-              than the roadmap says. Normally a PM absorbs that before it reaches
-              the squad; with no one in the seat it arrived raw, and the gap
-              between “this is the priority” and “this is what we build next” had
-              to be closed before any design work meant anything.
+              It came clear that stakeholders wanted to match a competitor.
+              They wanted feature toggles to be added through a new
+              “profile” system. Introducing a new system to the admin
+              platform.
             </p>
             <p>
-              So I worked back from the signal: which parts were actually being
-              asked for first, what that displaced on the locked roadmap, and
-              what could ship without discarding work underway. That gave the
-              squad a scope to commit to rather than a priority to interpret.
+              I looked deeper, what was actually being asked for, and what
+              was the right solution?
             </p>
           </>
         ),
       },
       {
-        heading: "Extend the groups system instead of building profiles",
+        heading: "Add to the existing system, don’t build a new one",
         body: (
           <>
             <p>
-              The ask was concrete: a standalone profile system, matching a
-              competitor. But <Emph>profiles meant a second parallel architecture
-              for the same job</Emph>: a rebuild alongside the groups system the
-              squad had already built.
+              Creating a new profile system to match a competitor would be
+              complex.{" "}
+              <Emph>
+                Profiles meant a whole extra system on top of the existing
+                Groups system
+              </Emph>
+              .
             </p>
             <p>
-              I argued for <Emph>extending groups instead</Emph>, on the grounds
-              that the intent was competitive capability rather than that specific
-              structure: managing AI features above the individual student. Groups
-              already expressed that relationship.
-            </p>
-            <p>
-              So the gap between what was requested and what shipped was
-              architectural, not functional, no profile system, but the
-              capability the request was after.
+              I argued for{" "}
+              <Emph>giving feature toggles to groups instead</Emph>. They are
+              already used and understood by admins, and allow for the same
+              functionality. I had to push for this in place of my PM,
+              attending meetings and communicating with stakeholders in
+              their place.
             </p>
           </>
         ),
@@ -507,18 +456,10 @@ export const PROJECTS: Project[] = [
             caption:
               "Ideation: the profile system explored: named presets, each toggling the same set of features.",
           },
-          {
-            src: "/work/feature-toggles/ideation-assign-profile.png",
-            alt: "Ideation screen showing the Users table with two users selected and an Assign Profile action, with Profiles as its own sidebar section.",
-            width: 1600,
-            height: 754,
-            caption:
-              "Ideation, assigning a profile to selected users, with Profiles standing as its own section alongside Groups.",
-          },
         ],
       },
       {
-        heading: "Split control into an org baseline plus group overrides",
+        heading: "Org-wide baseline, group level override",
         body: (
           <>
             <p>
@@ -540,14 +481,6 @@ export const PROJECTS: Project[] = [
               "Ideation, configuring several groups at once, with features sorted into categories and settings copyable between groups.",
           },
           {
-            src: "/work/feature-toggles/ideation-feature-conflict.png",
-            alt: "Ideation modal titled Feature Conflict, asking which group's settings to use for a user who belongs to two groups.",
-            width: 700,
-            height: 326,
-            caption:
-              "Ideation: the case a group-based model has to answer: which settings win when a student belongs to two groups.",
-          },
-          {
             src: "/work/feature-toggles/ideation-user-matrix.png",
             alt: "Ideation screen for editing a single user, with a Managed Features table showing org-level and group-level state for each feature.",
             width: 1280,
@@ -558,14 +491,19 @@ export const PROJECTS: Project[] = [
         ],
       },
       {
-        heading: "Treat the toggle screen as an opportunity for delight",
+        heading: "Taking the opportunity to improve the form layout",
         body: (
           <>
             <p>
-              The control model answered the policy problem, but the screen was
-              also a chance to push Admin past a purely utilitarian feel, so
-              rather than fit the toggles into the existing page structure, I
-              built a new layout for them.
+              The existing form layout in Admin was hard to scan and lacked
+              structure. Since feature toggles needed to fit into these
+              forms, it felt like the right moment to fix that. I
+              restructured the layout with dividing lines, clear titles, and
+              descriptions.
+            </p>
+            <p>
+              It also made it easier to add new sections to a form, instead
+              of hunting for a spot in a long list.
             </p>
           </>
         ),
@@ -576,7 +514,15 @@ export const PROJECTS: Project[] = [
             width: 1600,
             height: 900,
             caption:
-              "Before: the organisation form as it stood: one long stacked column, with nowhere for feature management to live. The overhauled version is under Shipped.",
+              "Before: the organisation form as it stood: one long stacked column, with nowhere for feature management to live.",
+          },
+          {
+            src: "/work/feature-toggles/final-org-form.png",
+            alt: "The shipped Edit Organisation screen, with a Manage Features block marked New! listing Study Notes, QuizMe and Outlines, alongside general details and sharing policy.",
+            width: 1600,
+            height: 900,
+            caption:
+              "After: the overhauled two-column layout, section intent on the left, controls on the right, with room for feature management to live.",
           },
         ],
       },
@@ -590,14 +536,6 @@ export const PROJECTS: Project[] = [
       </p>
     ),
     gallery: [
-      {
-        src: "/work/feature-toggles/final-org-form.png",
-        alt: "The shipped Edit Organisation screen, with a Manage Features block marked New! listing Study Notes, QuizMe and Outlines, alongside general details and sharing policy.",
-        width: 1600,
-        height: 900,
-        caption:
-          "Shipped: the organisation baseline, in the overhauled two-column layout: section intent on the left, controls on the right.",
-      },
       {
         src: "/work/feature-toggles/final-edit-group.png",
         alt: "The shipped Edit Group screen, with Managed Features set to Customise for this group and each feature labelled with its organisation default.",
@@ -636,7 +574,8 @@ export const PROJECTS: Project[] = [
     section: "genio-admin",
     art: AudioBubblesArt,
     tag: "Case study",
-    title: "Audio Bubbles: Accessibility-Driven Redesign",
+    topics: ["Accessibility", "Experimentation"],
+    title: "Audio Bubbles: Accessibility Redesign",
     summary:
       "Getting a lightweight, background UI element to WCAG 2.1 AA without making it visually loud.",
     snapshot: {
@@ -647,42 +586,26 @@ export const PROJECTS: Project[] = [
       tools: "Figma, Pendo, a custom bubble playground prototype",
       statement: (
         <>
-          Genio Notes&apos; audio bubbles failed WCAG 2.1 AA contrast ahead of a
-          VPAT submission.{" "}
+          Genio Notes&apos; audio capture interface (audio bubbles) failed
+          WCAG 2.1 AA contrast. Our CEO voiced his concerns, simply
+          strengthening the colour to pass contrast would increase cognitive
+          load for a mainly background element.{" "}
           <Emph>
-            AA was reached before the deadline by moving contrast into the border
-            and the weight rather than the fill
+            I came up with a redesign that met colour contrast by focusing
+            on the borders, rather than the fill
           </Emph>
-          , so the element stayed as quiet as it was meant to be.
+          {" "}- leading to a cleaner and lighter interface.
         </>
       ),
       overview: (
-        <>
-          <p>
-            Genio Notes uses small “audio bubbles”, with connecting lines, in the
-            audio tab to let students navigate and annotate recorded lectures. An
-            external audit ahead of a VPAT found most of their colours short of
-            AA, and the obvious fix, more saturation, would have dragged a
-            background element into the foreground.
-          </p>
-          <p>
-            Contrast went into the border and the weight instead. Along the way an
-            external ruling that the connecting lines were{" "}
-            <Emph>functional rather than decorative</Emph> reversed an earlier
-            call of mine, and the direction was checked with an AI cross-check and
-            a small five-person survey, a sample stated as the limitation it is.
-          </p>
-          <p>
-            It shipped compliant and visually unchanged in character, with usage
-            logging left in place to argue any deeper investment in the audio tab
-            from data. What began as a colour swap became{" "}
-            <Emph>
-              a lesson in accessibility improving a design rather than
-              constraining it
-            </Emph>
-            .
-          </p>
-        </>
+        <p>
+          Each colour marks a different note type: important notes in red,
+          notes flagged for review in yellow, and regular notes in blue. The
+          audit found a colour contrast issue:{" "}
+          <Emph>in dark mode, grey (4.04:1) and yellow (3.5:1) passed, but
+          blue (2.94:1) and red (2.42:1) failed</Emph>; in light mode, every
+          colour except red failed.
+        </p>
       ),
     },
     cover: {
@@ -691,105 +614,59 @@ export const PROJECTS: Project[] = [
       width: 2000,
       height: 1110,
     },
-    problem: (
-      <>
-        <p>The audit found a colour contrast issue:</p>
-        <ul className="flex list-disc flex-col gap-1.5 pl-5">
-          <li>
-            <Emph>
-              Dark mode:
-            </Emph>{" "}
-            grey (4.04:1) and yellow (3.5:1) passed. Blue (2.94:1) and red
-            (2.42:1) failed.
-          </li>
-          <li>
-            <Emph>
-              Light mode:
-            </Emph>{" "}
-            every colour except red failed.
-          </li>
-        </ul>
-        <p>
-          The brief: reach WCAG AA without turning a deliberately quiet
-          background element into a heavier, more clinical UI: the opposite of
-          its purpose.
-        </p>
-        <p>
-          <Emph>
-            Why this ran for months rather than an afternoon:
-          </Emph>{" "}
-          the CEO was concerned that raising contrast until every colour passed
-          would make the interface louder and undermine the point of the
-          bubbles. That tension set the whole project, every decision below was
-          weighed as evidence against that risk, not ticked off.
-        </p>
-        <p className="text-foreground">Constraints:</p>
-        <ul className="flex list-disc flex-col gap-1.5 pl-5">
-          <li>A hard VPAT deadline, later pulled forward to early February.</li>
-          <li>
-            An unresolved second question: were the grey connecting lines
-            decorative, or did they convey sequence and so need to meet 3:1 on
-            their own?
-          </li>
-          <li>No large testing pool, only Insiders and internal reviewers.</li>
-        </ul>
-      </>
-    ),
     decisions: [
       {
-        heading: "Reject the contrast bump; fix it with borders",
+        heading: "How do we meet contrast, but keep the UI light?",
         body: (
           <>
             <p>
-              Raising saturation to force 3:1 <Emph>read as muddy and measurably
-              heavier</Emph>, exactly the tradeoff the CEO had flagged, so it was
-              rejected on principle, not taste.
+              Raising the saturation to meet 3:1 contrast{" "}
+              <Emph>read as muddy and heavy</Emph>, exactly the tradeoff the
+              CEO had flagged.
             </p>
+            <ProjectFigure
+              media={{
+                src: "/work/audio-bubbles/contrast-bump-rejected.png",
+                alt: "Two columns of audio bubbles with fully saturated red, orange and purple fills against grey connecting lines.",
+                width: 772,
+                height: 554,
+                caption:
+                  "The rejected direction, raising saturation to force 3:1 read as muddy and visually heavier.",
+              }}
+            />
             <p>
-              The border-based approach instead: background fill for inactive
-              bubbles with a contrast-passing border, a lighter fill when
-              active, lines from 2px to 1px, and heights retuned (8→5px
-              inactive, 12→11px active) to centre on the thinner line. The new
-              grey came from the design system, sitting as close to 3:1 as
-              possible without overshooting.
+              I tried various approaches, making the bubbles thinner but
+              stronger, an empty fill, a light fill, and more. Having a light
+              fill for the inactive bubbles and a stronger one when they were
+              active hit the sweet spot.
             </p>
+            <ProjectFigure
+              media={{
+                src: "/work/audio-bubbles/fill-variants.png",
+                alt: "Three panels comparing audio bubble fill treatments across slide outlines.",
+                width: 1236,
+                height: 583,
+                caption:
+                  "Comparing fill treatments for active bubbles against the thinner 1px connecting line.",
+              }}
+            />
             <p>
-              <Emph>
-                Cross-checks:
-              </Emph>{" "}
-              Paul ran both directions through ChatGPT and Gemini blind, and
-              both favoured the thinner, lower-contrast one on visual weight and
-              scannability: a second opinion, not a substitute for testing.
-              Dave also raised a question worth recording: does an{" "}
-              <em>inactive</em> bubble need 3:1 at all, if it communicates
-              nothing until you interact with it?
+              The final solution added a light background fill with a border
+              that passes contrast checks. Getting there took a few tweaks: I
+              reduced the connecting lines from 2px to 1px, and shrunk the
+              bubbles themselves, inactive ones from 8px to 5px, active ones
+              from 12px to 11px. I kept those sizes odd so the bubbles would
+              sit centered on the thinner line.
             </p>
           </>
         ),
         media: [
           {
-            src: "/work/audio-bubbles/contrast-bump-rejected.png",
-            alt: "Two columns of audio bubbles with fully saturated red, orange and purple fills against grey connecting lines.",
-            width: 772,
-            height: 554,
-            caption:
-              "The rejected direction, raising saturation to force 3:1 read as muddy and visually heavier.",
-          },
-          {
-            src: "/work/audio-bubbles/fill-variants.png",
-            alt: "Three panels comparing audio bubble fill treatments across slide outlines.",
-            width: 1236,
-            height: 583,
-            caption:
-              "Comparing fill treatments for active bubbles against the thinner 1px connecting line.",
-          },
-          {
             src: "/work/audio-bubbles/light-dark-panels.png",
             alt: "Two audio tab panels side by side, one with a purple header and one with a teal header, showing highlighted bubbles.",
             width: 972,
             height: 772,
-            caption:
-              "The border-based treatment checked across themes, where the light-mode failures were worst.",
+            caption: "Comparing the new proposed design to the original.",
           },
           {
             kind: "video",
@@ -816,20 +693,21 @@ export const PROJECTS: Project[] = [
         ],
       },
       {
-        heading: "Soften the connecting lines to 40% opacity",
+        heading: "Pushing for the lowest cognitive load",
         body: (
           <>
             <p>
-              Three options: remove the lines (lost the structure), drop them to
-              ~40% opacity (didn’t strictly pass, but visibly lighter), or leave
-              them at full opacity (too heavy for a zone that isn’t
-              interactive).
+              To go further, I explored dropping the opacity of the
+              connecting line, or removing it entirely. Our accessibility
+              expert liked the idea, but suggested I double check first.
             </p>
             <p>
-              Went with 40%, with Steven backing it and the plan to push back if
-              formal review flagged it. Scope stayed deliberately narrow, pass
-              AA first, and Matt added logging on audio-tab vs. transcript-tab
-              use so any deeper investment could be argued from data later.
+              I put the question to an external WCAG auditor. Their answer:
+              decorative lines are exempt, but lines that are interactive and
+              convey essential context are not. Since our lines are
+              interactive and give context for the empty audio between
+              bubbles, <Emph>that reversed my decision</Emph>. I kept them at
+              full opacity, with contrast that still passes.
             </p>
           </>
         ),
@@ -842,45 +720,28 @@ export const PROJECTS: Project[] = [
             caption:
               "Line treatments compared: removed entirely, ~40% opacity, and full-opacity grey.",
           },
-          {
-            src: "/work/audio-bubbles/progression.png",
-            alt: "Three panels showing the progression of bubble and line styling across red, orange and purple states.",
-            width: 1268,
-            height: 563,
-            caption:
-              "The progression across states, checking that sequence stayed readable as line weight dropped.",
-          },
         ],
       },
       {
-        heading: "Survey only the students who use the audio tab",
+        heading: "Testing with power users",
         body: (
           <>
             <p>
-              I surveyed people who actually use the audio tab, cross-referencing
-              Pendo usage against the Insiders panel: a general population
-              wouldn’t give a real signal on a feature-specific change. It
-              compared current vs. proposed on cognitive load and on whether the
-              design felt “beautiful and minimal”, then asked outright which they
-              preferred.
+              I surveyed our heaviest audio-tab users, cross-referencing usage
+              stats against our Insiders group (customers who&apos;ve opted
+              in to being contacted). The survey compared the current and
+              proposed designs on cognitive load, perceived polish
+              (“beautiful and minimal”), and overall preference.
             </p>
             <p>
-              <Emph>
-                Results (n=5, too small for hard conclusions):
-              </Emph>
+              With only 5 responses, the sample was too small for hard
+              conclusions, but the signal was promising:{" "}
+              <Emph>the new design won overall</Emph>. It scored lower on
+              “beautiful and minimal”, though that was skewed by a single 1/5
+              from a respondent resistant to any change. The clearest win
+              was clarity: users found it easier to see where audio starts
+              and stops, and felt it was less distracting.
             </p>
-            <ul className="flex list-disc flex-col gap-1.5 pl-5">
-              <li>Cognitive load tied 3/1/1 across both designs.</li>
-              <li>
-                “Beautiful and minimal”: current 3.8/5, new 3.2/5, though one
-                respondent resistant to any change scored the new design 1/5,
-                which skews a sample this size.
-              </li>
-              <li>
-                Qualitatively, the new design made it easier to see where a
-                bubble starts and ends, and felt less distracting.
-              </li>
-            </ul>
           </>
         ),
         media: [
@@ -902,24 +763,6 @@ export const PROJECTS: Project[] = [
           },
         ],
       },
-      {
-        heading: "Reverse the line decision on the auditor’s ruling",
-        body: (
-          <>
-            <p>
-              I put the open question to Level Access, the external WCAG
-              auditor: decorative lines are exempt from 3:1, but lines that are
-              interactive and convey essential context are not.
-            </p>
-            <p>
-              The lines are interactive and act as a sequencing aid, so they
-              count as context. <Emph>That reversed October’s assumption</Emph>, they stayed at full contrast rather than being lightened, since
-              making the bubble relationships illegible would raise cognitive load
-              for the low-vision users the fix was for.
-            </p>
-          </>
-        ),
-      },
     ],
     shipped: (
       <>
@@ -928,15 +771,6 @@ export const PROJECTS: Project[] = [
           background-fill inactive bubble with a contrast-passing border, a
           lighter fill when active, 1px lines at full contrast per the ruling,
           and heights of 5px / 11px so they centre on the thinner line.
-        </p>
-        <p>
-          <Emph>
-            Corner radius (Jan 2026):
-          </Emph>{" "}
-          I built a “Bubble Playground” with 0.5px radius sliders so
-          stakeholders could test presets rather than review comps. It landed on
-          “Fully rounded” or “Rounded”, though the border treatment had already
-          solved the segment-distinction problem on its own.
         </p>
       </>
     ),
@@ -947,14 +781,6 @@ export const PROJECTS: Project[] = [
         width: 726,
         height: 1329,
         caption: "The final bubble treatment in the audio tab.",
-      },
-      {
-        src: "/work/audio-bubbles/playground-55px.png",
-        alt: "The Bubble Playground with corner radius set to 5.5px, fully rounded, for selected bubbles.",
-        width: 1600,
-        height: 796,
-        caption:
-          "The Bubble Playground, radius sliders in 0.5px increments, so stakeholders could test presets directly rather than review comps. “Fully rounded” shown here.",
       },
     ],
     outcome: (
@@ -970,8 +796,8 @@ export const PROJECTS: Project[] = [
             response, even though it meant reversing an earlier call.
           </li>
           <li>
-            Direction validated by an AI cross-check and a small, targeted
-            survey, with the 5-person sample stated as the limitation it is.
+            Direction validated by a small, targeted survey, with the
+            5-person sample stated as the limitation it is.
           </li>
           <li>
             Usage logging left in place to argue any deeper investment in the
@@ -983,18 +809,16 @@ export const PROJECTS: Project[] = [
     reflection: (
       <>
         <p>
-          The “lighter lines” fix looked settled in October and got reversed in
-          January once an actual authority looked at it. <Emph>Treating that as new
-          information rather than defending the earlier call</Emph> is the more
-          interesting decision here than the visual polish.
-        </p>
-        <p>
-          The rigour existed because of one tension set on day one: don’t let
-          compliance quietly make the product worse to use. Every stage was
-          really answering “did we just trade cognitive load for contrast?” with
-          evidence instead of a gut call, which is how a colour swap became a
-          lesson in accessibility improving a design rather than constraining
-          it.
+          All this experimenting came down to one principle:{" "}
+          <Emph>
+            approach compliance thoughtfully, not as a box to tick, but as a
+            prompt to rethink the design itself
+          </Emph>
+          . That approach led to a solution that worked better for everyone.
+          Moving away from simply increasing the strength of the colour fill,
+          trusting that gut instinct, turned out to be the right call. This
+          project taught me a lot, including how to manage stakeholder input
+          up to CEO level, and sharpened my eye for detail.
         </p>
       </>
     ),
@@ -1031,8 +855,6 @@ export const PROJECTS: Project[] = [
         </>
       ),
     },
-    problem:
-      "Reading through material front-to-back is passive: students can finish a page having absorbed very little, with no moment that forces them to articulate why any of it matters.",
     decisions: [
       {
         heading: "Reveal one concept at a time, then ask why it matters",
@@ -1056,6 +878,7 @@ export const PROJECTS: Project[] = [
     art: MemorArt,
     tag: "Concept",
     tagMuted: true,
+    topics: ["Innovation", "Conceptual"],
     title: "Memor",
     summary:
       "A conceptual app focused on reducing productivity guilt and promoting mindfulness.",
@@ -1096,15 +919,6 @@ export const PROJECTS: Project[] = [
         </>
       ),
     },
-    problem: (
-      <p>
-        <Emph>Productivity guilt, never doing “enough”</Emph>, is reinforced by
-        apps that maximise output. Research sharpened the constraint: digital
-        calendars offer flexibility, physical ones visibility. Running IDEO’s
-        “Five Whys” surfaced the same roots each time: productivity, not letting
-        people down, and wanting to feel in control.
-      </p>
-    ),
     decisions: [
       {
         heading: "Make the calendar a fluid shape, not a grid",
@@ -1194,9 +1008,10 @@ export const PROJECTS: Project[] = [
     art: StoriArt,
     tag: "Sponsored research",
     tagMuted: true,
+    topics: ["Human-centred Design", "User Research"],
     title: "Tell Me a Story",
     summary:
-      "Contacted after graduating to continue a neonatal project, taken from paper to a tested, working prototype.",
+      "Continuing a neonatal project from paper to a tested, working prototype.",
     cardImage: {
       src: "/work/stori/tmas-build-special.png",
       alt: "Five screens of the Tell Me A Story prototype in a dark purple night-sky theme.",
@@ -1226,11 +1041,23 @@ export const PROJECTS: Project[] = [
       overview: (
         <>
           <p>
+            In a NICU the bond between parent and newborn is disrupted exactly
+            when it matters most: you go from birth, to touching your baby
+            through an incubator, to leaving them overnight.{" "}
+            <Emph>Parents get updates but have no way to reach their baby</Emph>
+            , and a parent&apos;s voice is one of the few things known to
+            support both brain development and bonding.
+          </p>
+          <p>
             Tell Me A Story lets parents record stories and messages for their
-            baby in a Neonatal Intensive Care Unit, so their voice reaches the cot
-            when they can&apos;t be there. A paired university project in 2023 had
-            taken the idea as far as a paper prototype; I was asked to continue it
-            afterwards.
+            baby in a Neonatal Intensive Care Unit, so their voice reaches the
+            cot when they can&apos;t be there. A paired 2023 third-year project
+            I&apos;d built with Pavlin Petev, informed by a DJCAD and School of
+            Medicine study on the Ninewells neonatal ward, had taken the idea as
+            far as a paper prototype, shown to six experts who pointed at four
+            areas to develop: recording support, memories and metadata, a
+            custom avatar, and signposting to support information. I was asked
+            to continue it afterwards.
           </p>
           <p>
             What I added was the thing the concept had never been able to prove:{" "}
@@ -1249,28 +1076,6 @@ export const PROJECTS: Project[] = [
         </>
       ),
     },
-    problem: (
-      <>
-        <p>
-          In a NICU the bond between parent and newborn is disrupted exactly when
-          it matters most: you go from birth, to touching your baby through an
-          incubator, to leaving them overnight.{" "}
-          <Emph>Parents get updates but have no way to reach their baby</Emph>, and a parent&apos;s voice is one of the few things known to support
-          both brain development and bonding.
-        </p>
-        <p>
-          I was brought back in to continue the work, which meant starting from
-          what already existed rather than a blank page:{" "}
-          <Emph>a DJCAD and School of Medicine study on the Ninewells neonatal
-          ward</Emph>, and <Emph>a 2023 third-year project I&apos;d built with
-          Pavlin Petev</Emph>: the paired work that first proposed recording
-          stories for playback at the cot. Seven prototypes from that phase had
-          been shown to six experts, pointing at four areas to develop: recording
-          support, memories and metadata, a custom avatar, and signposting to
-          support information.
-        </p>
-      </>
-    ),
     constraints: (
       <>
         <p>

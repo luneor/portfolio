@@ -255,12 +255,14 @@
 
 
 /*
-  Lifts the whole nav block off whatever is behind it. Only the hero asks for
-  this: it sits on the gradient field, where a flat block reads as painted onto
-  the colour, while the site header sits on a solid bar and needs nothing.
+  Lifts a block off whatever is behind it. Only the hero asks for this, from
+  either of the two things it puts on the gradient field: the nav pill from
+  `sm` up, and the pair of CTAs that replaces it below. Both sit on moving
+  colour, where a flat block reads as painted onto it. The site header sits on
+  a solid bar and needs nothing.
 
-  `filter: drop-shadow` on the TRACK, deliberately, rather than a box-shadow on
-  each item. Two reasons:
+  `filter: drop-shadow` on the TRACK (or, for the CTAs, on the row), deliberately,
+  rather than a box-shadow on each item. Two reasons:
 
   - It follows the rendered silhouette, so it picks up the rounded and square
     corners exactly as `shapeFor` morphs them, and the gap that opens when an

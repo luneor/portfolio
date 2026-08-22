@@ -54,12 +54,17 @@ export function Hero() {
       <HeroGlow randomizeRef={randomizeRef} />
 
       {/*
-        Full viewport, not the 88vh it used to be. The header is out of flow on
-        this page (see SiteHeader), so the hero starts at the very top and has
-        to cover the height the header used to take as well, or the field would
-        stop short of the fold.
+        Full viewport from `sm` up, not the 88vh it used to be: the header is
+        out of flow at those widths (see SiteHeader), so the hero starts at the
+        very top and has to cover the height the header used to take as well, or
+        the field would stop short of the fold.
+
+        Below `sm` the header is sticky and therefore IN flow, taking its
+        `min-h-16` off the top before the hero begins. A full `svh` here would
+        push the hero's own bottom that far past the fold and shove the centred
+        block visibly low; subtracting the header's height puts it back.
       */}
-      <div className="relative z-10 mx-auto flex min-h-svh max-w-[1120px] flex-col items-center justify-center px-6 py-24 text-center">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-[1120px] flex-col items-center justify-center px-6 py-24 text-center sm:min-h-svh">
         <motion.div
           variants={container}
           initial="hidden"
@@ -101,8 +106,19 @@ export function Hero() {
             pill doesn't fit, so nav moves to the header's hamburger and these
             buttons take over as the hero's call to action.
           */}
-          {/* Set well below the text block, so the page reads as two groups. */}
-          <motion.div variants={item} className="mt-14 flex flex-wrap justify-center gap-3 sm:hidden">
+          {/*
+            Set well below the text block, so the page reads as two groups.
+
+            `morph-raised` is the nav pill's own lift, borrowed. These two are
+            what stands in for the pill below `sm`, and they sit on the same
+            gradient field it does, where a flat block reads as painted onto the
+            colour rather than resting on it. On the ROW, not on each button,
+            which is how the pill does it too: `drop-shadow` follows the union
+            of the silhouettes, so the shadow in the gap between the pair is
+            drawn behind both of them instead of one button casting onto the
+            other.
+          */}
+          <motion.div variants={item} className="morph-raised mt-14 flex flex-wrap justify-center gap-3 sm:hidden">
             {/*
               Both plain, neither carrying the coral fill. Work used to take it
               as the page's call to action, but over a field that is itself
@@ -120,7 +136,7 @@ export function Hero() {
               size="lg"
               nativeButton={false}
               className="h-11 border border-border bg-card px-6 text-[0.95rem] text-card-foreground hover:bg-accent!"
-              render={<Link href="/work">See the work →</Link>}
+              render={<Link href="/work">See my work →</Link>}
             />
             <Button
               variant="ghost"

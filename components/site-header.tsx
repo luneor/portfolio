@@ -31,22 +31,26 @@ export function SiteHeader() {
     translucent, because as a sticky bar it sits over the article the whole way
     down, and at 92% opacity content stayed faintly visible sliding underneath.
 
-    On the homepage: no fill and no rule, so the hero's gradient field runs all
-    the way up behind the logo instead of stopping at a hard line under it.
-    `absolute`, so it is out of flow (the hero therefore starts at the very top
-    of the viewport and the field fills the whole thing) but anchored to the
-    top of the DOCUMENT rather than the viewport, so it scrolls away with the
-    hero instead of riding down the page over the sections below.
+    On the homepage, from `sm` up: no fill and no rule, so the hero's gradient
+    field runs all the way up behind the logo instead of stopping at a hard
+    line under it. `absolute`, so it is out of flow (the hero therefore starts
+    at the very top of the viewport and the field fills the whole thing) but
+    anchored to the top of the DOCUMENT rather than the viewport, so it scrolls
+    away with the hero instead of riding down the page over the sections below.
 
-    That also removes the reason it needed a fill below `sm`. It only ever sits
-    over the top of the hero now, which the vignette holds at full background
-    anyway, so there is nothing for the logo to land on illegibly.
+    On the homepage below `sm`: the same solid, ruled, sticky bar as everywhere
+    else. Out of flow is a desktop luxury. On a phone the hamburger is the ONLY
+    route to the rest of the site -- the hero shows CTAs instead of the nav pill
+    there -- so a header that scrolls away takes navigation with it and doesn't
+    come back until you scroll all the way home. Sticky keeps it in reach, and
+    once it's riding over the page it needs the fill and the rule again to stop
+    the sections sliding visibly underneath the logo.
   */
   return (
     <header
       className={
         isHome
-          ? "absolute inset-x-0 top-0 z-50"
+          ? "sticky top-0 z-50 border-b border-border bg-background sm:absolute sm:inset-x-0 sm:border-b-0 sm:bg-transparent"
           : "sticky top-0 z-50 border-b border-border bg-background"
       }
     >

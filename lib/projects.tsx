@@ -300,14 +300,6 @@ export const PROJECTS: Project[] = [
               "Ideation: the same thresholds as draggable markers on a timeline, with each range read back underneath.",
           },
           {
-            src: "/work/last-active/ideation-icons.png",
-            alt: "Five variants of an Activity filter card, each showing the four states, Active, At risk, Inactive, No data, with icon and colour treatments checked against colour contrast requirements.",
-            width: 820,
-            height: 565,
-            caption:
-              "A small accessibility mini-project alongside the main work: now that the RAG colours carried real meaning, they needed to pass colour contrast too, not just read well as icons.",
-          },
-          {
             src: "/work/last-active/final-ranges-modal.png",
             alt: "The Edit Last Active Ranges dialog, with week inputs for Active, At risk and Inactive and a reset to default option.",
             width: 608,

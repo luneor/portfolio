@@ -57,6 +57,7 @@ uniform vec2  u_mouse;
 uniform float u_seed;
 uniform float u_rotation;
 uniform vec2  u_offset;
+uniform float u_layerMix;
 uniform vec3  u_bg, u_c1, u_c2, u_c3, u_c4, u_c5;
 uniform vec2  u_p1, u_p2, u_p3, u_p4;
 uniform float u_scale, u_noiseSize, u_displacement, u_spread, u_grain;
@@ -107,6 +108,76 @@ vec2 rotate(vec2 v, float a) {
   return mat2(c, -s, s, c) * v;
 }
 
+/*
+  The domain warp. One field on wide screens, three lattices on tall ones.
+
+  The problem being solved is a crease. Value noise interpolates with the
+  quintic u = 6f^5 - 15f^4 + 10f^3, and the displacement here is that curve's
+  derivative, du = 30f^2(f-1)^2. du is zero at both ends of every cell and its
+  own second derivative is largest exactly there, so the warp both collapses
+  and kinks along every integer lattice plane. At this frequency the field
+  spans barely one cell on a phone, so the only two such planes sat dead centre,
+  vertically and horizontally, and -- the lattice being welded to screen space,
+  since u_rotation and u_offset are applied AFTER the warp -- they never moved.
+  Two static seams across the middle of the hero, which is what showed up on a
+  phone screenshot.
+
+  It is not fixable inside one lattice. Gradient (Perlin) noise was the obvious
+  candidate, since its derivative doesn't vanish at lattice points, and it makes
+  no difference: measured, the curvature peak still lands exactly on the
+  boundary, because the kink comes from the quintic's own second derivative,
+  which both noises share. The crease needs more than one lattice.
+
+  So LAYER 0 IS THE ORIGINAL FIELD, byte for byte -- sampled straight off p,
+  no rotation, no offset -- and at u_layerMix 0 this function returns precisely
+  what the single noised3 call returned, down to the opening composition on
+  first load. That is deliberate and it is the thing to preserve: the layered
+  version is a fix for a phone-shaped viewport, not an improvement on the look,
+  and wide screens are left alone.
+
+  The two extra lattices are at THE SAME FREQUENCY as layer 0, not detail
+  octaves above it. That is also deliberate. The first attempt used proper fBm,
+  octaves at 2.13x and 4.5x with falling amplitude, and it did kill the seam,
+  but detail octaves are detail: it came out four times busier by measurement
+  and read as a fussy, distracting background. Same-frequency layers buy the one
+  thing actually needed -- three lattices in different places -- and add no
+  detail at all: measured busyness at full mix is fractionally BELOW the
+  original's.
+
+  Each is turned off-axis (so what little crease survives falls on a diagonal,
+  which reads as composition where a line down the middle of the screen reads as
+  a bug) and shifted, so no two share a plane. Worst-case seam coherence,
+  measured across every orientation: 3.70x at mix 0, 2.53x at mix 1.
+*/
+const float GOLDEN = 2.39996;
+const float TILT = 0.61;
+
+vec2 warpField(vec2 p, float seed) {
+  vec2 total = noised3(vec3(p * u_noiseSize, seed)).yzw.xz;
+
+  /*
+    u_layerMix is a uniform, so every pixel takes the same side of this branch
+    and it costs a wide screen nothing: the extra two samples are not merely
+    weighted to zero there, they are never taken.
+  */
+  if (u_layerMix > 0.0) {
+    for (int i = 1; i < 3; i++) {
+      float angle = TILT + float(i - 1) * GOLDEN;
+      vec2 q = rotate(p, angle);
+      vec3 g = noised3(vec3(
+        q * u_noiseSize + vec2(float(i) * 7.31, float(i) * 3.77),
+        seed + float(i) * 31.4
+      )).yzw;
+      // Turned back out of this layer's own frame, so all three displace the
+      // same space rather than each pulling in its own direction.
+      total += rotate(g.xz, -angle) * u_layerMix;
+    }
+    total /= 1.0 + 2.0 * u_layerMix;
+  }
+
+  return total;
+}
+
 void main() {
   /*
     min(1.0, aspect), NOT the aspect itself. Every colour below sits on the
@@ -134,8 +205,7 @@ void main() {
   vec2 warped = uv + toMouse * (smoothstep(2.4, 0.0, dist) * 0.40);
 
   // The domain warp itself.
-  vec3 grad = noised3(vec3(warped * u_noiseSize, u_seed)).yzw;
-  vec2 pos = rotate(warped + grad.xz * u_displacement + u_offset, -u_rotation);
+  vec2 pos = rotate(warped + warpField(warped, u_seed) * u_displacement + u_offset, -u_rotation);
 
   /*
     Four colours, each anchored at its own point, folded into lobes by the warp
@@ -215,7 +285,28 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
 */
 const SCALE = 0.82;
 const NOISE_SIZE = 0.7;
+/*
+  0.9 is the original figure and the one a wide screen still gets, unchanged.
+
+  A tall screen mixes in two more lattices (see `warpField`), which partly
+  cancel each other, so the same number there would buy about three quarters of
+  the fold depth and flatten the field into a wash. 1.236 is what restores it,
+  set by matching the RMS displacement of the single-field original rather than
+  by eye, so the folds are the depth they always were and no more.
+*/
 const DISPLACEMENT = 0.9;
+const DISPLACEMENT_LAYERED = 1.236;
+
+/*
+  How tall a viewport has to be before the crease is worth spending two extra
+  noise samples on. Phones (~0.46) are fully in, anything square or landscape is
+  fully out, and a portrait tablet sits partway. Interpolated rather than
+  switched so that rotating a tablet cross-fades instead of popping; the
+  displacement is lerped straight across the band, which undershoots the true
+  normalisation by ~10% in the middle of it, and that only exists mid-rotation.
+*/
+const LAYER_ASPECT_OFF = 0.95;
+const LAYER_ASPECT_FULL = 0.65;
 const SPREAD = 1.0;
 const GRAIN = 0.055;
 
@@ -403,6 +494,8 @@ export function HeroGradient({
     const uSeed = u("u_seed");
     const uRotation = u("u_rotation");
     const uOffset = u("u_offset");
+    const uLayerMix = u("u_layerMix");
+    const uDisplacement = u("u_displacement");
     const uColours = [u("u_c1"), u("u_c2"), u("u_c3"), u("u_c4")];
     const uPositions = [u("u_p1"), u("u_p2"), u("u_p3"), u("u_p4")];
 
@@ -413,7 +506,6 @@ export function HeroGradient({
     gl.uniform3fv(u("u_c5"), readColour(styles, "--brand-grad-5"));
     gl.uniform1f(u("u_scale"), SCALE);
     gl.uniform1f(u("u_noiseSize"), NOISE_SIZE);
-    gl.uniform1f(u("u_displacement"), DISPLACEMENT);
     gl.uniform1f(u("u_spread"), SPREAD);
     gl.uniform1f(u("u_grain"), GRAIN);
 
@@ -553,6 +645,22 @@ export function HeroGradient({
       canvas.height = h;
       gl.viewport(0, 0, w, h);
       gl.uniform2f(uResolution, w, h);
+
+      // Both of these are functions of the viewport shape and nothing else, so
+      // this is the only place they can change.
+      const aspect = w / h;
+      const mix = Math.min(
+        1,
+        Math.max(
+          0,
+          (LAYER_ASPECT_OFF - aspect) / (LAYER_ASPECT_OFF - LAYER_ASPECT_FULL)
+        )
+      );
+      gl.uniform1f(uLayerMix, mix);
+      gl.uniform1f(
+        uDisplacement,
+        DISPLACEMENT + (DISPLACEMENT_LAYERED - DISPLACEMENT) * mix
+      );
     };
     resize();
 

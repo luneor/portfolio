@@ -296,6 +296,49 @@ function randomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
 
+/*
+  How far an anchor may sit from centre, and the least it must travel on a
+  press. The minimum is the important one: without it a fresh uniform draw can
+  land next to where the anchor already was, and that press does nothing
+  visible.
+*/
+const SHIFT_X = 0.7;
+const SHIFT_Y = 1.2;
+const MIN_SHIFT = 0.85;
+
+/** A palette index other than the one this slot already holds. */
+function pickOtherIndex(current: number) {
+  const i = randomInt(PALETTE.length - 1);
+  return i >= current ? i + 1 : i;
+}
+
+/**
+ * A new anchor at least MIN_SHIFT away from the current one. Rejection
+ * sampling rather than adding a fixed offset to the old position: an offset
+ * would need clamping back into range, which quietly shrinks the move for any
+ * anchor already near an edge, exactly where a big move reads best. Falls back
+ * to the furthest of the attempts so this always terminates.
+ */
+function pickAnchor(from: number[]): number[] {
+  let best: number[] = from;
+  let bestDistance = -1;
+
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const candidate = [
+      (Math.random() * 2 - 1) * SHIFT_X,
+      (Math.random() * 2 - 1) * SHIFT_Y,
+    ];
+    const distance = Math.hypot(candidate[0] - from[0], candidate[1] - from[1]);
+    if (distance >= MIN_SHIFT) return candidate;
+    if (distance > bestDistance) {
+      bestDistance = distance;
+      best = candidate;
+    }
+  }
+
+  return best;
+}
+
 export function HeroGradient({
   onUnsupported,
   randomizeRef,
@@ -452,15 +495,20 @@ export function HeroGradient({
       from.positions = to.positions.map((p) => [...p]);
 
       for (let i = 0; i < slots.length; i++) {
-        // Drawn independently rather than dealt from the palette without
-        // replacement: repeats are what make an all-warm or all-cool field
-        // possible at all, and the recovery rule has nothing to do otherwise.
-        slots[i] = randomInt(PALETTE.length);
+        /*
+          Both the colour and the anchor are forced to actually change. Drawing
+          each freely meant a press could land a slot on the colour it already
+          had, or an anchor a hair from where it already was, so a good share
+          of presses barely altered the field at all.
+
+          Repeats ACROSS slots are still possible, which is what keeps an
+          all-warm or all-cool draw reachable and gives the recovery rule
+          something to do; it's only repeating a slot's own previous value
+          that's ruled out.
+        */
+        slots[i] = pickOtherIndex(slots[i]);
         to.colours[i] = [...swatches[slots[i]]];
-        to.positions[i] = [
-          (Math.random() * 2 - 1) * 0.55,
-          (Math.random() * 2 - 1) * 1.05,
-        ];
+        to.positions[i] = pickAnchor(to.positions[i]);
       }
 
       beginTween();

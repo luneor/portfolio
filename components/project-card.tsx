@@ -43,18 +43,31 @@ export function ProjectCard({
         made it lurch dark on the way back out. Depths stay soft so they read on
         cream as well as near-black.
       */}
+      {/*
+        Same border treatment as the On AI cards: a mint hairline at rest that
+        crosses into the brand gradient on hover (`.brand-ring` +
+        `.brand-ring-card` in globals.css).
+
+        The plain `border` is gone rather than kept alongside it. `.brand-ring`
+        paints its ring at the padding box, so a real border underneath would
+        hold the gradient a pixel in from the edge and leave a dead outline
+        around it. `--brand-ring-fill` carries the card colour the border used
+        to sit against, since .brand-ring paints its own fill.
+      */}
       <div
-        className="h-full overflow-hidden rounded-xl border border-border bg-card shadow-[0_1px_2px_0_rgba(0,0,0,0.12)] transition-shadow duration-300 ease-out group-hover:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.28)]"
+        className="brand-ring brand-ring-card h-full overflow-hidden rounded-xl shadow-[0_1px_2px_0_rgba(0,0,0,0.12)] transition-shadow duration-300 ease-out group-hover:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.28)] [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]"
       >
         <Link href={`/work/${slug}`} className="flex h-full flex-col">
           <div className="relative aspect-video overflow-hidden border-b border-border bg-background-alt">
-            <motion.div
-              className="h-full w-full [&>svg]:h-full [&>svg]:w-full"
-              whileHover={{ scale: 1.04 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            >
+            {/*
+              No hover scale on the media. The card now answers hover itself,
+              with the border crossing from mint into the gradient, and a
+              second thing moving under that read as two effects fighting for
+              the same gesture.
+            */}
+            <div className="h-full w-full [&>svg]:h-full [&>svg]:w-full">
               {media}
-            </motion.div>
+            </div>
           </div>
           <div className="flex flex-1 flex-col gap-1.5 p-4">
             <h3 className="text-base font-bold tracking-tight text-foreground">

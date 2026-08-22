@@ -456,8 +456,19 @@
   position: relative;
   /* The fill inside the ring. Overridable per surface; defaults to the page. */
   background: var(--brand-ring-fill, var(--background));
-  border-color: transparent;
   color: var(--foreground);
+  /*
+    No border, rather than a transparent one.
+
+    The button base class ships `border border-transparent` with
+    `bg-clip-padding`, but the `background` shorthand above resets
+    `background-clip` to its initial `border-box`, so the fill spread over that
+    1px border too. The hairline below is drawn at the PADDING box, an inch
+    inside it, which left a 1px band of opaque page colour between the ring and
+    anything glowing outside it: a dark line tracing the whole button. With no
+    border the two boxes coincide and the ring sits flush on the outer edge.
+  */
+  border-width: 0;
 }
 
 /* The hairline. */
@@ -467,6 +478,16 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  /*
+    Above the element's own content, not merely above its background. A
+    pseudo-element paints in DOM order among its siblings, so any POSITIONED
+    child drawn after it lands on top: on the project cards the media panel is
+    `relative` with a fill of its own, and it was covering the ring along its
+    whole edge, so the border looked like it vanished behind the image. Only a
+    1px masked perimeter ever paints, so sitting above the content costs
+    nothing.
+  */
+  z-index: 1;
   background: linear-gradient(var(--angle), var(--brand-grad-stops));
   animation: brand-ring-spin 18s linear infinite;
   padding: 1px;
@@ -507,24 +528,14 @@
   opacity: 1;
 }
 
-/*
-  Card variant: mint at rest, the brand gradient only on hover.
-
-  A second ring stacked over the first and cross-faded against it, rather than
-  swapping the one ring's background from a colour to a gradient. Background
-  images don't interpolate between a flat colour and a gradient, so that would
-  snap on hover; two rings each animating their own opacity gives an actual
-  fade in both directions.
-
-  Paired with `--brand-ring-rest: 0` on the element, so the gradient underneath
-  is fully out of the way until this one lifts.
-*/
 .brand-ring-card::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  /* Above positioned content, for the reason given on .brand-ring::before. */
+  z-index: 1;
   padding: 1px;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,

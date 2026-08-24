@@ -34,7 +34,6 @@ export function ProjectCard({
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      whileHover={{ y: -4 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
     >
       {/*
@@ -42,6 +41,17 @@ export function ProjectCard({
         two box-shadows with different numbers of length values (3 vs 4), which
         made it lurch dark on the way back out. Depths stay soft so they read on
         cream as well as near-black.
+
+        The LIFT is CSS now too, and used to be Motion's `whileHover={{ y: -4 }}`
+        on the wrapper. It had to move for the keyboard to reach it: `whileHover`
+        answers the pointer only, and the wrapper isn't focusable anyway -- the
+        link inside it is. Doing it here lets one pair of rules serve both, keyed
+        off `group-hover` and `has-[:focus-visible]`.
+
+        Not both mechanisms, deliberately. Leaving `whileHover` in place and
+        adding CSS for focus alone would have stacked them at 8px whenever a card
+        was keyboard-focused and then hovered, since Motion writes `transform`
+        and Tailwind writes `translate` and the two compose rather than override.
       */}
       {/*
         Same border treatment as the On AI cards: a mint hairline at rest that
@@ -55,7 +65,7 @@ export function ProjectCard({
         to sit against, since .brand-ring paints its own fill.
       */}
       <div
-        className="brand-ring brand-ring-card h-full overflow-hidden rounded-xl shadow-[0_1px_2px_0_rgba(0,0,0,0.12)] transition-shadow duration-300 ease-out group-hover:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.28)] [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]"
+        className="brand-ring brand-ring-card h-full overflow-hidden rounded-xl shadow-[0_1px_2px_0_rgba(0,0,0,0.12)] transition-[box-shadow,translate] duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.28)] has-[:focus-visible]:-translate-y-1 has-[:focus-visible]:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.28)] [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]"
       >
         <Link href={`/work/${slug}`} className="flex h-full flex-col">
           <div className="relative aspect-video overflow-hidden border-b border-border bg-background-alt">

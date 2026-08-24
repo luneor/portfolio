@@ -524,9 +524,17 @@
   strength and that's the whole state change. There was a blurred copy of the
   gradient blooming out from behind the pill as well, which is what the
   reference does, but next to the hero's own field it was one glow too many.
+
+  Three selectors, because `.brand-ring` is worn by two different kinds of
+  thing. On a button or a nav pill the class sits ON the focusable element, so
+  `:focus-visible` matches it directly. On a card it sits on a wrapping DIV and
+  the focusable element is the link INSIDE it -- so that selector could never
+  match, and tabbing through the work grid lit nothing at all while hovering the
+  same card lit the gradient. `:has()` is what covers the second case.
 */
 .brand-ring:hover::before,
-.brand-ring:focus-visible::before {
+.brand-ring:focus-visible::before,
+.brand-ring:has(:focus-visible)::before {
   opacity: 1;
 }
 
@@ -551,8 +559,10 @@
   transition: opacity 300ms ease-out;
 }
 
+/* Same three cases as .brand-ring::before above, for the same reason. */
 .brand-ring-card:hover::after,
-.brand-ring-card:focus-visible::after {
+.brand-ring-card:focus-visible::after,
+.brand-ring-card:has(:focus-visible)::after {
   opacity: 0;
 }
 

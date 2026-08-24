@@ -70,15 +70,61 @@ export function SpotlightCard({ className, children }: SpotlightCardProps) {
   const handleMouseLeave = () => {
     normX.set(0.5);
     normY.set(0.5);
+    /*
+      Unless the card is still keyboard-focused. Hovering a focused card and
+      then leaving it would otherwise take the glow away while the ring stayed
+      lit, which reads as the card half-losing its state.
+    */
+    if (cardRef.current?.matches(":focus-visible")) return;
+    glowOpacity.set(0);
+  };
+
+  /*
+    The keyboard's half of the hover state.
+
+    The gradient hairline needs nothing here -- `.brand-ring:focus-visible` in
+    globals.css already covers it, because unlike the project cards this class
+    sits ON the focusable element rather than on a wrapper around it. Only the
+    glow is driven from JS, so only the glow needs these.
+
+    Gated on `:focus-visible` rather than plain focus, so it matches what the
+    hairline does. Clicking the card focuses it too, now that it is tabbable,
+    and without this test the glow would light on that click and then sit there
+    lit after the pointer had gone.
+
+    The tilt is deliberately left at rest. It reads a cursor position, and a
+    keyboard focus has none; a card that tilted to some invented angle on focus
+    would be inventing information.
+  */
+  const handleFocus = (event: React.FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.matches(":focus-visible")) return;
+    glowOpacity.set(1);
+  };
+
+  const handleBlur = () => {
+    normX.set(0.5);
+    normY.set(0.5);
     glowOpacity.set(0);
   };
 
   return (
     <motion.div
       ref={cardRef}
+      /*
+        Focusable, so the keyboard can reach the same state the pointer gets.
+
+        Worth being clear that this is a deliberate trade rather than a plain
+        win: the card holds a heading and a paragraph and nothing to activate,
+        so this adds a tab stop that does not DO anything. It was taken
+        knowingly, to put keyboard users on equal footing with the hover state
+        rather than leaving the effect pointer-only.
+      */
+      tabIndex={0}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
       style={{
         rotateX: reduce ? 0 : rotateX,
         rotateY: reduce ? 0 : rotateY,

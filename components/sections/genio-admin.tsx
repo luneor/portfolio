@@ -13,8 +13,8 @@ export function GenioAdmin() {
       archive, which worked when each project was a card: the cards carried
       `--card` and the grey behind them was what they were lifted OFF. With
       the cards gone there's nothing left to lift, so the grey read as a slab
-      of panel colour behind loose content. The heading and the divider below
-      carry the separation instead.
+      of panel colour behind loose content. The section headings and the
+      generous padding either side of them carry the separation instead.
     */
     <div aria-labelledby="recent-projects-heading" className="py-32">
       <div className="mx-auto max-w-[1120px] px-6">

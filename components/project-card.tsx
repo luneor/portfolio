@@ -83,7 +83,15 @@ export function ProjectCard({
             <h3 className="text-base font-bold tracking-tight text-foreground">
               {title}
             </h3>
-            <p className="line-clamp-2 text-sm text-foreground">
+            {/*
+              No line clamp. The summaries are deliberately a sentence long now
+              -- each one states what the project demonstrates -- and a 2-line
+              clamp cut every card off mid-clause. Cards still line up because
+              they're `h-full` in a grid row, so the row's tallest card sets the
+              height for all of them. The trade is that one much longer summary
+              would grow its whole row, so keep them to roughly this length.
+            */}
+            <p className="text-sm text-foreground">
               {summary}
             </p>
             {/* `mt-auto` pins topics to the card's foot regardless of how

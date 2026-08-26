@@ -171,9 +171,10 @@ export const PROJECTS: Project[] = [
     art: LastActiveArt,
     tag: "Case study",
     topics: ["Innovation", "User Testing"],
-    title: "Last Active Filtering",
+    title:
+      "Last Active Filtering: a hidden definition, now admin-controlled",
     summary:
-      'Custom, admin-defined thresholds for what "active" means at each institution.',
+      "Shows how my instinct pointed at the real problem, and user research confirmed it, avoiding a fixed system for one admins define themselves.",
     cardImage: {
       src: "/work/last-active/final-ranges-in-context.png",
       alt: "The Last Active Ranges dialog open over the users table, defining the range for each status.",
@@ -383,19 +384,19 @@ export const PROJECTS: Project[] = [
     art: FeatureTogglesArt,
     tag: "Case study",
     topics: ["Stakeholder Management", "Systems Thinking"],
-    title: "Feature Toggles for AI Tools",
+    title: "AI Feature Toggles: the feature I stopped us overbuilding",
     summary:
-      "A two-tier control model so institution-wide policy doesn't block the students who need support.",
+      "Shows how I managed cross-functional stakeholder feedback, stepped up to cover PM responsibilities, and used systems thinking to avoid overbuilding a solution.",
     cardImage: {
       src: "/work/feature-toggles/final-org-form.png",
       alt: "The shipped Edit Organisation screen, showing the Manage Features block alongside general details.",
-      width: 1600,
+      width: 1311,
       height: 900,
     },
     cover: {
       src: "/work/feature-toggles/final-org-form.png",
       alt: "The shipped Edit Organisation screen, with a Manage Features block marked New! listing Study Notes, QuizMe and Outlines, alongside general details and sharing policy.",
-      width: 1600,
+      width: 1311,
       height: 900,
     },
     snapshot: {
@@ -501,8 +502,8 @@ export const PROJECTS: Project[] = [
           {
             src: "/work/feature-toggles/ideation-user-matrix.png",
             alt: "Ideation screen for editing a single user, with a Managed Features table showing org-level and group-level state for each feature.",
-            width: 1280,
-            height: 776,
+            width: 1175,
+            height: 749,
             caption:
               "Ideation, showing the org-level and group-level state of each feature side by side on a single user.",
           },
@@ -529,7 +530,7 @@ export const PROJECTS: Project[] = [
           {
             src: "/work/feature-toggles/old-org-form.png",
             alt: "The previous organisation settings form: a single stacked column of fields with no feature management.",
-            width: 1600,
+            width: 1237,
             height: 900,
             caption:
               "Before: the organisation form as it stood: one long stacked column, with nowhere for feature management to live.",
@@ -537,7 +538,7 @@ export const PROJECTS: Project[] = [
           {
             src: "/work/feature-toggles/final-org-form.png",
             alt: "The shipped Edit Organisation screen, with a Manage Features block marked New! listing Study Notes, QuizMe and Outlines, alongside general details and sharing policy.",
-            width: 1600,
+            width: 1311,
             height: 900,
             caption:
               "After: the overhauled two-column layout, section intent on the left, controls on the right, with room for feature management to live.",
@@ -558,7 +559,7 @@ export const PROJECTS: Project[] = [
       {
         src: "/work/feature-toggles/final-edit-group.png",
         alt: "The shipped Edit Group screen, with Managed Features set to Customise for this group and each feature labelled with its organisation default.",
-        width: 1600,
+        width: 1311,
         height: 898,
         caption:
           "Shipped: the group override. Each feature carries its organisation default in the label, so an admin can see what they're departing from.",
@@ -603,9 +604,10 @@ export const PROJECTS: Project[] = [
     art: AudioBubblesArt,
     tag: "Case study",
     topics: ["Accessibility", "Experimentation"],
-    title: "Audio Bubbles: Accessibility Redesign",
+    title:
+      "Making an audio interface accessible without making it visually loud",
     summary:
-      "Getting a lightweight, background UI element to WCAG 2.1 AA without making it visually loud.",
+      "Shows how I balanced WCAG 2.1 AA compliance with usability testing and iterative design to solve for accessibility without sacrificing UX.",
     snapshot: {
       role: "UX Designer, Genio Notes, Audio tab",
       timeline: "Sep 2025 – Jan 2026",
@@ -777,7 +779,7 @@ export const PROJECTS: Project[] = [
             src: "/work/audio-bubbles/survey-preference.png",
             alt: "Multiple choice survey results: 60% said the new bubble design would be an improvement, 20% wouldn't mind, 20% would miss the old design.",
             width: 797,
-            height: 410,
+            height: 401,
             caption:
               "The direct preference question, 3 of 5 called the new design an improvement.",
           },
@@ -907,9 +909,10 @@ export const PROJECTS: Project[] = [
     tag: "Concept",
     tagMuted: true,
     topics: ["Innovation", "Conceptual"],
-    title: "Memor",
+    title:
+      "Memor: challenging conventional calendars with fluidity and tone of voice",
     summary:
-      "A conceptual app focused on reducing productivity guilt and promoting mindfulness.",
+      "Shows how I applied human-centred, 0-to-1 conceptual thinking to challenge convention through fluid visuals and tone of voice.",
     cover: {
       src: "/work/memor/m-14.jpg",
       alt: "The Memor prototype open on a phone on a stand, showing the fluid clock-calendar with red and blue event circles, beside a laptop on a desk.",
@@ -999,16 +1002,16 @@ export const PROJECTS: Project[] = [
           {
             src: "/work/memor/fluid-shape-strip.png",
             alt: "Three panels showing the shape's progression: four separate squares, the squares melting into an outlined organic blob, and the final blob shape inside a 12-hour clock face.",
-            width: 1673,
-            height: 600,
+            width: 1581,
+            height: 508,
             caption:
               "The shape's progression: rigid squares, softened into an organic blob, then set inside the familiar clock face.",
           },
           {
             src: "/work/memor/fluid-shape-iteration.png",
             alt: "Three framed panels: a dark calendar concept with a glowing outline and event labels, a small dark green-and-white blob study, and the blue-and-orange blob on white.",
-            width: 1903,
-            height: 600,
+            width: 1817,
+            height: 514,
             caption:
               "Iterating the look in After Effects.",
           },
@@ -1045,8 +1048,8 @@ export const PROJECTS: Project[] = [
           {
             src: "/work/memor/m-05.png",
             alt: "Two Memor notifications written in a brutally honest tone telling the user to go for a walk.",
-            width: 794,
-            height: 510,
+            width: 723,
+            height: 434,
             caption: "The Brutally Honest voice in action, motivation that reads like a friend keeping you in check.",
           },
         ],
@@ -1058,8 +1061,8 @@ export const PROJECTS: Project[] = [
           {
             src: "/work/memor/weekly-radial-view.jpg",
             alt: "A radial weekly calendar built by stacking each day's organic shape, with Monday highlighted in blue against the six other days in grey.",
-            width: 1041,
-            height: 1038,
+            width: 965,
+            height: 950,
             caption: "The weekly view, stacking daily shapes made weekly trends visible at a glance.",
           },
         ],
@@ -1125,9 +1128,10 @@ export const PROJECTS: Project[] = [
     tag: "Sponsored research",
     tagMuted: true,
     topics: ["Human-centred Design", "User Research"],
-    title: "Tell Me a Story",
+    title:
+      "Tell Me a Story: giving parents a heartstring of attachment in a tough time",
     summary:
-      "A way for parents to keep bonding with their baby during a NICU stay.",
+      "Shows how I created a 0-to-1 concept relying on human-centred design for parents who were going through a neonatal experience.",
     cardImage: {
       src: "/work/stori/tmas-build-special.png",
       alt: "Five screens of the Tell Me A Story prototype in a dark purple night-sky theme.",

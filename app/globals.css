@@ -566,8 +566,104 @@
   opacity: 0;
 }
 
+/*
+  Work-page pill: bare at rest, ringed on hover.
+
+  Keyed off an ANCESTOR `.group`, not the pill's own `:hover`. On the work page
+  the whole project row is the link and the pill is only its affordance -- a
+  span, not a second anchor -- so the pill has no hover or focus of its own to
+  answer. Hovering anywhere in the row is what has to light it.
+
+  `:focus-visible` is on the group too, for the same reason: the row IS the
+  focusable element, so tabbing to a project lights its pill exactly as
+  pointing at it does. `:has(:focus-visible)` covers the case where the row's
+  focusable element ends up nested rather than being the group itself.
+
+  Overrides `.brand-ring::before`'s `--brand-ring-rest` default rather than
+  setting that property to 0, because the `.brand-ring:hover::before` rule
+  above writes `opacity: 1` directly and would beat any custom-property
+  value on the pill's own hover -- which is the wrong trigger here.
+*/
+.brand-ring-reveal::before {
+  opacity: 0;
+}
+
+.group:hover .brand-ring-reveal::before,
+.group:focus-visible .brand-ring-reveal::before,
+.group:has(:focus-visible) .brand-ring-reveal::before {
+  opacity: 1;
+}
+
+/*
+  The resting outline: flat `--border`, the same value the nav pill's own
+  outline is drawn in, so a pill nobody is pointing at matches the chrome
+  rather than floating unbounded on the page.
+
+  A masked pseudo-element like the gradient hairline above, NOT a real border.
+  `.brand-ring` sets `border-width: 0` on purpose -- its `background`
+  shorthand resets `background-clip` to `border-box`, so the fill would
+  spread over a real border and leave a 1px band of opaque pill colour
+  between the outline and the glow outside it. Drawing this at the same
+  padding box as the gradient means the two hairlines occupy exactly the same
+  pixels, which is what lets them cross-fade cleanly instead of one sliding
+  out from under the other.
+
+  Fades out as the gradient fades in, on the same 300ms, so hover reads as
+  the outline CHANGING colour rather than as a second ring arriving.
+*/
+.brand-ring-reveal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  /* Above positioned content, for the reason given on .brand-ring::before. */
+  z-index: 1;
+  padding: 1px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background: var(--border);
+  transition: opacity 300ms ease-out;
+}
+
+.group:hover .brand-ring-reveal::after,
+.group:focus-visible .brand-ring-reveal::after,
+.group:has(:focus-visible) .brand-ring-reveal::after {
+  opacity: 0;
+}
+
+/*
+  The bloom behind the pill: the same gradient, blurred, spilling past the
+  edge. There used to be one of these on every .brand-ring and it was taken
+  out because next to the hero's own colour field it was one glow too many.
+  Here it's on the work page, where nothing else is glowing, and it's the
+  thing that makes the ring read as lit rather than merely drawn.
+
+  A real ELEMENT behind the pill rather than a `::after` with `z-index: -1`.
+  A negative z-index would paint behind the nearest stacking context, and
+  `.brand-ring` is `position: relative` with `z-index: auto`, so it doesn't
+  establish one -- the glow would have dropped behind the section's own
+  background and vanished. A preceding sibling under a `relative` parent
+  paints below the pill without any of that.
+
+  Only the spill is ever visible: the pill's fill is opaque, so it covers the
+  middle of the blur and what's left is a rim. `blur()` falls off on a
+  gaussian, so it fades out fast -- tight to the edge, not a wide halo.
+*/
+.brand-glow {
+  background: linear-gradient(var(--angle), var(--brand-grad-stops));
+  animation: brand-ring-spin 18s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .brand-ring::before {
+  .brand-ring::before,
+  .brand-glow {
     /* Held at a fixed diagonal, so the full spread of colours still shows. */
     animation: none;
     --angle: 120deg;

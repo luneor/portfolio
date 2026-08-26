@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { HeroGlow } from "@/components/hero-glow";
@@ -71,6 +72,28 @@ export function Hero() {
           animate="show"
           className="flex flex-col items-center"
         >
+          {/*
+            Small, circular, and cropped tight on the face -- a face reads at
+            this size where a wider portrait would just be a blur of tone.
+            `rounded-full` + `overflow-hidden` draws the circle; the source
+            asset itself is a square crop with headroom on every side so the
+            ring never clips hair or chin.
+
+            No border: a flat ring around a light photo read as a hard black
+            outline on the gradient field. `morph-raised`, the same lift the
+            CTAs and nav pill use, separates it from the field on its own.
+          */}
+          <motion.div variants={item} className="morph-raised mb-5">
+            <Image
+              src="/assets/hero-avatar.png"
+              alt="Hanru Wehmeyer"
+              width={256}
+              height={256}
+              className="h-16 w-16 rounded-full object-cover sm:h-[4.5rem] sm:w-[4.5rem]"
+              priority
+            />
+          </motion.div>
+
           <motion.h1
             id="hero-heading"
             variants={item}

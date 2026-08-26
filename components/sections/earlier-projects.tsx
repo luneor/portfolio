@@ -9,13 +9,13 @@ export function EarlierProjects() {
   return (
     /*
       Page ground, matching Recent Projects above (see the note there on why
-      that section gave up its lifted surface). With both on the same ground
-      the `border-t` hairline is the only thing dividing them, so it stays.
+      that section gave up its lifted surface). No dividing rule between the
+      two: a hairline earns its place when it separates two different
+      surfaces, and once both sections sat on the same ground it was drawing
+      a line through continuous space. The heading and the `py-32` either
+      side of it are what mark the change of section now.
     */
-    <div
-      aria-labelledby="earlier-projects-heading"
-      className="border-t border-border py-32"
-    >
+    <div aria-labelledby="earlier-projects-heading" className="py-32">
       <div className="mx-auto max-w-[1120px] px-6">
         <SectionHeading
           title="Earlier Projects"

@@ -8,19 +8,27 @@ const projects = PROJECTS.filter((project) => project.section === "genio-admin")
 export function GenioAdmin() {
   return (
     /*
-      Page ground, same as Earlier Projects below. This section used to sit on
+      Page ground, same as More Work below. This section used to sit on
       the lifted `bg-background-alt` to mark current work as raised above the
       archive, which worked when each project was a card: the cards carried
       `--card` and the grey behind them was what they were lifted OFF. With
       the cards gone there's nothing left to lift, so the grey read as a slab
       of panel colour behind loose content. The section headings and the
-      generous padding either side of them carry the separation instead.
+      padding either side of them carry the separation instead.
+
+      `py-20`, and every section on this page matches it. Adjacent sections
+      each contribute their own padding, so the figure here is half the gap
+      between two sections: 80px a side reads as 160px between, against the
+      96px `gap-24` between projects INSIDE a section. That ordering is the
+      point -- a section break has to read as bigger than a project break --
+      and at the old `py-32` it was 256px, nearly triple the project gap,
+      which left the page feeling like three separate documents.
     */
-    <div aria-labelledby="recent-projects-heading" className="py-32">
-      <div className="mx-auto max-w-[1120px] px-6">
+    <div aria-labelledby="genio-admin-heading" className="py-20">
+      <div className="mx-auto max-w-page px-6">
         <SectionHeading
-          title="Recent Projects"
-          headingId="recent-projects-heading"
+          title="Genio Admin"
+          headingId="genio-admin-heading"
         >
           <p>
             <strong className="font-semibold">
@@ -57,6 +65,7 @@ export function GenioAdmin() {
                 slug={project.slug}
                 title={project.title}
                 summary={project.summary}
+                secondaryAction={project.secondaryAction}
                 media={
                   <ProjectThumb
                     project={project}

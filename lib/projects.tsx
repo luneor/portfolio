@@ -100,10 +100,14 @@ export type ProjectMedia = ProjectImage | ProjectVideo | ProjectYouTubeVideo;
 export interface Project {
   slug: string;
   /**
-   * Which homepage section lists the project. "ai" sits under the AI section
+   * Which section of the site lists the project. "ai" sits under the AI section
    * rather than Work, since that work puts AI inside the design itself.
+   *
+   * "accessibility" is its own section on the work page rather than a subsection
+   * of Genio Admin: the work is on Genio Notes, not the admin platform, so the
+   * Genio Admin intro copy doesn't describe it.
    */
-  section: "genio-admin" | "ai" | "earlier-projects";
+  section: "genio-admin" | "accessibility" | "ai" | "earlier-projects";
   art: ComponentType;
   tag: string;
   tagMuted?: boolean;
@@ -150,6 +154,11 @@ export interface Project {
    * `cover`, then to the motif.
    */
   cardImage?: ProjectImage;
+  /**
+   * A second link on the work row, beside "View case study", for work that has
+   * a companion page worth reaching directly.
+   */
+  secondaryAction?: { href: string; label: string };
   /** Wide hero image for the detail page, in place of the SVG art. */
   cover?: ProjectImage;
   /** Case-study media rendered as a captioned column under "Shipped". */
@@ -386,7 +395,7 @@ export const PROJECTS: Project[] = [
     topics: ["Stakeholder Management", "Systems Thinking"],
     title: "AI Feature Toggles: the feature I stopped us overbuilding",
     summary:
-      "Shows how I managed cross-functional stakeholder feedback, stepped up to cover PM responsibilities, and used systems thinking to avoid overbuilding a solution.",
+      "Shows how I managed cross-functional stakeholder feedback, stepped up to cover PM responsibilities while navigating ambiguity, and used systems thinking to avoid overbuilding a solution.",
     cardImage: {
       src: "/work/feature-toggles/final-org-form.png",
       alt: "The shipped Edit Organisation screen, showing the Manage Features block alongside general details.",
@@ -600,8 +609,12 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "audio-bubbles",
-    section: "genio-admin",
+    section: "accessibility",
     art: AudioBubblesArt,
+    secondaryAction: {
+      href: "/process/accessibility",
+      label: "How I approach accessibility",
+    },
     tag: "Case study",
     topics: ["Accessibility", "Experimentation"],
     title:

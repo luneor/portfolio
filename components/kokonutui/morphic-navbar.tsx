@@ -30,13 +30,33 @@
  */
 
 import clsx from "clsx";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-export interface NavItem {
+/** A plain destination. */
+export interface NavLink {
   key: string;
   href: string;
   name: string;
+}
+
+/**
+ * A dropdown. No `href` of its own, deliberately: it opens a panel rather than
+ * going anywhere, so making it a link too would leave one label doing two
+ * different things depending on how it was activated.
+ */
+export interface NavMenu {
+  key: string;
+  name: string;
+  items: NavLink[];
+}
+
+export type NavItem = NavLink | NavMenu;
+
+export function isNavMenu(item: NavItem): item is NavMenu {
+  return "items" in item;
 }
 
 interface MorphicNavbarProps {
@@ -131,6 +151,94 @@ function shapeFor(
   );
 }
 
+/*
+  The dropdown panel.
+
+  A DISCLOSURE, not a menu: it's a short list of ordinary page links, so the
+  right pattern is a button with `aria-expanded` revealing a `<ul>` of links,
+  and NOT role="menu"/role="menuitem". Those roles promise arrow-key traversal
+  and a focus trap, and applying them to plain links tells a screen reader to
+  expect behaviour that isn't there. Tab moves through these exactly as it
+  moves through any other list of links.
+
+  Positioned under its own trigger and centred on it. `min-w-full` keeps the
+  panel at least as wide as Process itself so a narrow panel never looks
+  detached from the item it belongs to.
+*/
+function NavMenuPanel({
+  id,
+  label,
+  items,
+  pathname,
+  onNavigate,
+  onItemActive,
+}: {
+  id: string;
+  label: string;
+  items: NavLink[];
+  pathname: string;
+  onNavigate: () => void;
+  /**
+   * Reports whether any item in here is hovered or focused, so the trigger can
+   * hand its gradient ring over while one is.
+   */
+  onItemActive: (active: boolean) => void;
+}) {
+  return (
+    <div
+      id={id}
+      /* Shadow per theme, for the reason given at `.morph-raised`: the same
+         alpha that reads as lift on near-black reads as smudge on cream. */
+      className="absolute top-full left-1/2 z-50 mt-2 -translate-x-1/2 min-w-full rounded-2xl border border-border bg-card p-1.5 shadow-[0_10px_24px_-14px_rgba(0,0,0,0.22)] dark:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.45)]"
+    >
+      <ul aria-label={label} className="flex flex-col gap-0.5">
+        {items.map((child) => {
+          const isCurrent =
+            pathname === child.href || pathname.startsWith(`${child.href}/`);
+          return (
+            <li key={child.key}>
+              <Link
+                href={child.href}
+                aria-current={isCurrent ? "page" : undefined}
+                onClick={onNavigate}
+                onMouseEnter={() => onItemActive(true)}
+                onMouseLeave={() => onItemActive(false)}
+                onFocus={() => onItemActive(true)}
+                onBlur={() => onItemActive(false)}
+                className={clsx(
+                  "block rounded-xl px-3 py-2 text-sm whitespace-nowrap",
+                  /*
+                    The same gradient hairline the nav's highlighted item
+                    wears, hidden at rest and brought up by this item's OWN
+                    hover or focus (`.brand-ring:hover::before` in
+                    globals.css). `--brand-ring-rest: 0` is what hides it, and
+                    `--brand-ring-fill` has to be restated as the panel's card
+                    colour, since .brand-ring paints its own fill and would
+                    otherwise punch the page ground through the panel.
+
+                    No `hover:bg-*` alongside it: .brand-ring sets
+                    `background` itself from unlayered CSS, which outranks a
+                    Tailwind background utility, so a hover fill here would
+                    silently do nothing.
+                  */
+                  "brand-ring [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]",
+                  "focus-visible:outline-none",
+                  // Current page by weight, not colour alone.
+                  isCurrent
+                    ? "font-bold text-foreground"
+                    : "font-normal text-card-foreground"
+                )}
+              >
+                {child.name}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export function MorphicNavbar({
   items,
   activeKey,
@@ -140,10 +248,66 @@ export function MorphicNavbar({
 }: MorphicNavbarProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [menuItemActive, setMenuItemActive] = useState(false);
+  const pathname = usePathname();
+
+  /*
+    Close the dropdown on navigation. Adjusted during render rather than in an
+    effect, the same way MobileNav does it: React re-runs this pass immediately
+    with the new state and never commits the stale open panel, so there's no
+    flash of it. Route changes aren't the only way to leave, so this covers
+    browser back as well as clicking a child link.
+  */
+  const [renderedAt, setRenderedAt] = useState(pathname);
+  if (renderedAt !== pathname) {
+    setRenderedAt(pathname);
+    setOpenMenu(null);
+    setMenuItemActive(false);
+  }
+
+  /*
+    Escape closes, and a pointer down anywhere outside the track closes. Both
+    only while something is open, so the listeners aren't sitting on the
+    document for the entire life of the page.
+  */
+  useEffect(() => {
+    if (!openMenu) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpenMenu(null);
+      setMenuItemActive(false);
+      // Escape should leave focus on the trigger, not adrift on <body>.
+      trackRef.current
+        ?.querySelector<HTMLButtonElement>(`[data-menu-trigger="${openMenu}"]`)
+        ?.focus();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!trackRef.current?.contains(event.target as Node)) {
+        setOpenMenu(null);
+        setMenuItemActive(false);
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [openMenu]);
 
   const activeIndex = items.findIndex((item) => item.key === activeKey);
-  // Hover wins while it lasts, then the highlight falls back to the real page.
-  const highlight = hovered ?? activeIndex;
+  const openIndex = items.findIndex((item) => item.key === openMenu);
+  /*
+    An open menu holds the highlight, ahead of hover. The panel hangs off the
+    detached item, so letting hover move the highlight elsewhere would leave
+    the panel pointing at a fused item with nothing above it. Otherwise hover
+    wins while it lasts, then the highlight falls back to the real page.
+  */
+  const highlight = openIndex >= 0 ? openIndex : (hovered ?? activeIndex);
 
   return (
     <nav className={clsx("flex justify-center", className)}>
@@ -173,23 +337,25 @@ export function MorphicNavbar({
             the highlighted item, which is the "you are here" signal, and
             `aria-current` carries it regardless.
           */
-          const gradientRing = index === highlight && !onField;
+          /*
+            While a dropdown ITEM is hovered or focused, the trigger gives up
+            its ring, so only one thing in the nav is ringed at a time -- the
+            thing being pointed at. It keeps its DETACHMENT though (see
+            `highlight` above): the panel hangs off the trigger, so re-fusing
+            it into the block would leave the panel pointing at nothing.
+          */
+          const gradientRing =
+            index === highlight &&
+            !onField &&
+            !(isNavMenu(item) && menuItemActive);
 
-          return (
-          <Link
-            key={item.key}
-            href={item.href}
-            aria-current={isCurrent ? "page" : undefined}
-            onMouseEnter={() => setHovered(index)}
-            onFocus={() => setHovered(index)}
-            onBlur={(event) => {
-              // Only reset once focus leaves the whole track, so tabbing
-              // between items keeps morphing instead of snapping shut.
-              if (!trackRef.current?.contains(event.relatedTarget as Node)) {
-                setHovered(null);
-              }
-            }}
-            className={clsx(
+          /*
+            One className for both kinds of item, so a dropdown trigger is the
+            same shape, fill and ring as its neighbours and takes part in the
+            morph identically. Only the element differs: a Link goes somewhere,
+            a button opens a panel.
+          */
+          const itemClassName = clsx(
               "flex items-center justify-center text-center whitespace-nowrap transition-all duration-300 ease-out",
               /*
                 Focus indicator, not the sitewide `focus-visible:ring-*`: a
@@ -225,16 +391,18 @@ export function MorphicNavbar({
                 .brand-ring otherwise paints its own fill in the page ground,
                 which is a step darker than the block around it.
               */
-              gradientRing && "brand-ring [--brand-ring-fill:var(--card)]",
-              shapeFor(index, highlight, items.length, gradientRing)
-            )}
-          >
-            {/*
-              Two stacked copies in one grid cell. The bold ghost is invisible
-              but still reserves space, so the cell is always as wide as the
-              bold text and the weight tween never resizes the item or nudges
-              its neighbours: the strokes just thicken in place.
-            */}
+            gradientRing && "brand-ring [--brand-ring-fill:var(--card)]",
+            shapeFor(index, highlight, items.length, gradientRing),
+            isNavMenu(item) && "gap-1.5"
+          );
+
+          /*
+            Two stacked copies in one grid cell. The bold ghost is invisible
+            but still reserves space, so the cell is always as wide as the
+            bold text and the weight tween never resizes the item or nudges
+            its neighbours: the strokes just thicken in place.
+          */
+          const label = (
             <span className="grid">
               <span
                 aria-hidden="true"
@@ -249,7 +417,86 @@ export function MorphicNavbar({
                 {item.name}
               </span>
             </span>
-          </Link>
+          );
+
+          // Shared between both kinds of item, so tabbing across the block
+          // keeps morphing instead of snapping shut.
+          const focusHandlers = {
+            onMouseEnter: () => setHovered(index),
+            onFocus: () => setHovered(index),
+            onBlur: (event: React.FocusEvent) => {
+              if (!trackRef.current?.contains(event.relatedTarget as Node)) {
+                setHovered(null);
+              }
+            },
+          };
+
+          if (isNavMenu(item)) {
+            const isOpen = openMenu === item.key;
+            return (
+              /*
+                `relative` so the panel can hang off this item rather than the
+                whole track: it should line up under Process, not under the
+                middle of the nav.
+              */
+              <div key={item.key} className="relative">
+                <button
+                  type="button"
+                  data-menu-trigger={item.key}
+                  aria-expanded={isOpen}
+                  aria-controls={`${item.key}-menu`}
+                  /*
+                    Click, not hover. The track already spends hover on the
+                    morph highlight, and a panel that opens on pass-through
+                    would fire every time someone crossed the nav on their way
+                    somewhere else. Click also means one behaviour on touch and
+                    pointer alike.
+                  */
+                  onClick={() => {
+                    setOpenMenu(isOpen ? null : item.key);
+                    setMenuItemActive(false);
+                  }}
+                  className={itemClassName}
+                  {...focusHandlers}
+                >
+                  {label}
+                  <ChevronDown
+                    aria-hidden="true"
+                    className={clsx(
+                      "shrink-0 transition-transform duration-300 ease-out",
+                      size === "lg" ? "size-4" : "size-3.5",
+                      isOpen && "rotate-180"
+                    )}
+                  />
+                </button>
+
+                {isOpen && (
+                  <NavMenuPanel
+                    id={`${item.key}-menu`}
+                    label={item.name}
+                    items={item.items}
+                    pathname={pathname}
+                    onNavigate={() => {
+                      setOpenMenu(null);
+                      setMenuItemActive(false);
+                    }}
+                    onItemActive={setMenuItemActive}
+                  />
+                )}
+              </div>
+            );
+          }
+
+          return (
+            <Link
+              key={item.key}
+              href={item.href}
+              aria-current={isCurrent ? "page" : undefined}
+              className={itemClassName}
+              {...focusHandlers}
+            >
+              {label}
+            </Link>
           );
         })}
       </div>

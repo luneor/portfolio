@@ -58,23 +58,20 @@ export default function RootLayout({
           Skip to main content
         </a>
         {/*
-          Dark only, for now. `forcedTheme` pins every visitor to it regardless
-          of what's in localStorage, so anyone who picked light earlier isn't
-          stranded on a half-tuned palette while the new brand gradient work
-          settles.
+          Both themes, reader's choice. `forcedTheme` is gone, so whatever is
+          in localStorage wins again and ThemeToggle is back in the header.
 
-          Parked rather than removed: the light tokens, the 500ms cross-fade,
-          and ThemeToggle itself are all still in the tree. Bringing the toggle
-          back is dropping this one prop and un-commenting it in
-          components/site-header.tsx.
+          `defaultTheme="dark"` still: dark is the palette the brand gradient
+          work was built around, so a first-time visitor gets the intended
+          look and light is opt-in.
 
-          `enableSystem` stays off for the same reason it always was: "system"
-          isn't a state a visitor can reach here.
+          `enableSystem` stays off. With no "system" option in the toggle it
+          isn't a state a visitor can reach, and turning it on would mean the
+          first paint depends on an OS setting the toggle can't show.
         */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          forcedTheme="dark"
           enableSystem={false}
         >
           <MotionConfig reducedMotion="user">

@@ -26,8 +26,8 @@ const principles = [
 export function Ai() {
   return (
     <section id="ai" aria-labelledby="ai-heading" className="py-24">
-      <div className="mx-auto max-w-[1120px] px-6">
-        <SectionHeading title="On AI" headingId="ai-heading">
+      <div className="mx-auto max-w-page px-6">
+        <SectionHeading title="AI" headingId="ai-heading">
           <div className="flex flex-col gap-3">
             <p>
               It&apos;s become part of how I actually work: AI-assisted

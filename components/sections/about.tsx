@@ -3,15 +3,22 @@ import Image from "next/image";
 export function About() {
   return (
     <section id="about" aria-labelledby="about-heading" className="py-24">
-      <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-center gap-16 px-6 md:grid-cols-[1fr_1.3fr]">
-        {/* One portrait, square, filling the column. */}
+      <div className="mx-auto grid max-w-page grid-cols-1 items-center gap-16 px-6 md:grid-cols-[1fr_1.3fr]">
+        {/*
+          One portrait, square. `md:w-[85%]` rather than a narrower first grid
+          track: shrinking the track would hand the freed width to the prose
+          column, pushing its measure past ~80 characters. Capping the image
+          instead leaves the text column exactly as it was and lets the space
+          fall into the gap. Below `md` the layout is one column and the
+          portrait still runs its full width.
+        */}
         <Image
           src="/assets/about-headshot.png"
           alt="Hanru Wehmeyer, portrait"
-          width={684}
-          height={684}
-          sizes="(max-width: 768px) 92vw, 440px"
-          className="aspect-square w-full rounded-xl border border-border object-cover"
+          width={1400}
+          height={1400}
+          sizes="(max-width: 768px) 92vw, 380px"
+          className="aspect-square w-full rounded-xl border border-border object-cover md:w-[85%]"
         />
         <div>
           <h2

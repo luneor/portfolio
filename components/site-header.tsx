@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MorphicNavbar } from "@/components/kokonutui/morphic-navbar";
 import { MobileNav } from "@/components/mobile-nav";
-import { HEADER_NAV, SITE_NAV, activeNavKey } from "@/lib/nav";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { SITE_NAV, activeNavKey } from "@/lib/nav";
 
 /*
   Logo, navigation, theme toggle.
@@ -65,7 +66,7 @@ export function SiteHeader() {
         is already met by `py-4`'s padding alone and does nothing. The figure
         has to be the whole row, padding included.
       */}
-      <div className="mx-auto flex min-h-16 max-w-[1120px] items-center justify-between gap-4 px-6 py-4">
+      <div className="mx-auto flex min-h-16 max-w-page items-center justify-between gap-4 px-6 py-4">
         {/*
           Two SVGs, driven by the `.dark` class already on <html>, so the swap
           needs no theme-detection JS and can't flash the wrong mark on first
@@ -102,7 +103,7 @@ export function SiteHeader() {
 
         {!isHome && (
           <MorphicNavbar
-            items={HEADER_NAV}
+            items={SITE_NAV}
             activeKey={activeNavKey(pathname)}
             size="sm"
             className="max-sm:hidden"
@@ -110,12 +111,7 @@ export function SiteHeader() {
         )}
 
         <div className="flex items-center gap-2">
-          {/*
-            The theme toggle is parked, not deleted: the site is dark-only for
-            now (see `forcedTheme` in app/layout.tsx). ThemeToggle and the whole
-            light palette are still in the tree, so putting it back is this line
-            plus dropping `forcedTheme`.
-          */}
+          <ThemeToggle />
           {/*
             The hamburger is on every page, the homepage included: below `sm`
             the hero shows CTAs instead of the nav pill, so this is the only way
@@ -123,7 +119,7 @@ export function SiteHeader() {
             point at the page you're already on.
           */}
           <MobileNav
-            items={isHome ? SITE_NAV : HEADER_NAV}
+            items={SITE_NAV}
             activeKey={activeNavKey(pathname)}
           />
         </div>

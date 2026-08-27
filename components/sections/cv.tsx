@@ -76,7 +76,7 @@ function CvBlockHeading({ children }: { children: string }) {
 export function Cv() {
   return (
     <section id="cv" aria-labelledby="cv-heading" className="py-24">
-      <div className="mx-auto max-w-[1120px] px-6">
+      <div className="mx-auto max-w-page px-6">
         {/* Visually hidden: the nav tab and page title already say "CV", so
             a third repeat added nothing on the page itself. Kept as a real
             heading, not dropped outright, so the section still has the

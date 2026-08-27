@@ -223,13 +223,38 @@ function NavMenuPanel({
                   */
                   "brand-ring [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]",
                   "focus-visible:outline-none",
-                  // Current page by weight, not colour alone.
+                  /*
+                    Bold on hover and focus, matching how the nav items above
+                    thicken when highlighted.
+
+                    The current page stays bold at ALL times, hover or not. It
+                    isn't decoration: weight is what marks "you are here" here,
+                    and `aria-current` alone wouldn't show it. So the two cases
+                    can't collapse into one rule -- the current item has no
+                    resting state to return to.
+                  */
                   isCurrent
                     ? "font-bold text-foreground"
-                    : "font-normal text-card-foreground"
+                    : "font-normal text-card-foreground hover:font-bold focus-visible:font-bold"
                 )}
               >
-                {child.name}
+                {/*
+                  Same invisible bold ghost the nav items use. The panel sizes
+                  to its content, so without a reserved width the widest item
+                  going bold would widen the whole panel under the cursor. The
+                  ghost holds the bold width from the start, and the visible
+                  copy sits on top of it in the same grid cell, so the strokes
+                  thicken in place and nothing moves.
+                */}
+                <span className="grid">
+                  <span
+                    aria-hidden="true"
+                    className="invisible col-start-1 row-start-1 font-bold"
+                  >
+                    {child.name}
+                  </span>
+                  <span className="col-start-1 row-start-1">{child.name}</span>
+                </span>
               </Link>
             </li>
           );

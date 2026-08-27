@@ -243,6 +243,13 @@ void main() {
 
 /** Reads a CSS custom property off an element and returns it as RGB 0..1, so
  *  the palette stays owned by the tokens in globals.css. */
+/*
+  How long to keep re-reading `--background` after the theme class flips.
+  Covers the 300ms token transition in globals.css with room for the frame or
+  two of lag before it starts.
+*/
+const THEME_SAMPLE_MS = 600;
+
 function readColour(styles: CSSStyleDeclaration, name: string): [number, number, number] {
   const raw = styles.getPropertyValue(name).trim();
   const hex = raw.replace("#", "");
@@ -502,7 +509,8 @@ export function HeroGradient({
     // Palette straight from the tokens, so globals.css stays the one source.
     const styles = getComputedStyle(document.documentElement);
     const swatches = PALETTE.map((entry) => readColour(styles, entry.token));
-    gl.uniform3fv(u("u_bg"), readColour(styles, "--background"));
+    const uBg = u("u_bg");
+    gl.uniform3fv(uBg, readColour(styles, "--background"));
     gl.uniform3fv(u("u_c5"), readColour(styles, "--brand-grad-5"));
     gl.uniform1f(u("u_scale"), SCALE);
     gl.uniform1f(u("u_noiseSize"), NOISE_SIZE);
@@ -667,6 +675,32 @@ export function HeroGradient({
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
 
+    /*
+      The field's ground colour is `--background`, read from the tokens above.
+      That read happens ONCE at mount, so without this the canvas keeps
+      whichever theme was live when it started: switch to light and the page
+      goes cream while the hero stays near-black behind the same gradient.
+
+      Re-read on the theme class flipping, and keep re-reading for a moment
+      after. `--background` is a registered @property that TRANSITIONS over
+      300ms (see `.theme-transition`), so a single read at mutation time gets
+      the old value -- the token hasn't moved yet. Sampling until the
+      transition is over lets the canvas ease across with the rest of the page
+      instead of stepping at one end or the other.
+
+      Bounded to that window on purpose: `getComputedStyle` forces a style
+      recalc, so doing it every frame for the life of the page would be a
+      permanent cost for something that changes only on a click.
+    */
+    let bgSampleUntil = 0;
+    const themeObserver = new MutationObserver(() => {
+      bgSampleUntil = performance.now() + THEME_SAMPLE_MS;
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
     // Pointer in -1..1, y flipped to match clip space.
     const target = { x: 0, y: 0 };
     const eased = { x: 0, y: 0 };
@@ -705,6 +739,11 @@ export function HeroGradient({
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
       if (!visible) return;
+
+      // Only while a theme switch is in flight; see `bgSampleUntil` above.
+      if (now < bgSampleUntil) {
+        gl.uniform3fv(uBg, readColour(styles, "--background"));
+      }
 
       /*
         With no pointer to follow, walk one around instead. Two incommensurate
@@ -772,6 +811,7 @@ export function HeroGradient({
       clearTimeout(shuffleTimer);
       if (randomizeRef) randomizeRef.current = null;
       observer.disconnect();
+      themeObserver.disconnect();
       io.disconnect();
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseleave", onLeave);

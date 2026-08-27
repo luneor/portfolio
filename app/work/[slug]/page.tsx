@@ -101,7 +101,7 @@ export default async function ProjectPage({
     space. This keeps a clear gap to the footer without the dead air.
   */
   return (
-    <main id="main" className="mx-auto w-full max-w-[1120px] px-6 pb-10">
+    <main id="main" className="mx-auto w-full max-w-page px-6 pb-10">
       <div className="flex flex-col gap-6 md:grid md:grid-cols-[15rem_minmax(0,1fr)] md:gap-12">
         <CaseStudyNav sections={sections} title={project.title} />
 
@@ -112,7 +112,7 @@ export default async function ProjectPage({
           No `max-w` cap: the column is already bounded by the grid track
           (`minmax(0,1fr)` beside the rail's fixed 15rem), so it naturally
           fills to the same right edge as the header above it, the theme
-          toggle included, both sitting in the same `max-w-[1120px]`
+          toggle included, both sitting in the same `max-w-page`
           container. A hardcoded cap here left a ~100px gap unused on wide
           viewports; prose lines run a little longer now, but the page reads
           less cramped for it.

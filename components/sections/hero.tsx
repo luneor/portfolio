@@ -65,7 +65,7 @@ export function Hero() {
         push the hero's own bottom that far past the fold and shove the centred
         block visibly low; subtracting the header's height puts it back.
       */}
-      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-[1120px] flex-col items-center justify-center px-6 py-24 text-center sm:min-h-svh">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-page flex-col items-center justify-center px-6 py-24 text-center sm:min-h-svh">
         <motion.div
           variants={container}
           initial="hidden"
@@ -116,9 +116,9 @@ export function Hero() {
             */
             className="mt-5 max-w-[54ch] text-[1.05rem] leading-relaxed text-foreground"
           >
-            UX Designer, curious about what&apos;s next - always{" "}
-            <strong className="font-semibold">thinking creatively</strong> and
-            pushing for <strong className="font-semibold">collaboration</strong>.
+            UX Designer in Scotland, creating{" "}
+            <strong className="font-semibold">innovative, human-centred</strong>{" "}
+            solutions that align with business needs.
           </motion.p>
 
           {/*

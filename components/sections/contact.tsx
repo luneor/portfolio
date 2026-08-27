@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 type Status =
   | { state: "idle" }
@@ -15,6 +16,20 @@ type Status =
   | { state: "error"; message: string };
 
 const GENERIC_ERROR = "Sorry, something went wrong sending that. Please email directly instead.";
+
+/*
+  Page ground inside the fields, rather than the input primitive's own
+  `bg-transparent` + `dark:bg-input/30`. That 30% tint of `--input` used to be
+  invisible, but `--input` had to be lifted to clear WCAG 1.4.11 on the field
+  BORDER, which lifted the tint with it and left the fields sitting on a
+  lighter slab than the page around them.
+
+  Overridden here rather than in components/ui/input.tsx: `cn` runs
+  tailwind-merge, so these replace the primitive's background cleanly and the
+  primitive stays stock for anything else that uses it. `dark:` needs stating
+  too -- without it the primitive's own dark rule still outranks the base.
+*/
+const FIELD_SURFACE = "bg-background dark:bg-background";
 
 export function Contact() {
   const [status, setStatus] = useState<Status>({ state: "idle" });
@@ -57,7 +72,7 @@ export function Contact() {
 
   return (
     <section id="contact" aria-labelledby="contact-heading" className="py-24">
-      <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-16 px-6 md:grid-cols-2">
+      <div className="mx-auto grid max-w-page grid-cols-1 gap-16 px-6 md:grid-cols-2">
         <div>
           <h2
             id="contact-heading"
@@ -145,7 +160,14 @@ export function Contact() {
               >
                 <div className="grid gap-1.5">
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" autoComplete="name" required disabled={isSending} />
+                  <Input
+                    id="name"
+                    name="name"
+                    autoComplete="name"
+                    required
+                    disabled={isSending}
+                    className={FIELD_SURFACE}
+                  />
                 </div>
                 <div className="grid gap-1.5">
                   <Label htmlFor="email">Email</Label>
@@ -156,6 +178,7 @@ export function Contact() {
                     autoComplete="email"
                     required
                     disabled={isSending}
+                    className={FIELD_SURFACE}
                   />
                 </div>
                 <div className="grid gap-1.5">
@@ -165,7 +188,7 @@ export function Contact() {
                     name="message"
                     required
                     disabled={isSending}
-                    className="min-h-[130px]"
+                    className={cn("min-h-[130px]", FIELD_SURFACE)}
                   />
                 </div>
                 <Button

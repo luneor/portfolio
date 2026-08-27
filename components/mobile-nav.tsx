@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import clsx from "clsx";
-import type { NavItem } from "@/components/kokonutui/morphic-navbar";
+import { isNavMenu, type NavItem } from "@/components/kokonutui/morphic-navbar";
+import { activeNavChild } from "@/lib/nav";
 
 /*
   The header's navigation below `sm`, where the morphic pill doesn't fit.
@@ -26,6 +27,8 @@ export function MobileNav({
   const panelId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+  // `activeKey` reports a dropdown's PARENT, so the child needs its own lookup.
+  const activeChildKey = activeNavChild(pathname)?.key;
 
   /*
     Close on navigation. The header stays mounted across route changes, so
@@ -92,31 +95,42 @@ export function MobileNav({
           aria-label="Main"
           className="absolute inset-x-0 top-full border-b border-border bg-background px-6 py-3 shadow-lg"
         >
+          {/*
+            One flat list. A dropdown's children are spliced in where the
+            parent sat, WITHOUT a group label or an indent: on desktop the
+            dropdown exists to keep the pill short, and that pressure doesn't
+            exist in a vertical panel with room to spare. Grouping here would
+            add a heading and a level of hierarchy to save nothing, and the
+            parent has no page of its own to head them with anyway.
+          */}
           <ul className="flex flex-col">
-            {items.map((item) => {
-              const isCurrent = item.key === activeKey;
-              return (
-                <li key={item.key}>
-                  <Link
-                    href={item.href}
-                    aria-current={isCurrent ? "page" : undefined}
-                    onClick={() => setOpen(false)}
-                    className={clsx(
-                      // The current page is marked by weight and a rule, never
-                      // by colour alone.
-                      // No hover state here either, for the reason on the
-                      // button above.
-                      "block border-l-2 py-2.5 pl-3 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-                      isCurrent
-                        ? "border-brand-strong font-bold text-foreground"
-                        : "border-transparent font-normal text-foreground"
-                    )}
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              );
-            })}
+            {items
+              .flatMap((item) => (isNavMenu(item) ? item.items : [item]))
+              .map((item) => {
+                const isCurrent =
+                  item.key === activeKey || item.key === activeChildKey;
+                return (
+                  <li key={item.key}>
+                    <Link
+                      href={item.href}
+                      aria-current={isCurrent ? "page" : undefined}
+                      onClick={() => setOpen(false)}
+                      className={clsx(
+                        // The current page is marked by weight and a rule,
+                        // never by colour alone.
+                        // No hover state here either, for the reason on the
+                        // button above.
+                        "block border-l-2 py-2.5 pl-3 text-base focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+                        isCurrent
+                          ? "border-brand-strong font-bold text-foreground"
+                          : "border-transparent font-normal text-foreground"
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
         </nav>
       )}

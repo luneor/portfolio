@@ -3,26 +3,26 @@ import { ProjectFeature } from "@/components/project-feature";
 import { ProjectThumb } from "@/components/project-thumb";
 import { PROJECTS } from "@/lib/projects";
 
-const projects = PROJECTS.filter((project) => project.section === "earlier-projects");
+const projects = PROJECTS.filter(
+  (project) => project.section === "accessibility"
+);
 
-export function EarlierProjects() {
+/*
+  A peer of Genio Admin, not a subsection of it, which is why the heading
+  is an h2 at the same size rather than an h3 inside the Genio Admin stack.
+
+  The split is real and not just presentational: this work is on Genio Notes,
+  the student-facing product, so the Genio Admin intro copy above describes a
+  different platform entirely and shouldn't be read as framing it.
+
+  Same one-column, no-border stack and spacing as the sections either side.
+*/
+export function Accessibility() {
   return (
-    /*
-      Page ground, matching Genio Admin above (see the note there on why
-      that section gave up its lifted surface). No dividing rule between the
-      two: a hairline earns its place when it separates two different
-      surfaces, and once both sections sat on the same ground it was drawing
-      a line through continuous space. The heading and the `py-20` either
-      side of it are what mark the change of section now.
-    */
-    <div aria-labelledby="more-work-heading" className="py-20">
+    <div aria-labelledby="accessibility-heading" className="py-20">
       <div className="mx-auto max-w-page px-6">
-        <SectionHeading
-          title="More Work"
-          headingId="more-work-heading"
-        />
+        <SectionHeading title="Accessibility" headingId="accessibility-heading" />
 
-        {/* Same one-column, no-border stack and spacing as Genio Admin. */}
         <div className="mt-10 flex flex-col gap-24">
           {projects.map((project) => {
             return (
@@ -31,6 +31,7 @@ export function EarlierProjects() {
                 slug={project.slug}
                 title={project.title}
                 summary={project.summary}
+                secondaryAction={project.secondaryAction}
                 media={
                   <ProjectThumb
                     project={project}

@@ -45,6 +45,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /*
+    The page grid's max width, as a `max-w-page` utility. Every section, the
+    header, the footer and the case-study column sit in this one measure, so it
+    has to come from a single place -- there were 14 copies of the old literal
+    and any one of them could have drifted out of step. Reads `--page-max`
+    below, so the case-study rail's gutter maths can use the same number.
+  */
+  --container-page: var(--page-max);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -111,13 +119,26 @@
   --accent-foreground: #14131a;
   --destructive: oklch(0.577 0.245 27.325);
   --border: #d8d3c4;
-  --input: #cfc9b8;
+  /*
+    Darker than `--border`, and deliberately not in step with it. `--border`
+    draws decorative hairlines and dividers, which carry no information and so
+    have no contrast floor. `--input` draws the BOUNDARY OF A FORM CONTROL,
+    which WCAG 1.4.11 puts at 3:1 against its surround: the old #cfc9b8
+    measured 1.60:1 on the page and 1.65:1 on a card, so the field edges were
+    very nearly invisible. This clears it on all three light surfaces --
+    3.50:1 on the page, 3.63:1 on a card, 3.18:1 on `--background-alt`.
+    In light mode this token is ONLY that border (the `bg-input` fills are all
+    behind `dark:`), so nothing else moves with it.
+  */
+  --input: #8c8677;
   --ring: #0f6b57;
   --chart-1: #ed2a03;
   --chart-2: #12775f;
   --chart-3: #0f6b57;
   --chart-4: #7a5c00;
   --chart-5: #57515f;
+  /* Page grid width; see --container-page in @theme. */
+  --page-max: 1280px;
   --radius: 0.625rem;
   --sidebar: #fdfbf5;
   --sidebar-foreground: #14131a;
@@ -194,7 +215,21 @@
   --accent-foreground: #f5f3ec;
   --destructive: oklch(0.704 0.191 22.216);
   --border: #2a2a2a;
-  --input: #333330;
+  /*
+    Same rule as the light `--input` above, and the same reason to sit apart
+    from `--border`: this draws the boundary of a form control, which WCAG
+    1.4.11 puts at 3:1, while `--border` only draws decorative hairlines that
+    have no floor. The old #333330 measured 1.51:1 on the page and 1.37:1 on a
+    card -- the contact fields had edges you effectively couldn't see. Now
+    3.50:1 and 3.18:1.
+
+    Dark also uses this token as a FILL (`dark:bg-input/30`), unlike light, so
+    lifting it lifts the field interior too: 30% of this over the page ground
+    lands at #2b2a27 rather than #1a1a19. That's the field reading as a field
+    instead of as a hole, so it's a gain, but it is a visible change and not
+    only a border one.
+  */
+  --input: #6d6960;
   --ring: #44ccbe;
   --chart-1: #ed2a03;
   --chart-2: #24a182;
@@ -275,8 +310,22 @@
 
   Two stacked shadows: a tight one for the edge and a wide soft one for the
   lift, which reads as depth rather than as a dark outline.
+
+  Per theme, and by a wide margin. A shadow's job is to darken the surface
+  BEHIND the element, so the same alpha does very different work on each
+  paper: near-black swallows it and needs a heavy value to read as lift at
+  all, while on cream those same alphas land as visible grey smudge. Light
+  runs at roughly 40% of dark's opacity.
+
+  Light is the bare rule and dark is the override, matching the tokens above
+  (`:root` light, `.dark` dark).
 */
 .morph-raised {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.1))
+    drop-shadow(0 6px 14px rgb(0 0 0 / 0.16));
+}
+
+.dark .morph-raised {
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.34))
     drop-shadow(0 8px 18px rgb(0 0 0 / 0.42));
 }
@@ -287,7 +336,7 @@
   upward once its grid row ends (the last ~240px, over the footer).
 
   The grid column reserves the 15rem of space, so `left` only has to mirror
-  the container's own gutter maths: a centred max-w-[1120px] with a 1.5rem
+  the container's own gutter maths: a centred `max-w-page` with a 1.5rem
   gutter, clamped so it never goes past the gutter on narrower viewports.
   `top` clears the sticky site header.
 */
@@ -295,7 +344,7 @@
   .case-study-rail {
     position: fixed;
     top: 4.5rem;
-    left: max(1.5rem, calc((100vw - 1120px) / 2 + 1.5rem));
+    left: max(1.5rem, calc((100vw - var(--page-max)) / 2 + 1.5rem));
     width: 15rem;
     /*
       A definite height, not just a max: the rail's contact button is pushed to
@@ -567,31 +616,26 @@
 }
 
 /*
-  Work-page pill: bare at rest, ringed on hover.
+  Work-page pill: bare at rest, ringed on its OWN hover.
 
-  Keyed off an ANCESTOR `.group`, not the pill's own `:hover`. On the work page
-  the whole project row is the link and the pill is only its affordance -- a
-  span, not a second anchor -- so the pill has no hover or focus of its own to
-  answer. Hovering anywhere in the row is what has to light it.
+  Keyed to the pill itself, not the project row it sits in. The row isn't
+  clickable -- it answers hover with a title colour and a slow image scale and
+  nothing else -- so the ring has to belong to the one element that can
+  actually be clicked. A ring that lit up from anywhere in the row would be
+  advertising the whole row as a target.
 
-  `:focus-visible` is on the group too, for the same reason: the row IS the
-  focusable element, so tabbing to a project lights its pill exactly as
-  pointing at it does. `:has(:focus-visible)` covers the case where the row's
-  focusable element ends up nested rather than being the group itself.
+  Only the rest state needs declaring: `.brand-ring:hover::before` further up
+  already brings the hairline to full opacity on hover and focus, and it
+  outweighs this rule (two classes and a pseudo-class against one class), so
+  the reveal comes for free.
 
-  Overrides `.brand-ring::before`'s `--brand-ring-rest` default rather than
-  setting that property to 0, because the `.brand-ring:hover::before` rule
-  above writes `opacity: 1` directly and would beat any custom-property
-  value on the pill's own hover -- which is the wrong trigger here.
+  Overriding `::before`'s opacity rather than setting `--brand-ring-rest: 0`,
+  because that custom property is only a fallback inside `opacity` and the
+  hover rule writes `opacity` directly -- so the property would never get a
+  say once the pill was hovered.
 */
 .brand-ring-reveal::before {
   opacity: 0;
-}
-
-.group:hover .brand-ring-reveal::before,
-.group:focus-visible .brand-ring-reveal::before,
-.group:has(:focus-visible) .brand-ring-reveal::before {
-  opacity: 1;
 }
 
 /*
@@ -609,7 +653,8 @@
   out from under the other.
 
   Fades out as the gradient fades in, on the same 300ms, so hover reads as
-  the outline CHANGING colour rather than as a second ring arriving.
+  the outline CHANGING colour rather than as a second ring arriving. Same
+  trigger as the gradient: the pill's own hover, not the row's.
 */
 .brand-ring-reveal::after {
   content: "";
@@ -632,9 +677,8 @@
   transition: opacity 300ms ease-out;
 }
 
-.group:hover .brand-ring-reveal::after,
-.group:focus-visible .brand-ring-reveal::after,
-.group:has(:focus-visible) .brand-ring-reveal::after {
+.brand-ring-reveal:hover::after,
+.brand-ring-reveal:focus-visible::after {
   opacity: 0;
 }
 

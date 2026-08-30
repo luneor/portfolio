@@ -1,5 +1,6 @@
 import { SectionHeading } from "@/components/section-heading";
 import { SpotlightCard } from "@/components/kokonutui/spotlight-card";
+import { CollaborationWorkflow } from "@/components/collaboration-workflow";
 
 /*
   Same shape as the On AI section: intro prose under the heading, then three
@@ -71,6 +72,8 @@ export function Collaboration() {
             </SpotlightCard>
           ))}
         </div>
+
+        <CollaborationWorkflow />
       </div>
     </section>
   );

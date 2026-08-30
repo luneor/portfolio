@@ -42,14 +42,14 @@ export function Collaboration() {
         >
           <div className="flex flex-col gap-3">
             <p>
-              At university, the studio made this easy. I&apos;d lean over and
-              ask the person next to me a question about their work, or
-              they&apos;d ask me about mine, it just happened. No booking a
-              slot, no overthinking it, just proximity and curiosity.
+              At university, collaboration was easy. I&apos;d lean over and ask
+              the person next to me about their work, or they&apos;d ask me
+              about mine, it just happened. No booking a slot, no overthinking
+              it, just proximity and curiosity.
             </p>
             <p>
-              Moving to remote work, I quickly realised how much I&apos;d
-              relied on that.
+              Once I started working remotely, I looked into collaboration
+              more, how it&apos;s created, what it means, how it should work.
             </p>
           </div>
         </SectionHeading>

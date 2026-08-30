@@ -191,15 +191,39 @@ export function Contact() {
                     className={cn("min-h-[130px]", FIELD_SURFACE)}
                   />
                 </div>
-                <Button
-                  type="submit"
-                  variant="gradient"
-                  size="lg"
-                  className="h-11 w-fit px-6"
-                  disabled={isSending}
-                >
-                  {isSending ? "Sending…" : "Send message"}
-                </Button>
+                {/*
+                  The site's primary treatment, same as the work page's "View
+                  case study": bare at rest with a flat `--border` hairline,
+                  and on the button's own hover the gradient ring plus a bloom
+                  of the same gradient behind it.
+
+                  `group/cta` is scoped to this wrapper, which is `w-fit` around
+                  the button, so "hovered" means the button and not the form.
+                  `relative` keeps the glow, a preceding sibling, behind the
+                  button without a negative z-index.
+
+                  The glow is dropped entirely while sending rather than being
+                  hidden: a disabled button is `pointer-events-none`, so hover
+                  would still register on the WRAPPER and light the bloom
+                  around a button that can't be pressed.
+                */}
+                <div className="group/cta relative w-fit">
+                  {!isSending && (
+                    <span
+                      aria-hidden="true"
+                      className="brand-glow pointer-events-none absolute -inset-0.5 rounded-full opacity-0 blur-sm transition-opacity duration-300 ease-out group-hover/cta:opacity-70 group-has-[:focus-visible]/cta:opacity-70"
+                    />
+                  )}
+                  <Button
+                    type="submit"
+                    variant="gradient"
+                    size="lg"
+                    className="brand-ring-reveal relative h-11 w-fit px-6"
+                    disabled={isSending}
+                  >
+                    {isSending ? "Sending…" : "Send message"}
+                  </Button>
+                </div>
                 <p
                   role="status"
                   aria-live="polite"

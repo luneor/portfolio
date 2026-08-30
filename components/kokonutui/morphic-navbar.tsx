@@ -88,6 +88,22 @@ const SIZES = {
   sm: "px-3 py-1.5 text-sm sm:px-4",
 } as const;
 
+/*
+  Dropdown label size, per surface, and it is NOT simply `SIZES` reused.
+
+  The panel is exactly as wide as its trigger (see the panel's `inset-x-2`),
+  and the two triggers are very different widths: the hero's is ~148px, the
+  header's ~107px. Bold "Collaboration" is ~93px at `text-sm`, which with the
+  panel and item padding overflows the compact panel but leaves the hero's
+  with room to spare. So the compact one drops to `text-xs` to fit, and the
+  hero's goes UP to `text-base` -- sitting under an 18px trigger label, 12px
+  read like fine print.
+*/
+const ITEM_TEXT = {
+  lg: "text-base",
+  sm: "text-xs",
+} as const;
+
 /**
  * Geometry for one item: corner rounding, the detaching margin, and which ends
  * of its outline are lit.
@@ -161,9 +177,9 @@ function shapeFor(
   expect behaviour that isn't there. Tab moves through these exactly as it
   moves through any other list of links.
 
-  Positioned under its own trigger and centred on it. `min-w-full` keeps the
-  panel at least as wide as Process itself so a narrow panel never looks
-  detached from the item it belongs to.
+  Sized and positioned to sit exactly on its own trigger's box, so it reads as
+  belonging to Process rather than floating near it. See the `inset-x-2` note
+  on the panel element for why that isn't `w-full`.
 */
 function NavMenuPanel({
   id,
@@ -172,12 +188,25 @@ function NavMenuPanel({
   pathname,
   onNavigate,
   onItemActive,
+  onField,
+  size,
 }: {
   id: string;
   label: string;
   items: NavLink[];
   pathname: string;
   onNavigate: () => void;
+  /**
+   * Mirrors MorphicNavbar's own `onField`. On the hero the gradient is already
+   * the background, so nothing in the nav carries a gradient ring; these items
+   * follow that rule rather than being the one thing that breaks it.
+   */
+  onField: boolean;
+  /**
+   * Mirrors MorphicNavbar's own `size`, because the two surfaces have very
+   * different room. See ITEM_TEXT.
+   */
+  size: "sm" | "lg";
   /**
    * Reports whether any item in here is hovered or focused, so the trigger can
    * hand its gradient ring over while one is.
@@ -189,7 +218,23 @@ function NavMenuPanel({
       id={id}
       /* Shadow per theme, for the reason given at `.morph-raised`: the same
          alpha that reads as lift on near-black reads as smudge on cream. */
-      className="absolute top-full left-1/2 z-50 mt-2 -translate-x-1/2 min-w-full rounded-2xl border border-border bg-card p-1.5 shadow-[0_10px_24px_-14px_rgba(0,0,0,0.22)] dark:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.45)]"
+      /*
+        Exactly as wide as the Process trigger, rather than growing to fit its
+        longest label.
+
+        `inset-x-2`, NOT `w-full`. The panel's containing block is the wrapper
+        div, and the trigger inside it carries `mx-2` while highlighted -- which
+        it always is when this panel is open, since `highlight` prefers the open
+        menu. So `w-full` measured the wrapper and came out 16px wider than the
+        trigger every time. Insetting by that same 8px a side lands the panel on
+        the trigger's own box.
+
+        That width is the constraint the items answer to: at the compact size
+        the trigger is ~107px and bold "Collaboration" is ~93px at `text-sm`,
+        which with padding overflows a panel that narrow. Hence `text-xs`
+        there -- see the item classes below.
+      */
+      className="absolute top-full inset-x-2 z-50 mt-2 rounded-2xl border border-border bg-card p-1 shadow-[0_10px_24px_-14px_rgba(0,0,0,0.22)] dark:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.45)]"
     >
       <ul aria-label={label} className="flex flex-col gap-0.5">
         {items.map((child) => {
@@ -206,12 +251,17 @@ function NavMenuPanel({
                 onFocus={() => onItemActive(true)}
                 onBlur={() => onItemActive(false)}
                 className={clsx(
-                  "block rounded-xl px-3 py-2 text-sm whitespace-nowrap",
+                  // `text-left` because the nav items above are centred and
+                  // these inherit that; a two-item list reads better ranged
+                  // left off a common edge.
+                  "block rounded-xl px-2 py-2 text-left whitespace-nowrap",
+                  ITEM_TEXT[size],
                   /*
-                    The same gradient hairline the nav's highlighted item
-                    wears, hidden at rest and brought up by this item's OWN
-                    hover or focus (`.brand-ring:hover::before` in
-                    globals.css). `--brand-ring-rest: 0` is what hides it, and
+                    In the HEADER: the same gradient hairline the nav's
+                    highlighted item wears, hidden at rest and brought up by
+                    this item's OWN hover or focus
+                    (`.brand-ring:hover::before` in globals.css).
+                    `--brand-ring-rest: 0` is what hides it, and
                     `--brand-ring-fill` has to be restated as the panel's card
                     colour, since .brand-ring paints its own fill and would
                     otherwise punch the page ground through the panel.
@@ -220,8 +270,16 @@ function NavMenuPanel({
                     `background` itself from unlayered CSS, which outranks a
                     Tailwind background utility, so a hover fill here would
                     silently do nothing.
+
+                    ON THE FIELD: no ring at all, matching the rest of the
+                    hero's nav. Nothing there carries a gradient hairline
+                    because the field behind it already is the gradient, and
+                    an item that lit one up would be the single exception.
+                    Weight is the whole hover state there, which is what the
+                    hero's own items do too.
                   */
-                  "brand-ring [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]",
+                  !onField &&
+                    "brand-ring [--brand-ring-fill:var(--card)] [--brand-ring-rest:0]",
                   "focus-visible:outline-none",
                   /*
                     Bold on hover and focus, matching how the nav items above
@@ -506,6 +564,8 @@ export function MorphicNavbar({
                       setMenuItemActive(false);
                     }}
                     onItemActive={setMenuItemActive}
+                    onField={onField}
+                    size={size}
                   />
                 )}
               </div>

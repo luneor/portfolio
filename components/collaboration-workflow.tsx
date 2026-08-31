@@ -617,7 +617,7 @@ export function CollaborationWorkflow() {
           width. */}
       <p className="mt-3 text-[1.05rem] text-foreground">
         Being more aware of collaboration in a team, I spotted a real gap in
-        our process as a team, and I wanted to fix it. So I created a{" "}
+        our process, and I wanted to fix it. So I created a{" "}
         <strong className="font-semibold">Slack workflow</strong>{" "}
         for the UX team, standing in for the &ldquo;quick question&rdquo; habit remote
         working took away. It&apos;s built around framing the problem and saying

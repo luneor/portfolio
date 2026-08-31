@@ -30,16 +30,25 @@ export function GenioAdmin() {
           title="Genio Admin"
           headingId="genio-admin-heading"
         >
+          {/*
+            Role first, product second. A reader on the work page is here to
+            find out what Hanru did; the platform is the context that claim
+            needs, not the other way round.
+
+            The `strong` moved with it. It marked the definition when the
+            definition led, and leaving it there would have set the emphasis
+            on the sentence the reordering just demoted.
+          */}
           <p>
+            As design lead within the squad,{" "}
             <strong className="font-semibold">
-              Genio Admin is the B2B SaaS platform
-            </strong>{" "}
-            academic institutions use to manage their access to Genio Notes,
-            our flagship product for students, giving university staff real
-            control over how those students are supported. As design lead
-            within the squad, working closely with a Product Manager, Tech
-            Lead, and Product Marketing Manager, I own UX for the platform
-            end to end.
+              I own UX for Genio Admin end to end
+            </strong>
+            , working closely with a Product Manager, Tech Lead, and Product
+            Marketing Manager. It&apos;s the B2B SaaS platform academic
+            institutions use to manage their access to Genio Notes, our
+            flagship product for students, giving university staff real
+            control over how those students are supported.
           </p>
         </SectionHeading>
 

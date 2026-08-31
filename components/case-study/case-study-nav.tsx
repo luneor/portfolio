@@ -210,13 +210,24 @@ function useRailClearOfFooter(ref: React.RefObject<HTMLDivElement | null>) {
 function BackLink() {
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="sm"
       nativeButton={false}
-      // A plain border, not the brand gradient ring. The rail already carries
-      // the gradient on the contents list beside it, and putting it on the
-      // buttons too made a narrow column of small elements all compete.
-      className="w-fit justify-start border border-border bg-background text-foreground hover:bg-accent"
+      /*
+        A plain border, not the brand gradient ring. The rail already carries
+        the gradient on the contents list beside it, and putting it on the
+        buttons too made a narrow column of small elements all compete.
+
+        `ghost` with the border by hand, not `outline`, for the reason the
+        hero's CTAs give: the outline variant ships `dark:bg-input/30`, and a
+        dark-variant rule outranks the plain `bg-background` set here, so in
+        dark mode this wore a pale 30% wash of `--input` instead of the page
+        ground. `--input` is light because it had to be lifted to clear WCAG
+        1.4.11 on field borders, which made the wash bright enough that a
+        back-link and a secondary CTA read louder than the case study around
+        them. `hover:bg-accent!` overrides ghost's own `hover:bg-muted`.
+      */
+      className="w-fit justify-start border border-border bg-background text-foreground hover:bg-accent!"
       render={<Link href="/work">← Back to work</Link>}
     />
   );
@@ -233,13 +244,13 @@ function BackLink() {
 export function CaseStudyContact({ className }: { className?: string }) {
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="sm"
       nativeButton={false}
-      // Matches the back-link above: plain border, page-background fill (an
-      // outline button with no fill reads as a ghost).
+      // Matches the back-link above, `ghost` plus a hand-drawn border and the
+      // page ground as the fill; see BackLink for why not `outline`.
       className={cn(
-        "w-full shrink-0 border border-border bg-background text-foreground hover:bg-accent",
+        "w-full shrink-0 border border-border bg-background text-foreground hover:bg-accent!",
         className
       )}
       render={<Link href="/contact">Get in touch</Link>}

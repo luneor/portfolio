@@ -24,7 +24,7 @@ const principles = [
   {
     key: "everyone",
     label: "Everyone can collaborate",
-    body: "Collaborating isn't limited to designers, some of my sharpest feedback came from people who know nothing about design.",
+    body: "Collaborating isn't limited to designers, some of my sharpest feedback came from people who “know nothing” about design.",
   },
 ];
 

@@ -372,26 +372,34 @@
   overflow: hidden;
   pointer-events: none;
   /*
-    Contact's background is the same flat `--background` the hero sits on;
-    the only thing that reads as "hero" is this glow. Without a mask it's
-    `overflow: hidden` that ends it, a hard clip exactly on the section
-    edge, so the tint appears to cut off rather than settle into Contact.
-    Fading it out well before that edge means it's already back to flat
-    colour by the time the section ends, so there's nothing left to clip.
-  */
-  /*
-    Fades out well before the section ends, so the field is already back to
-    flat colour by the boundary and there's nothing left for `overflow: hidden`
-    to clip: without it the tint cuts off on a hard line rather than settling
-    into Contact.
+    Fades out before the section ends, so the field is already back to flat
+    colour at the boundary and there is nothing left for `overflow: hidden` to
+    clip: without it the tint cuts off on a hard line rather than settling into
+    whatever follows.
 
     Held off until 62% rather than 40%, which is what the first version used.
     A mask that starts eating the field a third of the way down also eats most
     of the pointer response, and the bottom half of the hero read as the effect
     having stopped working rather than as the glow moving.
+
+    A variable, because where the fade should start depends on how tall the
+    section is and where its content sits. The hero fills its height and hands
+    off to the page below at 62%; Contact centres a short form in a full
+    viewport, so the same figure leaves a third of the page as flat ground
+    under it and the field reads as a band rather than as the page. That
+    section overrides this to fade much later.
   */
-  mask-image: linear-gradient(to bottom, black 62%, transparent 99%);
-  -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 99%);
+  --hero-fade-start: 62%;
+  mask-image: linear-gradient(
+    to bottom,
+    black var(--hero-fade-start),
+    transparent 99%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black var(--hero-fade-start),
+    transparent 99%
+  );
 }
 
 /*

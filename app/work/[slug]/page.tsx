@@ -95,8 +95,8 @@ export default async function ProjectPage({
   const { snapshot } = project;
 
   /*
-    `pb-10` rather than the pb-24 the other pages use: those end with the Contact
-    section, which wants room to breathe, whereas a case study ends on its last
+    `pb-10` rather than the pb-24 the other pages use: their sections carry
+    their own generous bottom padding, whereas a case study ends on its last
     paragraph. A 96px void there just left the contact button stranded in empty
     space. This keeps a clear gap to the footer without the dead air.
   */

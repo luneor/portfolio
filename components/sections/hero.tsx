@@ -166,7 +166,7 @@ export function Hero() {
               size="lg"
               nativeButton={false}
               className="h-11 border border-border bg-card px-6 text-[0.95rem] text-card-foreground hover:bg-accent!"
-              render={<Link href="#contact">Get in touch</Link>}
+              render={<Link href="/contact">Get in touch</Link>}
             />
           </motion.div>
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AccessibilityProcess } from "@/components/sections/accessibility-process";
-import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
   title: "Accessibility | Hanru Wehmeyer",
@@ -12,7 +11,6 @@ export default function AccessibilityPage() {
   return (
     <main id="main">
       <AccessibilityProcess />
-      <Contact />
     </main>
   );
 }

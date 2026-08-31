@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Collaboration } from "@/components/sections/collaboration";
-import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
   title: "Collaboration | Hanru Wehmeyer",
@@ -12,7 +11,6 @@ export default function CollaborationPage() {
   return (
     <main id="main">
       <Collaboration />
-      <Contact />
     </main>
   );
 }

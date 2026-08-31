@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { About } from "@/components/sections/about";
-import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
   title: "About | Hanru Wehmeyer",
@@ -12,7 +11,6 @@ export default function AboutPage() {
   return (
     <main id="main">
       <About />
-      <Contact />
     </main>
   );
 }

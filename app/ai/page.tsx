@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Ai } from "@/components/sections/ai";
-import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
   title: "On AI | Hanru Wehmeyer",
@@ -12,7 +11,6 @@ export default function AiPage() {
   return (
     <main id="main">
       <Ai />
-      <Contact />
     </main>
   );
 }

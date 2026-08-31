@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Work } from "@/components/sections/work";
-import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
   title: "Work | Hanru Wehmeyer",
@@ -12,7 +11,6 @@ export default function WorkPage() {
   return (
     <main id="main">
       <Work />
-      <Contact />
     </main>
   );
 }

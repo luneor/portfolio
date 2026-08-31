@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Cv } from "@/components/sections/cv";
-import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = {
   title: "CV | Hanru Wehmeyer",
@@ -12,7 +11,6 @@ export default function CvPage() {
   return (
     <main id="main">
       <Cv />
-      <Contact />
     </main>
   );
 }

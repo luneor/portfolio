@@ -227,8 +227,8 @@ function BackLink() {
  * talk stays in view at any depth of a long case study; placed at the end of the
  * article on mobile, where there is no rail.
  *
- * Points at `/#contact` rather than a bare `#contact`: case-study pages don't
- * carry a Contact section of their own, so a local anchor would go nowhere.
+ * Points at the Contact page. This used to be `/#contact`, back when Contact
+ * was a section at the foot of the homepage rather than a route.
  */
 export function CaseStudyContact({ className }: { className?: string }) {
   return (
@@ -242,7 +242,7 @@ export function CaseStudyContact({ className }: { className?: string }) {
         "w-full shrink-0 border border-border bg-background text-foreground hover:bg-accent",
         className
       )}
-      render={<Link href="/#contact">Get in touch</Link>}
+      render={<Link href="/contact">Get in touch</Link>}
     />
   );
 }

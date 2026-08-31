@@ -40,8 +40,7 @@ export const SITE_NAV: NavItem[] = [
   { key: "ai", href: "/ai", name: "AI" },
   { key: "about", href: "/about", name: "About" },
   { key: "cv", href: "/cv", name: "CV" },
-  // Contact is a section at the foot of every page, not a route of its own.
-  { key: "contact", href: "#contact", name: "Contact" },
+  { key: "contact", href: "/contact", name: "Contact" },
 ];
 
 /**
@@ -49,8 +48,8 @@ export const SITE_NAV: NavItem[] = [
  * they keep Work highlighted rather than losing the highlight entirely; the
  * same rule keeps /process/* under Process.
  *
- * The `startsWith("/")` guard skips the in-page Contact anchor, which is on
- * every page and would otherwise match nothing usefully.
+ * The `startsWith("/")` guard is defensive: every nav href is a route now that
+ * Contact has its own page, and an in-page anchor would match nothing usefully.
  */
 function isUnder(pathname: string, href: string) {
   if (!href.startsWith("/")) return false;

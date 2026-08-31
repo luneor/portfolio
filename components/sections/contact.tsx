@@ -3,6 +3,7 @@
 import { CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState, type FormEvent } from "react";
+import { HeroGlow } from "@/components/hero-glow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,8 +72,44 @@ export function Contact() {
   const statusMessage = status.state === "error" ? status.message : "";
 
   return (
-    <section id="contact" aria-labelledby="contact-heading" className="py-24">
-      <div className="mx-auto grid max-w-page grid-cols-1 gap-16 px-6 md:grid-cols-2">
+    /*
+      Its own page now, rather than the block every other page ended with, so
+      it gets the hero's gradient field instead of flat `--background`: the two
+      are the only pages that are a destination in themselves rather than
+      something to read, and the field is what says so.
+
+      No "Press me!" button with it. That belongs to the hero, where it sits
+      under the nav pill with room to be a toy; here the form is the only thing
+      to do on the page and a second button competing for the press would read
+      as part of it.
+    */
+    <section
+      id="contact"
+      aria-labelledby="contact-heading"
+      className="hero-surface relative overflow-hidden [--hero-fade-start:88%]"
+    >
+      {/*
+        The gradient field, same as the hero's. No `randomizeRef`, since
+        nothing on this page reshuffles it.
+
+        `--hero-fade-start` pushed from the hero's 62% to 88%: the hero fills
+        its height and hands off to the page below, where a short form centred
+        in a full viewport leaves the bottom third empty, and a field that has
+        already faded out by then reads as a band behind the form rather than
+        as the ground it sits on.
+      */}
+      <HeroGlow />
+
+      {/*
+        Full viewport less the header, which is sticky and therefore in flow on
+        every page but home. Without a min-height the field would only be as
+        tall as the form and read as a band behind it rather than as the page's
+        ground.
+
+        `items-center` so the two columns sit in the middle of that height
+        together, the way the hero's block does.
+      */}
+      <div className="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] max-w-page grid-cols-1 items-center gap-16 px-6 py-24 md:grid-cols-2">
         <div>
           <h2
             id="contact-heading"

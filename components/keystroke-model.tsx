@@ -403,7 +403,10 @@ export function KeystrokeModel() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-b-2xl border-t border-border bg-background-alt px-5 py-4">
+            {/* `items-center`, not `items-baseline`. Sharing a baseline with a
+                number this much larger left the label sitting down at its
+                feet; centred, the two read as one row. */}
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-b-2xl border-t border-border bg-background-alt px-5 py-4">
               <p className={FIELD_LABEL}>Predicted time</p>
               {/* The one number the whole thing exists to produce, so it gets
                   to be the biggest thing in the card. Size and weight do that

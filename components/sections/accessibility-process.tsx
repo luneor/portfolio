@@ -1,5 +1,6 @@
 import { SectionHeading } from "@/components/section-heading";
 import { SpotlightCard } from "@/components/kokonutui/spotlight-card";
+import { KeystrokeModel } from "@/components/keystroke-model";
 
 /*
   Same shape as On AI and On Collaboration: intro prose under the heading, then
@@ -20,7 +21,7 @@ const principles = [
   {
     key: "better-design",
     label: "Accessible design is better design",
-    body: "Constraints that come with accessible design help to create stronger, more polished designs, not the other way around.",
+    body: "Constraints that come with accessible design help to create stronger, more polished designs.",
   },
   {
     key: "new-perspective",
@@ -63,37 +64,19 @@ export function AccessibilityProcess() {
         </div>
 
         {/*
-          Same shape as "Filling the gap" on the Collaboration page: an h3 and
-          full-width prose under the three principle cards. The two Process
-          pages are built to read as a pair, so the stance is followed by the
-          work in both places rather than in one.
+          Same shape as "Filling the gap" on the Collaboration page: an h3,
+          full-width prose and a thing the reader can work, under the three
+          principle cards. The two Process pages are built to read as a pair,
+          so the stance is followed by a piece of the actual work in both
+          places rather than in one.
 
-          Deliberately about the process and not about a product. The three
-          cards above are a stance, and what a reader wants next is what the
-          stance makes me DO, which is the same on everything I design. A
-          product-by-product account would answer a question nobody asked
-          here; the work pages are where a single product belongs.
+          The prose that used to sit here -- contrast passes, keyboard
+          complete, VoiceOver makes sense -- said what the stance makes me do
+          in general. It's gone: a reader who has just read three principle
+          cards has had the general answer, and what they want next is one
+          thing they can check. The component below is that.
         */}
-        <div className="mt-20">
-          <h3 className="text-[clamp(1.3rem,2.4vw,1.7rem)] leading-[1.2] font-bold tracking-tight text-foreground">
-            How this shows up in my work
-          </h3>
-          {/* Full container width, no measure cap -- the rule SectionHeading
-              states for section intros, which is what this is. */}
-          <p className="mt-3 text-[1.05rem] text-foreground">
-            During the early stages of design I&apos;m already thinking about
-            accessibility and WCAG standards. Knowing where that line is lets
-            me design up to it, rather than designing it first and finding out
-            it doesn&apos;t hold.
-          </p>
-          <p className="mt-4 text-[1.05rem] text-foreground">
-            Colour contrast has to pass, the keyboard experience has to be
-            complete, VoiceOver has to make sense of a screen. When I think
-            something isn&apos;t right I put it in front of the people who
-            would know: the accessibility experts and test engineers I work
-            with.
-          </p>
-        </div>
+        <KeystrokeModel />
       </div>
     </section>
   );

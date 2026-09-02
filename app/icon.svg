@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hanru Wehmeyer">
+  <!--
+    Tab mark: the hw wordmark (public/brand/logo-white.svg) over the hero's
+    gradient field, treated the way the homepage treats it.
+
+    WHY IT IS DARK
+
+    The raw brand-grad colours are far brighter than the hero ever looks,
+    because the page never shows them raw: .hero-vignette lays a scrim of
+    the background colour over the whole field, from 46 percent dead centre out to
+    solid at the edge. That scrim is what turns coral into the rust and mustard
+    into the olive you actually see on the homepage. So this icon composites the
+    same way rather than picking new, pre-muted hexes: full-strength lobes, then
+    ink over the top. Change a brand-grad token and this still tracks it.
+
+    The scrim here is a little heavier than the hero's (56 percent at centre
+    against its 46) because the hero's job is to sit behind a headline at full
+    viewport size, while this has to hold a wordmark inside 16 square pixels.
+
+    Vignette is circular rather than the hero's 78x62 ellipse: that ellipse is
+    shaped for a wide viewport, and in a square frame it closes in from top and
+    bottom and reads lopsided. r=.7 puts the corners (at .707 from centre) just
+    past the last stop, so they land on solid ink and the field never runs into
+    the squircle edge.
+
+    No grain. The shader mixes noise into the field, which is a large part of
+    why the hero reads as texture rather than as a smooth gradient, but at tab
+    size there is nothing for it to land on and it costs real bytes.
+
+    THE MARK
+
+    Full hw in cream, not the h alone. Squared off, 75.62 x 48.38 leaves the
+    strokes near a pixel at 16px, so this is the one place the mark is under
+    real pressure; a 4px margin buys back what it can. It holds because cream on
+    the darkened field is the highest-contrast pairing available here, which is
+    the same reason the scrim earns its place: on the raw gradient this mark
+    dissolved into the mustard lobe.
+
+    Colours are the brand-grad-1..4 tokens from globals.css plus cream, all
+    hardcoded, and deliberately NOT theme-swapped for the same reason the
+    gradient itself isn't: it is one fixed identity, closer to a logo than to an
+    accent. A favicon has no access to the page's custom properties in any case.
+
+    NB: no double hyphen anywhere in these comments. Unlike an inline SVG in
+    JSX, a standalone .svg is served as image/svg+xml and parsed as XML, where a
+    double hyphen inside a comment is a hard parse error that fails the whole
+    file. It renders fine in a JSX preview and then ships broken.
+  -->
+  <defs>
+    <linearGradient id="base" x1="0" y1="4" x2="46" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ed2a03" />
+      <stop offset=".55" stop-color="#24a182" />
+      <stop offset="1" stop-color="#24a182" />
+    </linearGradient>
+    <radialGradient id="lobeCoral" gradientUnits="userSpaceOnUse" cx="15" cy="17" r="46"
+      gradientTransform="rotate(-15 15 17) scale(1 .913) translate(0 1.619)">
+      <stop offset="0" stop-color="#ed2a03" />
+      <stop offset=".5" stop-color="#ed2a03" stop-opacity=".9" />
+      <stop offset="1" stop-color="#ed2a03" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="lobeMustard" gradientUnits="userSpaceOnUse" cx="53" cy="11" r="34"
+      gradientTransform="rotate(20 53 11) scale(1 .8529) translate(0 1.897)">
+      <stop offset="0" stop-color="#fae419" />
+      <stop offset=".42" stop-color="#fae419" stop-opacity=".82" />
+      <stop offset="1" stop-color="#fae419" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="lobeTeal" gradientUnits="userSpaceOnUse" cx="22" cy="57" r="44"
+      gradientTransform="rotate(-10 22 57) scale(1 .8636) translate(0 9)">
+      <stop offset="0" stop-color="#24a182" />
+      <stop offset=".5" stop-color="#24a182" stop-opacity=".85" />
+      <stop offset="1" stop-color="#24a182" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="lobeMint" gradientUnits="userSpaceOnUse" cx="58" cy="54" r="36"
+      gradientTransform="rotate(15 58 54) scale(1 .9444) translate(0 3.176)">
+      <stop offset="0" stop-color="#44ccbe" />
+      <stop offset=".45" stop-color="#44ccbe" stop-opacity=".85" />
+      <stop offset="1" stop-color="#44ccbe" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="scrim" cx=".5" cy=".46" r=".7">
+      <stop offset="0" stop-color="#0f0f0f" stop-opacity=".56" />
+      <stop offset=".45" stop-color="#0f0f0f" stop-opacity=".6" />
+      <stop offset=".78" stop-color="#0f0f0f" stop-opacity=".88" />
+      <stop offset="1" stop-color="#0f0f0f" stop-opacity="1" />
+    </radialGradient>
+    <clipPath id="squircle"><rect width="64" height="64" rx="14" /></clipPath>
+  </defs>
+  <g clip-path="url(#squircle)">
+    <rect width="64" height="64" fill="#0f0f0f" />
+    <rect width="64" height="64" fill="url(#base)" />
+    <rect width="64" height="64" fill="url(#lobeTeal)" />
+    <rect width="64" height="64" fill="url(#lobeMint)" />
+    <rect width="64" height="64" fill="url(#lobeCoral)" />
+    <rect width="64" height="64" fill="url(#lobeMustard)" />
+    <rect width="64" height="64" fill="url(#scrim)" />
+    <!-- 56/75.62 fits the mark to a 4px margin; y centres its 35.83 height. -->
+    <g transform="translate(4,14.09) scale(.7405)" fill="#f5f3ec">
+      <path d="M32.11,45.25v3.13h-9.43v-21.96c0-2.68-.47-4.52-1.41-5.5-.93-.99-2.48-1.48-4.64-1.48-1.15,0-2.19.23-3.1.68-.91.46-1.68,1.08-2.3,1.88-.63.79-1.09,1.7-1.4,2.73-.32,1.04-.47,2.15-.47,3.35v20.3H0V9.36C0,4.19,4.19,0,9.36,0v17.57c.33-.77.85-1.5,1.54-2.2.7-.69,1.5-1.28,2.42-1.76.91-.48,1.92-.87,3.02-1.15,1.1-.29,2.26-.44,3.46-.44,3.14,0,5.78.74,7.91,2.23-.13.15-.26.31-.38.47-1.8,2.38-2.37,5.4-1.55,8.28l6.33,22.25Z" />
+      <path d="M75.62,12.96l-7.51,26.2c-2.74,2.14-4.5,5.48-4.5,9.22h-7.72l-5.62-20.59-5.61,20.59h-9.58l-.97-3.41-2-7.03-4.41-15.49c-.73-2.56-.03-5.11,1.54-6.92.43-.5.93-.95,1.49-1.32,1.17-.78,2.59-1.25,4.14-1.25l5.76,22.75,2.89-13.46c1.17-5.42,5.96-9.29,11.51-9.29l5.54,22.75,3.17-13.36c1.31-5.5,6.22-9.39,11.88-9.39Z" />
+      <path d="M75.62,38.66v9.72h-10.01c0-.18,0-.35.01-.53h0c.09-1.5.51-2.9,1.19-4.14v-.02c1.66-3,4.85-5.03,8.52-5.03h.29Z" />
+    </g>
+  </g>
+</svg>

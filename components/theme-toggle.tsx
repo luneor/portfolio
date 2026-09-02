@@ -57,6 +57,13 @@ export function ThemeToggle() {
   };
 
   return (
+    /*
+      Hover border is `brand-weak`, not `brand-strong`: this control belongs to
+      the cool side of the palette, and `brand-weak` is the accent that already
+      flips per theme (teal on light paper, mint on dark). Coral is fixed across
+      both themes, so it neither tracked the mode nor read as anything but a
+      warning next to a sun/moon icon.
+    */
     <button
       type="button"
       onClick={toggleTheme}
@@ -67,7 +74,7 @@ export function ThemeToggle() {
             : "Switch to dark mode"
           : "Toggle colour theme"
       }
-      className="glass relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-foreground-muted/40 text-foreground transition-colors hover:border-brand-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+      className="glass relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-foreground-muted/40 text-foreground transition-colors hover:border-brand-weak focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
     >
       {mounted && (
         // No `mode="wait"`: the outgoing icon and the incoming one animate at

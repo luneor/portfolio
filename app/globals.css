@@ -722,6 +722,75 @@
   }
 }
 
+/*
+  Entrance animations, in CSS rather than in Motion.
+
+  Both of these used to be Motion, with `initial={{ opacity: 0 }}`. That ships
+  `style="opacity:0"` in the server-rendered HTML, so the content was invisible
+  until the JS bundle loaded, hydrated and ran the animation. On the homepage
+  that left a hero of pure gradient for a second or more; on the work page a
+  fast scroll could outrun the intersection observer and leave whole sections
+  blank. In both cases the markup was there and the pixels weren't.
+
+  Here the animation is an enhancement over content that is already visible. No
+  JS runs, nothing is gated on hydration, and a browser that supports none of
+  this still renders the page correctly.
+
+  `translate` rather than `transform`, so these compose with any transform the
+  element already carries instead of overwriting it.
+*/
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+/*
+  Hero entrance. `backwards` holds the start frame through the delay, which is
+  what staggers the group; the delays are deliberately short (the last is
+  200ms) so nothing waits long enough to read as missing.
+*/
+.hero-rise {
+  animation: rise-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+/*
+  Reduced motion drops the entrance entirely rather than shortening it. The
+  content is already in the markup at full opacity, so removing the animation
+  leaves it exactly where it belongs with nothing to fade or slide.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise {
+    animation: none;
+  }
+}
+
+/*
+  Scroll reveal, driven by the element's own position in the scrollport rather
+  than by an observer callback. Because progress is a function of scroll offset,
+  there is no callback to lose a race with: flicking to the bottom of the page
+  lands every card at its finished state instead of leaving it at zero opacity.
+
+  The range closes early, at 18% of `cover`, so an element taller than the
+  viewport still completes. Browsers without scroll-driven animations skip the
+  whole block and simply show the content.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal-rise {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 18%;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -20,15 +20,17 @@ import { SITE_NAV } from "@/lib/nav";
   legible in light mode (mint is dark-mode only; light substitutes a deep teal).
 */
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
-};
+/*
+  The entrance stagger, as plain data. Each child gets `.hero-rise` (see
+  globals.css) plus its own delay, so the whole sequence is CSS and the content
+  is in the markup already visible rather than waiting on hydration.
 
-const item = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
-};
+  40ms apart and 200ms at the last step: long enough to read as a sequence,
+  short enough that nothing looks absent while it waits its turn.
+*/
+function rise(step: number) {
+  return { "--rise-delay": `${step * 40}ms` } as React.CSSProperties;
+}
 
 export function Hero() {
   /*
@@ -66,10 +68,7 @@ export function Hero() {
         block visibly low; subtracting the header's height puts it back.
       */}
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-page flex-col items-center justify-center px-6 py-24 text-center sm:min-h-svh">
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
+        <div
           className="flex flex-col items-center"
         >
           {/*
@@ -83,7 +82,7 @@ export function Hero() {
             outline on the gradient field. `morph-raised`, the same lift the
             CTAs and nav pill use, separates it from the field on its own.
           */}
-          <motion.div variants={item} className="morph-raised mb-5">
+          <div style={rise(0)} className="hero-rise morph-raised mb-5">
             <Image
               src="/assets/hero-avatar.png"
               alt="Hanru Wehmeyer"
@@ -92,63 +91,38 @@ export function Hero() {
               className="h-16 w-16 rounded-full object-cover sm:h-[4.5rem] sm:w-[4.5rem]"
               priority
             />
-          </motion.div>
+          </div>
 
-          <motion.h1
+          {/*
+            Name and pitch in one statement rather than a big name over a quiet
+            subtitle. The name on its own is the least useful thing a first-time
+            visitor can read, and splitting them gave the sentence that actually
+            says what I do the visual weight of a caption.
+
+            No `whitespace-nowrap` now: at ~100 characters this has to wrap, so
+            the size comes from a clamp against a width cap instead of being
+            forced to one line. `text-balance` keeps the wrap even rather than
+            leaving a short last line.
+
+            The cap is 56rem because three lines is the target and the measure
+            has to be wide enough to reach it. At 46rem it fell 17px short at
+            1440 and tipped to four. 56rem clears three comfortably without
+            getting wide enough to collapse to two (which would need ~1130px at
+            that size), and the container's own 1280px keeps it honest. Below
+            about 400px the clamp bottoms out and a fourth line is unavoidable.
+          */}
+          <h1
             id="hero-heading"
-            variants={item}
-            /*
-              One line at every width. `whitespace-nowrap` forbids the wrap, so
-              the size has to come from the viewport instead: ~7vw keeps the 22
-              characters inside the gutters down to the smallest phones, with a
-              rem cap so it stops growing on wide screens.
-            */
-            className="text-[clamp(1.5rem,7vw,4.2rem)] leading-[1.1] font-extrabold tracking-tight whitespace-nowrap text-foreground"
+            style={rise(1)}
+            className="hero-rise max-w-[56rem] text-[clamp(1.5rem,4.2vw,2.9rem)] leading-[1.15] font-extrabold tracking-tight text-balance text-foreground"
           >
-            Hi, I&apos;m Hanru Wehmeyer
-          </motion.h1>
-
-          <motion.p
-            variants={item}
-            /*
-              Tight to the headline: the two read as one block, which leaves the
-              larger gap below to separate them from the navigation.
-
-              Capped at 44rem rather than a reading measure: the tagline is one
-              sentence, and it wants to sit on one line under the h1 (which is
-              wider still). At 54ch it fell ~13px short and orphaned the closing
-              "that?" onto a line of its own. `text-balance` handles the
-              viewports too narrow for one line, splitting them evenly instead
-              of leaving a stub at the end.
-            */
-            className="mt-5 max-w-[44rem] text-[1.05rem] leading-relaxed text-balance text-foreground"
-          >
-            UX Designer in Scotland who starts by asking &ldquo;why does it{" "}
+            I&apos;m Hanru Wehmeyer, UX Designer in Scotland who starts by
+            asking &ldquo;Why does it{" "}
             <em>have to</em>{" "}
             work like that?&rdquo;
-          </motion.p>
+          </h1>
 
-          {/*
-            Two routes into the site, split by width rather than shown together.
-
-            From `sm` up, the morphic pill is the whole navigation and a pair of
-            CTAs beside it would just duplicate Work and Contact. Below `sm` the
-            pill doesn't fit, so nav moves to the header's hamburger and these
-            buttons take over as the hero's call to action.
-          */}
-          {/*
-            Set well below the text block, so the page reads as two groups.
-
-            `morph-raised` is the nav pill's own lift, borrowed. These two are
-            what stands in for the pill below `sm`, and they sit on the same
-            gradient field it does, where a flat block reads as painted onto the
-            colour rather than resting on it. On the ROW, not on each button,
-            which is how the pill does it too: `drop-shadow` follows the union
-            of the silhouettes, so the shadow in the gap between the pair is
-            drawn behind both of them instead of one button casting onto the
-            other.
-          */}
-          <motion.div variants={item} className="morph-raised mt-14 flex flex-wrap justify-center gap-3 sm:hidden">
+          <div style={rise(2)} className="hero-rise morph-raised mt-14 flex flex-wrap justify-center gap-3 sm:hidden">
             {/*
               Both plain, neither carrying the coral fill. Work used to take it
               as the page's call to action, but over a field that is itself
@@ -175,11 +149,11 @@ export function Hero() {
               className="h-11 border border-border bg-card px-6 text-[0.95rem] text-card-foreground hover:bg-accent!"
               render={<Link href="/contact">Get in touch</Link>}
             />
-          </motion.div>
+          </div>
 
-          <motion.div variants={item} className="mt-20 max-sm:hidden">
+          <div style={rise(3)} className="hero-rise mt-20 max-sm:hidden">
             <MorphicNavbar items={SITE_NAV} size="lg" onField />
-          </motion.div>
+          </div>
 
           {/*
             Sits under the nav pill, and shares its `max-sm:hidden`: below `sm`
@@ -192,13 +166,11 @@ export function Hero() {
             says plainly what pressing it does. Rendered only when the field is
             actually running, since the CSS fallback has nothing to reshuffle.
 
-            Its own `initial`/`animate` rather than the shared `item` variant,
-            so it lands after the nav pill above it has finished arriving.
-            Being last in the stagger only bought it 0.1s, which reads as
-            simultaneous; and because `canRandomize` flips in an effect this
-            block mounts a beat after its siblings, by which point the parent's
-            orchestration has already run and it would simply appear. An
-            explicit delay is the only thing that sequences it reliably.
+            The one entrance still done in Motion, and the only one that can
+            be: `canRandomize` flips in an effect, so this block doesn't exist
+            until JS has run anyway. There's no blank-content risk to design
+            around, and an explicit delay is what lands it after the nav pill
+            above has finished arriving.
           */}
           {canRandomize && (
             <motion.div
@@ -225,7 +197,7 @@ export function Hero() {
               </Button>
             </motion.div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

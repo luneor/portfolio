@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { buttonVariants } from "@/components/ui/button";
@@ -60,13 +59,9 @@ export function ProjectFeature({
   secondaryAction,
 }: ProjectFeatureProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="group grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
-    >
+    /* See the note in project-card.tsx: CSS scroll-driven reveal, so a fast
+       scroll can't leave this row blank. */
+    <div className="reveal-rise group grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
       {/*
         The border is on the IMAGE, not around the row -- the row still has no
         box drawn around it. It's here because most of these screenshots are of
@@ -164,6 +159,6 @@ export function ProjectFeature({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

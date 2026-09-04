@@ -15,11 +15,11 @@ export function EarlierProjects() {
       a line through continuous space. The heading and the `py-20` either
       side of it are what mark the change of section now.
     */
-    <div aria-labelledby="more-work-heading" className="py-20">
+    <div aria-labelledby="concept-work-heading" className="py-20">
       <div className="mx-auto max-w-page px-6">
         <SectionHeading
-          title="More Work"
-          headingId="more-work-heading"
+          title="Concept Work"
+          headingId="concept-work-heading"
         />
 
         {/* Same one-column, no-border stack and spacing as Genio Admin. */}

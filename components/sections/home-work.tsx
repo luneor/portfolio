@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ProjectFeature } from "@/components/project-feature";
 import { ProjectThumb } from "@/components/project-thumb";
 import { PROJECTS } from "@/lib/projects";
@@ -33,12 +35,30 @@ export function HomeWork() {
             Selected work
           </h2>
 
-          <Link
-            href="/work"
-            className="rounded-sm font-mono text-[0.78rem] tracking-[0.03em] text-brand-weak underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            All work →
-          </Link>
+          {/*
+            A real button rather than a mono text link. It's the way out of a
+            three-project preview to the full set, which is the same kind of
+            move as "View case study" below it, and a small underlined link was
+            reading as a footnote next to a section heading.
+
+            Same gradient-ring-on-hover pair as those, so the two sit as
+            matched controls: see the note in project-feature.tsx.
+          */}
+          <div className="group/cta relative w-fit">
+            <span
+              aria-hidden="true"
+              className="brand-glow pointer-events-none absolute -inset-0.5 rounded-full opacity-0 blur-sm transition-opacity duration-300 ease-out group-hover/cta:opacity-70 group-has-[:focus-visible]/cta:opacity-70"
+            />
+            <Link
+              href="/work"
+              className={cn(
+                buttonVariants({ variant: "gradient", size: "lg" }),
+                "brand-ring-reveal relative h-11 px-6"
+              )}
+            >
+              All work →
+            </Link>
+          </div>
         </div>
 
         {/*

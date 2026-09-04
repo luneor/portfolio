@@ -7,6 +7,7 @@ import {
   MemorArt,
   StoriArt,
 } from "@/components/project-art";
+import { Disclosure } from "@/components/case-study/disclosure";
 import { ProjectFigure } from "@/components/case-study/project-figure";
 
 /**
@@ -183,7 +184,7 @@ export const PROJECTS: Project[] = [
     title:
       "Last Active Filtering: a hidden definition, now admin-controlled",
     summary:
-      "Shows how my instinct pointed at the real problem, and user research confirmed it, avoiding a fixed system for one admins define themselves.",
+      "Shows how I tested a hunch about the real problem instead of speccing from it, replacing a fixed system with one admins define themselves.",
     cardImage: {
       src: "/work/last-active/final-ranges-in-context.png",
       alt: "The Last Active Ranges dialog open over the users table, defining the range for each status.",
@@ -197,36 +198,29 @@ export const PROJECTS: Project[] = [
       height: 900,
     },
     snapshot: {
-      role: "UX Designer, Genio Admin (BEAR Squad)",
+      role:
+        "Junior UX Designer on Genio Admin, design lead within a cross-functional trio",
       // TODO: timeline, team, tools
       statement: (
         <>
           Admins couldn&apos;t tell which students were genuinely falling out
-          of using Genio Notes, and couldn&apos;t follow up with them
-          correctly. I let each institution define what Active, At Risk and
-          Inactive mean to them, giving them more control.{" "}
+          of Genio Notes, so they couldn&apos;t follow up correctly. I let each
+          institution define what Active, At Risk and Inactive mean to them.{" "}
           <Emph>
-            Adoption sits at 25.4% and growing, with vocal video appreciation
-            from our customers.
+            It beat its 20% Q2 target, sits at 25.4% and climbing, and answered
+            a blocker at our largest institutions.
           </Emph>
         </>
       ),
       overview: (
-        <>
-          <p>
-            Admins needed more accurate Last Active statuses to manage
-            licenses more efficiently.{" "}
-            <Emph>There was no way to filter by Last Active status at all</Emph>
-            , and our existing RAG (Red, Amber, Green) statuses were fixed at
-            0–7 days (Green), 7–14 days (Amber) and 14+ days (Red), and
-            invisible to admins.
-          </p>
-          <p>
-            My gut told me that{" "}
-            <Emph>few admins knew what the colours actually meant</Emph>,
-            which makes the data hard to act on.
-          </p>
-        </>
+        <p>
+          <Emph>There was no way to filter by Last Active status at all</Emph>.
+          The RAG statuses behind it were fixed at 0–7, 7–14 and 14+ days, and
+          invisible to admins. I suspected few admins knew what the colours
+          actually meant. I tested that rather than speccing from it, and it
+          held up. The fix wasn&apos;t a better filter, it was handing admins
+          the definition itself.
+        </p>
       ),
     },
     decisions: [
@@ -251,7 +245,7 @@ export const PROJECTS: Project[] = [
             </p>
             <p>
               <Emph>
-                I A/B tested both solutions in a survey with our Admin
+                I put both solutions head to head in a survey with our Admin
                 Insiders group
               </Emph>
               . They preferred custom ranges, and the reason they gave was
@@ -315,7 +309,7 @@ export const PROJECTS: Project[] = [
             width: 608,
             height: 431,
             caption:
-              "Final solution: two input boxes with a middle range that auto-adjusts. The wording precisely communicates exactly what setting that range means.",
+              "Final solution: two input boxes with a middle range that auto-adjusts. The wording spells out exactly what setting that range means.",
           },
         ],
       },
@@ -324,16 +318,27 @@ export const PROJECTS: Project[] = [
         body: (
           <>
             <p>
-              For extra validation, we got in touch with admins who use Genio
-              to test the prototype. Rather than taking them through it,{" "}
+              For extra validation we ran sessions with four institutions
+              across the UK and US, all Genio admins working in accessibility
+              and disability services. Rather than taking them through it,{" "}
               <Emph>I put them in the driver&apos;s seat</Emph> with a
               high-fidelity prototype I created.
             </p>
             <p>
-              It landed well, and surfaced what a demo wouldn’t: <Emph>once admins
-              could isolate a group they wanted to act on it</Emph>, export, email,
-              bulk deactivate. This also helped shape the roadmap beyond this
-              feature.
+              Reactions to the filter were immediate: one admin called it{" "}
+              <Emph>&ldquo;great&rdquo; and &ldquo;very useful&rdquo;</Emph>{" "}
+              on sight. They went on to say the work
+              &ldquo;makes the portal more user friendly&rdquo;, and another
+              could see it &ldquo;saving quite a bit of time&rdquo;. These were
+              reactions to a prototype rather than the shipped feature, but the
+              intent landed without me having to explain it.
+            </p>
+            <p>
+              It also surfaced what a demo wouldn&apos;t:{" "}
+              <Emph>
+                once admins could isolate a group they wanted to act on it
+              </Emph>
+              , export it, email it, bulk deactivate it.
             </p>
           </>
         ),
@@ -341,9 +346,9 @@ export const PROJECTS: Project[] = [
     ],
     shipped: (
       <p>
-        A Last Active filter in the users table: the four states as checkboxes,
-        each carrying its status icon, with an Edit Ranges control that opens
-        the editor where an admin sets the week boundaries for Active, At risk
+        A Last Active filter in the users table, with the four states as
+        checkboxes, each carrying its status icon. An Edit Ranges control opens
+        the editor, where an admin sets the week boundaries for Active, At risk
         and Inactive.
       </p>
     ),
@@ -360,31 +365,57 @@ export const PROJECTS: Project[] = [
     outcome: (
       <>
         <p>
-          <Emph>Adoption currently sits at 25.4% and growing.</Emph> Admins
-          shared appreciation for the feature during calls with customer
-          success.
+          A 20% adoption rate was our key Q2 objective.{" "}
+          <Emph>
+            It hit 22.7% by review and 25.4% today, all through the academic
+            quiet season.
+          </Emph>
         </p>
         <p>
-          It helped us define the next projects on the roadmap.{" "}
+          It also answered a blocker at our largest institutions, where IT
+          teams doubted they could manage users at that volume. Two deals were
+          riding on it, so the PM and I went to them. One was weighing up
+          whether to renew at all;{" "}
           <Emph>
-            Giving admins control and the ability to isolate a group
-          </Emph>{" "}
-          left them wanting to action it quickly.
+            they renewed once they understood what was coming, before a line of
+            it shipped
+          </Emph>
+          . We reached only one of the two, but the objection has an answer now.
+        </p>
+        <p>
+          Before this, an admin sorted by last active, read each date, and
+          decided user by user what it meant. Bulk deactivation already
+          existed; what it lacked was a list worth running against.{" "}
+          <Emph>
+            Now the ranges carry that judgement and the filter returns the
+            group
+          </Emph>
+          , the saving admins raised most.
+        </p>
+        <p>
+          Admins went from having no say in that definition to setting it once.{" "}
+          <Emph>They stay in the driver&apos;s seat, where they should be.</Emph>
         </p>
       </>
     ),
     reflection: (
-      <p>
-        The obvious fix, a date picker, would&apos;ve only solved half the
-        problem. I dug into what was actually blocking admins: they
-        didn&apos;t know what the statuses meant, and had no way to say what
-        &ldquo;Last Active&rdquo; should mean for them.{" "}
-        <Emph>
-          Trusting my gut led to a solution that fixed the real issue.
-        </Emph>{" "}
-        A/B testing and talking to customers backed up my instinct, so we
-        shipped a full solution rather than something half-baked.
-      </p>
+      <>
+        <p>
+          The obvious fix, a date picker, would&apos;ve only solved half the
+          problem. What I&apos;d carry forward is the sequence:{" "}
+          <Emph>
+            treat the hunch as a hypothesis, put it head to head with the
+            obvious answer, then spec it.
+          </Emph>
+        </p>
+        <p>
+          The other lesson was{" "}
+          <Emph>handing the prototype over rather than demoing it</Emph>.
+          Watching admins isolate a group and reach straight for exporting,
+          emailing and bulk deactivating it taught me more than a walkthrough
+          would. It shaped the roadmap beyond this feature.
+        </p>
+      </>
     ),
   },
   {
@@ -410,44 +441,53 @@ export const PROJECTS: Project[] = [
     },
     snapshot: {
       // TODO: exact timeline dates and stakeholder names/roles to confirm.
-      role: "UX Designer, Genio Admin (BEAR Squad)",
+      role:
+        "Junior UX Designer on Genio Admin, design lead within a cross-functional trio, standing in for the PM",
       timeline: "TODO, confirm dates",
       team: "TODO, confirm names and roles",
       statement: (
         <>
-          Genio Notes&apos; AI tools help students, but they can sometimes
-          conflict with a school&apos;s academic policies. Admins had no way
-          to control who could access which tools, so schools were stuck
-          choosing between blocking AI outright or leaving it wide open.{" "}
+          Genio Notes&apos; AI tools help students, but they can conflict with
+          a school&apos;s academic policies. Admins had no way to control who
+          could access which tools, so schools were stuck choosing between
+          blocking AI outright or leaving it wide open.{" "}
           <Emph>
-            I built an org-wide setting with group-level overrides
+            I designed an org-wide setting with group-level overrides, built on
+            the Groups system admins already knew
           </Emph>
-          , giving admins full control using a Groups system they already
-          know.
+          . That was instead of the whole new profiles system we were asked
+          for.
         </>
       ),
       overview: (
         <p>
-          Our PM was on leave, so I had to cover PM responsibilities and deal
-          with varying stakeholder input, including an initial request for a
-          more complex profiles system.
+          The work came out of shipping Study Notes, our AI generated
+          summaries. Admins needed a way to turn it on or off for people. Our
+          PM was on leave, so I carried the role alongside my own: stakeholder
+          conversations, scope, and challenging what we had been asked to
+          build.{" "}
+          <Emph>
+            What we shipped is far smaller than what I was handed, and does the
+            same job.
+          </Emph>
         </p>
       ),
     },
     decisions: [
       {
-        heading: "A change in priority",
+        heading: "Look past the request to the outcome",
         body: (
           <>
             <p>
-              It came clear that stakeholders wanted to match a competitor.
-              They wanted feature toggles to be added through a new
-              “profile” system. Introducing a new system to the admin
-              platform.
+              It became clear that stakeholders wanted to match a competitor,
+              by delivering feature toggles through a new
+              “profiles” system. That meant adding a whole new
+              system to the admin platform.
             </p>
             <p>
-              I looked deeper, what was actually being asked for, and what
-              was the right solution?
+              Rather than take the request at face value, I dug into what was
+              actually being asked for: the outcome stakeholders wanted, not
+              the system they had named.
             </p>
           </>
         ),
@@ -469,9 +509,12 @@ export const PROJECTS: Project[] = [
               I argued for{" "}
               <Emph>giving feature toggles to groups instead</Emph>. They are
               already used and understood by admins, and allow for the same
-              functionality. I had to push for this in place of my PM,
-              attending meetings and communicating with stakeholders in
-              their place.
+              functionality. I made that case in the PM&apos;s place,{" "}
+              <Emph>
+                attending the meetings and taking the stakeholder conversations
+                myself until the room was behind it
+              </Emph>
+              .
             </p>
           </>
         ),
@@ -487,7 +530,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       {
-        heading: "Org-wide baseline, group level override",
+        heading: "Org-wide baseline, group-level override",
         body: (
           <>
             <p>
@@ -559,9 +602,8 @@ export const PROJECTS: Project[] = [
       <p>
         Feature toggles shipped as an extension of the existing Groups
         system: an org-wide baseline for each of the three AI features in
-        Notes, with group-level overrides on top. Utilising a system they
-        were already familiar with to give them the ability to cater to
-        their academic AI policies.
+        Notes, with group-level overrides on top. It let admins match their
+        academic AI policies through a system they already knew.
       </p>
     ),
     gallery: [
@@ -577,25 +619,35 @@ export const PROJECTS: Project[] = [
     outcome: (
       <>
         <p>
-          <Emph>A student who needs the support isn’t blocked by a blanket
-          policy</Emph> set elsewhere in the organisation, and an institution
-          can restrict a feature without handling exceptions one student at
-          a time.
+          The objective was never adoption. It was{" "}
+          <Emph>
+            cutting the requests reaching support and customer success asking
+            for AI features to be turned off
+          </Emph>
+          . That figure hasn&apos;t come back to me yet, so the headline result
+          is still outstanding.
         </p>
         <p>
-          <Emph>Adoption reached 11.8% within the first month</Emph>, with 52
-          unique admins taking action on it. It shipped during summer break,
-          when most institutions are quiet, so we expect adoption to grow
-          significantly as term starts.
+          What I can report is use:{" "}
+          <Emph>11.8% of organisations in the first month</Emph>. Admins were
+          changing their toggle settings, not just looking at them. That was
+          over the summer break, when most institutions are quiet.
+        </p>
+        <p>
+          <Emph>The bigger result was what we didn&apos;t build.</Emph> A
+          profiles system meant a second permission model to design, integrate
+          and maintain. We had a conference deadline, and we hit it. It would
+          also have left every future feature weighed against three layers
+          instead of two.
         </p>
       </>
     ),
     reflection: (
       <>
         <p>
-          This wasn&apos;t a heavy UX project, it was PM work: taking in
-          varying stakeholder feedback and steering it toward the right
-          approach.
+          The value I added here wasn&apos;t in the pixels, it was in the PM
+          work: absorbing conflicting stakeholder feedback and steering it
+          toward an approach the platform could actually carry.
         </p>
         <p>
           The useful question turned out to be{" "}
@@ -622,7 +674,8 @@ export const PROJECTS: Project[] = [
     summary:
       "Shows how I balanced WCAG 2.1 AA compliance with usability testing and iterative design to solve for accessibility without sacrificing UX.",
     snapshot: {
-      role: "UX Designer, Genio Notes, Audio tab",
+      role:
+        "Junior UX Designer on Genio Notes, taking on the more complex WCAG compliance work",
       timeline: "Sep 2025 – Jan 2026",
       team:
         "Dave Tucker-Diaz (CEO), Paul Davis (Head of UX), Steven (accessibility/dev support), Matt Russell (analytics), Level Access (external WCAG auditor)",
@@ -630,24 +683,25 @@ export const PROJECTS: Project[] = [
       statement: (
         <>
           Genio Notes&apos; audio capture interface (audio bubbles) failed
-          WCAG 2.1 AA contrast. Our CEO voiced his concerns, simply
-          strengthening the colour to pass contrast would increase cognitive
-          load for a mainly background element.{" "}
+          WCAG 2.1 AA contrast. Our CEO raised a concern: simply strengthening
+          the colour to pass would increase cognitive load for what is mostly a
+          background element.{" "}
           <Emph>
-            I came up with a redesign that met colour contrast by focusing
-            on the borders, rather than the fill
+            I met contrast in the borders and the weight instead of the fill
           </Emph>
-          {" "}- leading to a cleaner and lighter interface.
+          . That led to a cleaner, lighter interface.
         </>
       ),
       overview: (
         <p>
           Each colour marks a different note type: important notes in red,
           notes flagged for review in yellow, and regular notes in blue. The
-          audit found a colour contrast issue:{" "}
-          <Emph>in dark mode, grey (4.04:1) and yellow (3.5:1) passed, but
-          blue (2.94:1) and red (2.42:1) failed</Emph>; in light mode, every
-          colour except red failed.
+          audit found failures in both modes, and not the same ones.{" "}
+          <Emph>
+            In dark mode grey (4.04:1) and yellow (3.5:1) passed, while blue
+            (2.94:1) and red (2.42:1) failed
+          </Emph>
+          . In light mode only red passed.
         </p>
       ),
     },
@@ -696,10 +750,10 @@ export const PROJECTS: Project[] = [
             <p>
               The final solution added a light background fill with a border
               that passes contrast checks. Getting there took a few tweaks: I
-              reduced the connecting lines from 2px to 1px, and shrunk the
+              reduced the connecting lines from 2px to 1px, and shrank the
               bubbles themselves, inactive ones from 8px to 5px, active ones
               from 12px to 11px. I kept those sizes odd so the bubbles would
-              sit centered on the thinner line.
+              sit centred on the thinner line.
             </p>
           </>
         ),
@@ -810,10 +864,11 @@ export const PROJECTS: Project[] = [
     shipped: (
       <>
         <p>
-          Contrast lives in the border and the weight, not the fill: a
-          background-fill inactive bubble with a contrast-passing border, a
-          lighter fill when active, 1px lines at full contrast per the ruling,
-          and heights of 5px / 11px so they centre on the thinner line.
+          Contrast lives in the border and the weight, not the fill. An
+          inactive bubble carries a background fill with a contrast-passing
+          border, and a lighter fill when active. Lines stay 1px at full
+          contrast, per the ruling. Heights of 5px and 11px keep them centred
+          on the thinner line.
         </p>
       </>
     ),
@@ -828,25 +883,28 @@ export const PROJECTS: Project[] = [
     ],
     outcome: (
       <>
-        <ul className="flex list-disc flex-col gap-2 pl-5">
-          <li>
-            WCAG 2.1 AA reached ahead of the VPAT deadline via borders rather
-            than saturation, keeping the design as quiet as it was meant to be.
-          </li>
-          <li>
-            The decorative-vs-functional question settled by an external
-            authority rather than an internal guess, and the design changed in
-            response, even though it meant reversing an earlier call.
-          </li>
-          <li>
-            Direction validated by a small, targeted survey, with the
-            5-person sample stated as the limitation it is.
-          </li>
-          <li>
-            Usage logging left in place to argue any deeper investment in the
-            audio tab from data.
-          </li>
-        </ul>
+        <p>
+          <Emph>
+            Every bubble colour now clears 3:1 in both modes, confirmed on
+            re-audit
+          </Emph>
+          , and without the cost our CEO had flagged. Contrast came from the
+          borders and the weight rather than the saturation, so a background
+          element stayed in the background.
+        </p>
+        <p>
+          That mattered commercially.{" "}
+          <Emph>
+            WCAG 2.1 AA is a condition of selling into the US market
+          </Emph>
+          . This was one of the failures standing between Genio Notes and a
+          clean VPAT. The deadline driving it later moved, but the requirement
+          didn&apos;t.
+        </p>
+        <p>
+          I also left usage logging on the tab in place, so any future
+          investment there can be argued from data rather than instinct.
+        </p>
       </>
     ),
     reflection: (
@@ -854,14 +912,21 @@ export const PROJECTS: Project[] = [
         <p>
           All this experimenting came down to one principle:{" "}
           <Emph>
-            approach compliance thoughtfully, not as a box to tick, but as a
-            prompt to rethink the design itself
+            treat compliance as a prompt to rethink the design, not a box to
+            tick
           </Emph>
-          . That approach led to a solution that worked better for everyone.
-          Moving away from simply increasing the strength of the colour fill,
-          trusting that gut instinct, turned out to be the right call. This
-          project taught me a lot, including how to manage stakeholder input
-          up to CEO level, and sharpened my eye for detail.
+          . Forcing the fill to 3:1 would have passed the audit and made the
+          product worse. Testing the alternative is what produced a design that
+          worked better for everyone.
+        </p>
+        <p>
+          <Emph>
+            I took this from a failed audit to an interface that passes and
+            looks better for it
+          </Emph>
+          . That meant managing stakeholder input up to CEO level. It also
+          meant bringing in an external authority to settle the one question we
+          couldn&apos;t answer internally.
         </p>
       </>
     ),
@@ -933,7 +998,8 @@ export const PROJECTS: Project[] = [
       height: 1333,
     },
     snapshot: {
-      role: "Concept, research, UX & UI design, self-directed",
+      role:
+        "Sole designer on my 4th year Honours project: ideation, research, prototyping and every deliverable submitted",
       // TODO: timeline, team, tools
       statement:
         "My honours project: a conceptual app that treats productivity guilt as the problem. Replacing the calendar grid with a fluid shape and using tone of voice profiles that talk to you like a friend. Focused on making you mindful of how you're spending your time with custom interventions.",
@@ -953,8 +1019,8 @@ export const PROJECTS: Project[] = [
               research I had come to a key insight:{" "}
               <Emph>
                 Digital calendars offer more flexibility than physical
-                calendars - however, physical calendars offer more
-                visibility than digital calendars.
+                calendars, but physical calendars offer more visibility than
+                digital ones.
               </Emph>
             </p>
             <p>
@@ -1069,7 +1135,7 @@ export const PROJECTS: Project[] = [
       },
       {
         heading: "How do we visualise a week?",
-        body: "To compete with existing calendars I added a weekly view by stacking the daily shape into a visually stacked week. This unexpectedly made weekly trends visible - easier to spot your busiest and quietest times in a week.",
+        body: "To compete with existing calendars I added a weekly view by stacking the daily shape into a visually stacked week. This unexpectedly made weekly trends visible: it was easier to spot your busiest and quietest times in a week.",
         media: [
           {
             src: "/work/memor/weekly-radial-view.jpg",
@@ -1101,22 +1167,55 @@ export const PROJECTS: Project[] = [
           </li>
         </ul>
         <p>
-          I also had to create a final video showing what the project really
-          stands for, showing experiencing productivity guilt and where the
-          app would come in to help alleviate that.
+          I also made a final video showing what the project stands for. It
+          follows the experience of productivity guilt, and where the app steps
+          in to ease it.
         </p>
       </>
     ),
     shippedLabel: "Submitted",
+    outcome: (
+      <>
+        <p>
+          <Emph>The project was awarded a first.</Emph> It was exhibited at the
+          DJCAD degree show, in front of an audience that included people
+          working in the industry.
+        </p>
+        <p>
+          The reaction that stayed with me came from a visitor with ADHD.{" "}
+          <Emph>
+            They said the fluid shape made the day feel less cutthroat about
+            start and stop times
+          </Emph>
+          . It would also stop them planning too much, or doing too little.
+          That is one conversation, not a finding. But I had designed that
+          shape to challenge the grid and take the guilt out of a calendar. It
+          turned out to do something I hadn&apos;t designed for.
+        </p>
+      </>
+    ),
     reflection: (
-      <p>
-        This was a very fun conceptual project,{" "}
-        <Emph>
-          pushing the limits of how I could represent a calendar visually
-        </Emph>
-        , exploring tone of voice led to a project I&apos;m seriously happy
-        with.
-      </p>
+      <>
+        <p>
+          This was a very fun conceptual project,{" "}
+          <Emph>
+            pushing the limits of how I could represent a calendar visually
+          </Emph>
+          . I picked up After Effects and wired it into Protopie to get the
+          fluid shape moving. I paired it with a tone of voice no calendar app
+          would dare ship.
+        </p>
+        <p>
+          What I took from it is that{" "}
+          <Emph>
+            the far-out concepts are worth chasing, and approaching something
+            in a genuinely new way carries its own value
+          </Emph>
+          . The degree show was the proof. A grid would never have prompted
+          what that visitor told me, because what they responded to was the
+          part that broke convention.
+        </p>
+      </>
     ),
     gallery: [
       {
@@ -1158,7 +1257,8 @@ export const PROJECTS: Project[] = [
       height: 746,
     },
     snapshot: {
-      role: "UX Designer (internship), sole designer on the continuation",
+      role:
+        "UX Designer, sole designer on the continuation: research, design and the written report",
       timeline: "Jan – Jun 2025, continuing a 2023 university project",
       team:
         "Sponsored by Sarra Hoy (Bliss ambassador) · Dr. Lauren Shaw (Senior Neonatal Nurse) · DJCAD & School of Medicine · Ninewells Hospital NICU",
@@ -1177,16 +1277,21 @@ export const PROJECTS: Project[] = [
       overview: (
         <>
           <p>
-            A parent&apos;s voice is one of the few known things that support
-            brain development and bonding. Tell Me a Story lets parents
-            record stories and messages for their baby in a NICU, which
-            nurses can then play for the baby when parents can&apos;t be
-            there.
+            A DJCAD and School of Medicine study on the Ninewells neonatal ward
+            had already found that a parent&apos;s presence, and their voice in
+            particular, is vital to a baby&apos;s brain development and
+            bonding. I picked the project up from there. Tell Me a Story lets
+            parents record stories and messages for their baby in a NICU, which
+            nurses can then play when parents can&apos;t be there.
           </p>
           <p>
-            Feedback was <Emph>overwhelmingly positive</Emph>. Parents with
-            real neonatal experience said they would have valued it during
-            their own stay.
+            It tested well with parents who had lived through a NICU stay. What
+            I handed over was{" "}
+            <Emph>
+              a working proof of concept and a research report carrying six
+              design implications and five recommendations
+            </Emph>
+            , for whoever takes the project forward.
           </p>
         </>
       ),
@@ -1200,8 +1305,8 @@ export const PROJECTS: Project[] = [
           expectation rather than hide it.
         </p>
         <p>
-          <Emph>Safeguarding had to be visible.</Emph> “We&apos;d need a way to
-          check it&apos;s for the right baby”, plus open questions on NHS system
+          <Emph>Safeguarding had to be visible.</Emph>{" "}
+          “We&apos;d need a way to check it&apos;s for the right baby”, plus open questions on NHS system
           integration and information governance.
         </p>
         <p>
@@ -1210,17 +1315,17 @@ export const PROJECTS: Project[] = [
           everywhere else, and being web-based added a lag between screens.
         </p>
         <p>
-          Worth noting this was <Emph>pre-AI</Emph>. There was no assistant to
-          lean on for the parts Bubble.io made difficult, so getting functional
-          voice recording, pause, restart and playback working took far longer
-          than the design itself, and every workaround had to be found the slow
-          way.
+          Worth noting this was <Emph>pre-AI</Emph>, with no assistant to lean
+          on for the parts Bubble.io made difficult. Getting voice recording,
+          pause, restart and playback genuinely working took longer than the
+          design itself. I found every workaround the slow way, and shipped a
+          prototype that actually recorded.
         </p>
       </>
     ),
     decisions: [
       {
-        heading: "Using what I already knew",
+        heading: "Start from what the class already learned",
         body: (
           <>
             <p>
@@ -1338,10 +1443,74 @@ export const PROJECTS: Project[] = [
             <p>
               <Emph>17 people showed interest, 11 completed ethics, 6 tested</Emph>
               : a 35% conversion with no incentive offered beyond interest in
-              the project. Sessions ran up to an hour as semi-structured
-              interviews around the prototype. All six participants were
-              female and UK-based as it was targeted for the NHS.
+              the project. All six participants were female and UK-based, since
+              the concept targeted the NHS.{" "}
+              <Emph>
+                That is a real gap: the app speaks to parents, but I only heard
+                from mothers.
+              </Emph>
             </p>
+            <p>
+              Each session ran up to an hour, split three ways. Around five
+              minutes of icebreaking, to understand that parent&apos;s own
+              neonatal experience. Then 10 to 15 minutes of free roam on the
+              prototype, thinking aloud. The rest went on{" "}
+              <Emph>13 semi-structured questions</Emph>, with follow-ups
+              wherever an answer opened something up.
+            </p>
+            <Disclosure summary="The 13 questions I asked">
+              <ol className="flex list-decimal flex-col gap-2 pl-5 text-foreground">
+                <li>
+                  How did you find the onboarding process? How clear and
+                  helpful was it? Why was this so?
+                </li>
+                <li>
+                  How does the ability to record and send audio to the hospital
+                  help you overcome communication barriers with your infant?
+                </li>
+                <li>
+                  In what ways did any visual feedback during the recording
+                  process affect your approach to recording your voice?
+                </li>
+                <li>
+                  How intuitive was the process of recording and reviewing your
+                  audio message?
+                </li>
+                <li>
+                  Did you feel confident that your recording would successfully
+                  be played for your baby?
+                </li>
+                <li>
+                  Did the app provide enough information about how your
+                  recordings would be managed by the nursing team at the
+                  hospital?
+                </li>
+                <li>
+                  What did you think of the different types of stories and how
+                  they can be managed?
+                </li>
+                <li>
+                  Do you think the information and stories on the home page
+                  were helpful?
+                </li>
+                <li>What did you think of the language used in the app?</li>
+                <li>
+                  Were there any of the features in the app that may help you
+                  to alleviate stress and anxiety? If so, what were they and
+                  why?
+                </li>
+                <li>
+                  Is there anything you would change to help make the
+                  experience more comforting for you?
+                </li>
+                <li>
+                  Would you recommend this app to parents of neonatal infants?
+                </li>
+                <li>
+                  Are there any other thoughts you had on the prototype?
+                </li>
+              </ol>
+            </Disclosure>
           </>
         ),
       },
@@ -1387,19 +1556,26 @@ export const PROJECTS: Project[] = [
     outcome: (
       <>
         <p>
-          Feedback was <Emph>overwhelmingly positive</Emph>. Parents said they
-          would have valued it during their own stay, “just knowing they could
-          still hear your voice would have helped”, and the tone landed as
-          intended, described as “communicated in a compassionate and sensitive
-          way”, in contrast to existing neonatal apps that “wasn&apos;t a very
-          visually pleasing system”.
+          <Emph>The tone landed exactly as intended.</Emph>{" "}
+          One parent described it as “communicated in a compassionate and
+          sensitive way”. They set that against an existing neonatal app that
+          “wasn&apos;t a very visually pleasing system”. Another
+          said that “just knowing they could still hear your voice
+          would have helped”.
         </p>
         <p>
-          I wrote a report on the findings which brought light to{" "}
-          <Emph>6 design implications</Emph>. Bonding through audio, the need
-          for normalcy, language, emotional load, guilt, and visual design. I
-          created five recommendations and a feature shortlist for the future
-          of the project.
+          The willingness to take part was its own finding.{" "}
+          <Emph>
+            Six parents each gave up to an hour to revisit one of the hardest
+            periods of their lives
+          </Emph>
+          . The only incentive was caring about the project.
+        </p>
+        <p>
+          I wrote up the findings as six design implications: bonding through
+          audio, the need for normalcy, language, emotional load, guilt, and
+          visual design. From those I set out five recommendations and a
+          feature shortlist for whoever picks the project up next.
         </p>
       </>
     ),
@@ -1419,6 +1595,15 @@ export const PROJECTS: Project[] = [
           </Emph>
           , and who wished they&apos;d had something like it at the time, was
           probably the most rewarding experience of my career so far.
+        </p>
+        <p>
+          The craft lesson was{" "}
+          <Emph>designing around a constraint I couldn&apos;t remove</Emph>.
+          Playback could never be promised, because clinical duties come first.
+          The honest move was to say so in the onboarding rather than let a
+          parent assume otherwise. I&apos;d also push harder for time with the
+          nurses: I designed the parent side thoroughly and left theirs as
+          requirements for someone else to pick up.
         </p>
       </>
     ),

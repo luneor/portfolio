@@ -60,7 +60,7 @@ uniform vec2  u_offset;
 uniform float u_layerMix;
 uniform vec3  u_bg, u_c1, u_c2, u_c3, u_c4, u_c5;
 uniform vec2  u_p1, u_p2, u_p3, u_p4;
-uniform float u_scale, u_noiseSize, u_displacement, u_spread, u_grain;
+uniform float u_scale, u_noiseSize, u_displacement, u_spread, u_grain, u_sat;
 
 varying vec2 v_uv;
 
@@ -226,6 +226,22 @@ void main() {
   color = mix(color, u_c5, 0.5 * (1.0 - smoothstep(0.0, u_spread * 0.7, distance(pos, vec2(0.0)))));
 
   /*
+    Saturation compensation, applied after mixing and before grain.
+
+    Every lobe above is mixed OUT OF the background, so on the light paper each
+    one fades toward near-white at its edges and the field reads washed out;
+    the identical stops on near-black read as glow. u_sat comes from the
+    --hero-field-sat token and is 1 in dark, so this is a no-op there.
+
+    Pulling away from luma rather than toward a new colour: the hue and the
+    composition are untouched, only the distance from grey changes, which is
+    exactly what the light ground is eating. Rec. 709 luma, so the boost
+    doesn't shift perceived lightness while it does it.
+  */
+  float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+  color = mix(vec3(luma), color, u_sat);
+
+  /*
     Signed grain, added rather than composited: the negative half clamps off
     against the black ground instead of lifting it to grey.
 
@@ -265,6 +281,17 @@ function readColour(styles: CSSStyleDeclaration, name: string): [number, number,
     return [Number(m[0]) / 255, Number(m[1]) / 255, Number(m[2]) / 255];
   }
   return [0, 0, 0];
+}
+
+/** Reads a plain numeric custom property, for the non-colour tokens the field
+ *  takes from CSS. Falls back to `fallback` if the token is missing. */
+function readNumber(
+  styles: CSSStyleDeclaration,
+  name: string,
+  fallback: number
+): number {
+  const n = Number.parseFloat(styles.getPropertyValue(name));
+  return Number.isFinite(n) ? n : fallback;
 }
 
 function compile(gl: WebGLRenderingContext, type: number, source: string) {
@@ -516,6 +543,8 @@ export function HeroGradient({
     gl.uniform1f(u("u_noiseSize"), NOISE_SIZE);
     gl.uniform1f(u("u_spread"), SPREAD);
     gl.uniform1f(u("u_grain"), GRAIN);
+    const uSat = u("u_sat");
+    gl.uniform1f(uSat, readNumber(styles, "--hero-field-sat", 1));
 
     /*
       The four slots, each holding which palette entry it shows and where it
@@ -743,6 +772,8 @@ export function HeroGradient({
       // Only while a theme switch is in flight; see `bgSampleUntil` above.
       if (now < bgSampleUntil) {
         gl.uniform3fv(uBg, readColour(styles, "--background"));
+        // Moves with the theme for the same reason the background does.
+        gl.uniform1f(uSat, readNumber(styles, "--hero-field-sat", 1));
       }
 
       /*

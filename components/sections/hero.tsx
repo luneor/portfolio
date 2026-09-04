@@ -139,7 +139,8 @@ export function Hero() {
               `text-balance` since balancing is per block.
             */}
             <span className="block text-balance">
-              &ldquo;Why does it <em>have to</em>{" "}
+              &ldquo;<em>Why</em>{" "}
+              does it <em>have to</em>{" "}
               work like that?&rdquo;
             </span>
           </h1>

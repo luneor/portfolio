@@ -138,7 +138,7 @@ export function Hero() {
               than beginning halfway along the sentence, with its own
               `text-balance` since balancing is per block.
             */}
-            <span className="block text-balance">
+            <span className="block italic text-balance">
               &ldquo;<em>Why</em>{" "}
               does it <em>have to</em>{" "}
               work like that?&rdquo;

@@ -15,8 +15,7 @@ import Link from "next/link";
 const GROUPS = [
   {
     key: "process",
-    heading: "Understand my process",
-    intro: "How the work actually gets done, rather than what came out of it.",
+    heading: "Understand how I work",
     links: [
       {
         href: "/process/collaboration",
@@ -35,7 +34,6 @@ const GROUPS = [
   {
     key: "ai",
     heading: "Where I stand on AI",
-    intro: "Used for pace, never as a way to skip the thinking.",
     links: [
       {
         href: "/ai",
@@ -68,8 +66,9 @@ export function HomeProcess() {
               <h3 className="text-[clamp(1.3rem,2.4vw,1.7rem)] leading-[1.2] font-bold tracking-tight text-foreground">
                 {group.heading}
               </h3>
-              <p className="mt-3 text-foreground">{group.intro}</p>
-
+              {/* Straight from the heading to the links: each card already
+                  says what it is, so a line of intro between them was a
+                  summary of two summaries. */}
               <ul className="mt-6 flex flex-col gap-3">
                 {group.links.map((link) => (
                   <li key={link.href}>

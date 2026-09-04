@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SpotlightCard } from "@/components/kokonutui/spotlight-card";
 
 /*
   The three writing-led pages, which the work rows above don't reach: how the
@@ -36,7 +37,11 @@ const LINKS = [
 
 export function HomeProcess() {
   return (
-    <section id="inner-workings" aria-labelledby="inner-workings-heading" className="py-20">
+    <section
+      id="inner-workings"
+      aria-labelledby="inner-workings-heading"
+      className="py-20"
+    >
       <div className="mx-auto max-w-page px-6">
         <h2
           id="inner-workings-heading"
@@ -46,33 +51,38 @@ export function HomeProcess() {
         </h2>
 
         {/*
-          Three across from `md`, one below. `items-stretch` so a card with a
-          shorter blurb still matches its row rather than leaving a ragged foot.
+          The same SpotlightCard the On AI principles use, rather than a plain
+          bordered box: mint hairline at rest, the brand gradient ring and an
+          inner glow on hover. Reusing the component instead of copying its
+          classes means these can't drift out of step with those cards, and the
+          glow's reduced-motion and focus handling comes with it.
+
+          `p-0` so the padding can move onto the link inside. The card carries
+          it by default, which would have left a 20px frame around the target
+          that looked clickable and wasn't.
         */}
         <ul className="mt-8 grid items-stretch gap-4 md:grid-cols-3">
           {LINKS.map((link) => (
             <li key={link.href} className="flex">
-              {/*
-                The whole card is the link, not a "read more" inside it: one
-                target, and it's the size of the block rather than two words.
-              */}
-              <Link
-                href={link.href}
-                className="group flex w-full flex-col rounded-lg border border-border bg-background-alt p-5 transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none"
-              >
-                <span className="flex items-center gap-2 font-semibold text-foreground">
-                  {link.name}
-                  <span
-                    aria-hidden="true"
-                    className="text-brand-weak transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none"
-                  >
-                    →
+              <SpotlightCard className="flex w-full p-0">
+                <Link
+                  href={link.href}
+                  className="group/link flex h-full w-full flex-col rounded-xl p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                >
+                  <span className="flex items-center gap-2 font-semibold text-foreground">
+                    {link.name}
+                    <span
+                      aria-hidden="true"
+                      className="text-foreground transition-transform duration-200 group-hover/link:translate-x-0.5 motion-reduce:transition-none"
+                    >
+                      →
+                    </span>
                   </span>
-                </span>
-                <span className="mt-1.5 block text-[0.95rem] leading-relaxed text-foreground-muted">
-                  {link.blurb}
-                </span>
-              </Link>
+                  <span className="mt-1.5 block text-[0.95rem] leading-relaxed text-foreground-muted">
+                    {link.blurb}
+                  </span>
+                </Link>
+              </SpotlightCard>
             </li>
           ))}
         </ul>

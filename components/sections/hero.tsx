@@ -116,9 +116,9 @@ export function Hero() {
             */
             className="mt-5 max-w-[54ch] text-[1.05rem] leading-relaxed text-foreground"
           >
-            UX Designer in Scotland, creating{" "}
-            <strong className="font-semibold">innovative, human-centred</strong>{" "}
-            solutions that align with business needs.
+            UX Designer in Scotland who starts by asking &ldquo;why does it{" "}
+            <em>have to</em>{" "}
+            work like that?&rdquo;
           </motion.p>
 
           {/*

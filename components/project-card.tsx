@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -29,13 +28,16 @@ export function ProjectCard({
   topics,
 }: ProjectCardProps) {
   return (
-    <motion.div
-      className={cn("group h-full", className)}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-    >
+    /*
+      The reveal is `.reveal-rise` in globals.css, not Motion's `whileInView`.
+      That gated the card behind `opacity: 0` in the server HTML and an
+      observer callback, and a fast scroll could outrun the callback and leave
+      a whole section of the work page rendered blank. Scroll-driven CSS reads
+      the card's position instead of waiting to be told about it, so there is
+      no callback to lose the race, and where it isn't supported the card is
+      simply visible.
+    */
+    <div className={cn("reveal-rise group h-full", className)}>
       {/*
         The shadow eases via CSS, not Motion. Motion can't cleanly interpolate
         two box-shadows with different numbers of length values (3 vs 4), which
@@ -108,6 +110,6 @@ export function ProjectCard({
           </div>
         </Link>
       </div>
-    </motion.div>
+    </div>
   );
 }

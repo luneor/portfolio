@@ -77,13 +77,56 @@ export function Cv() {
   return (
     <section id="cv" aria-labelledby="cv-heading" className="py-24">
       <div className="mx-auto max-w-page px-6">
-        {/* Visually hidden: the nav tab and page title already say "CV", so
-            a third repeat added nothing on the page itself. Kept as a real
-            heading, not dropped outright, so the section still has the
-            accessible name `aria-labelledby` promises assistive tech. */}
-        <h2 id="cv-heading" className="sr-only">
-          CV
-        </h2>
+        {/*
+          The heading was `sr-only` while the page had nothing beside it: the
+          nav tab and page title already said "CV", so a third repeat earned
+          nothing. It's visible again now that it anchors the download control,
+          which needs something to sit across from.
+
+          The page had no interactive element on it at all before this. Anyone
+          wanting to forward the CV or put it through an applicant tracking
+          system had to copy it out of the markup.
+
+          A plain <a download> rather than a button: it navigates to a file, so
+          it belongs in the links rota, and it still works with JS off. The
+          filename is set explicitly so it doesn't save under a hashed asset
+          name, and the format is in the accessible name because "Download"
+          alone doesn't tell a screen reader user what they're about to get.
+
+          `flex-wrap` with the heading first: on a narrow phone the button drops
+          under the heading rather than squeezing beside it.
+        */}
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <h2
+            id="cv-heading"
+            className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] font-extrabold tracking-tight text-foreground"
+          >
+            CV
+          </h2>
+
+          <a
+            href="/Hanru_Wehmeyer_CV.pdf"
+            download="Hanru-Wehmeyer-CV.pdf"
+            aria-label="Download CV as a PDF"
+            className="inline-flex shrink-0 items-center gap-2.5 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              className="size-4 shrink-0 text-brand-weak"
+            >
+              <path
+                d="M8 2v8m0 0 3-3m-3 3L5 7M3 12.5h10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Download CV (PDF)
+          </a>
+        </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-10">
           {/*

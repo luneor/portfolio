@@ -8,7 +8,7 @@ const projects = PROJECTS.filter((project) => project.section === "genio-admin")
 export function GenioAdmin() {
   return (
     /*
-      Page ground, same as More Work below. This section used to sit on
+      Page ground, same as Concept Work below. This section used to sit on
       the lifted `bg-background-alt` to mark current work as raised above the
       archive, which worked when each project was a card: the cards carried
       `--card` and the grey behind them was what they were lifted OFF. With

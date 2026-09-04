@@ -8,6 +8,7 @@ import {
   StoriArt,
 } from "@/components/project-art";
 import { Disclosure } from "@/components/case-study/disclosure";
+import { ToneComparison } from "@/components/tone-comparison";
 import { ProjectFigure } from "@/components/case-study/project-figure";
 
 /**
@@ -305,7 +306,7 @@ export const PROJECTS: Project[] = [
           },
           {
             src: "/work/last-active/final-ranges-modal.png",
-            alt: "The Edit Last Active Ranges dialog, with week inputs for Active, At risk and Inactive and a reset to default option.",
+            alt: "The Edit Last Active Ranges dialog, with week inputs for Active and Inactive, the At risk range in between derived from those two, and a reset to default option.",
             width: 608,
             height: 431,
             caption:
@@ -724,7 +725,7 @@ export const PROJECTS: Project[] = [
             <ProjectFigure
               media={{
                 src: "/work/audio-bubbles/contrast-bump-rejected.png",
-                alt: "Two columns of audio bubbles with fully saturated red, orange and purple fills against grey connecting lines.",
+                alt: "The same three slide sections side by side: the original audio bubbles on the left, and on the right the same bubbles darkened to force 3:1 contrast, where the greys and oranges turn muddy.",
                 width: 772,
                 height: 554,
                 caption:
@@ -760,7 +761,7 @@ export const PROJECTS: Project[] = [
         media: [
           {
             src: "/work/audio-bubbles/light-dark-panels.png",
-            alt: "Two audio tab panels side by side, one with a purple header and one with a teal header, showing highlighted bubbles.",
+            alt: "Two audio tab panels side by side: the proposed outlined bubbles under a purple header on the left, and the original solid grey bubbles under a teal header on the right.",
             width: 972,
             height: 772,
             caption: "Comparing the new proposed design to the original.",
@@ -1114,8 +1115,13 @@ export const PROJECTS: Project[] = [
               I decided against the usual &quot;app talk&quot;,{" "}
               <Emph>it&apos;s niceness that does little for real motivation</Emph>
               . I instead opted for a brutally honest voice, like a friend who
-              keeps you in check.
+              keeps you in check. Same nudge, same moment, only the tone
+              changes.
             </p>
+            <p>
+              Which one is more likely to actually get you on a walk?
+            </p>
+            <ToneComparison />
             <p>
               I did later add two other profiles for those who didn&apos;t
               want the bluntness: one which spoke to you like a supportive
@@ -1123,15 +1129,6 @@ export const PROJECTS: Project[] = [
             </p>
           </>
         ),
-        media: [
-          {
-            src: "/work/memor/m-05.png",
-            alt: "Two Memor notifications written in a brutally honest tone telling the user to go for a walk.",
-            width: 723,
-            height: 434,
-            caption: "The Brutally Honest voice in action, motivation that reads like a friend keeping you in check.",
-          },
-        ],
       },
       {
         heading: "How do we visualise a week?",
@@ -1139,7 +1136,7 @@ export const PROJECTS: Project[] = [
         media: [
           {
             src: "/work/memor/weekly-radial-view.jpg",
-            alt: "A radial weekly calendar built by stacking each day's organic shape, with Monday highlighted in blue against the six other days in grey.",
+            alt: "A radial weekly calendar on a 00 to 23 hour scale, built by stacking each day's organic shape, with Monday highlighted in blue against the six other days in grey.",
             width: 965,
             height: 950,
             caption: "The weekly view, stacking daily shapes made weekly trends visible at a glance.",

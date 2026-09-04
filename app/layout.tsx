@@ -19,12 +19,38 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
 });
 
-// Headings only. Archivo Heavy (800/900) gives display type its weight.
+/*
+  Headings only. Archivo Heavy (800/900) gives display type its weight.
+
+  500 is here for the hero, which sets the name at 800 against the rest of the
+  sentence at 500. 700 was the lightest step already loaded and the gap to 800
+  read as an accident rather than a decision.
+*/
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
-  weight: ["400", "700", "800", "900"],
+  weight: ["400", "500", "700", "800", "900"],
+  style: ["normal", "italic"],
 });
+
+/*
+  NO SERIF IS LOADED. The hero question was set in one for a while and is now
+  Archivo throughout, so shipping a second family for a single line isn't worth
+  the bytes.
+
+  Kept because it was expensive to work out, if a serif is ever wanted again:
+  the deciding factor is stroke contrast, not taste. Archivo is a near-monoline
+  grotesque, and a serif with heavy modulation (Instrument Serif, Fraunces, EB
+  Garamond, Newsreader) reads as a different texture beside it however it is
+  sized. Twelve faces were compared; the two that survived were PT Serif (the
+  closer fit, drawn as a companion to PT Sans, but 400/700 only so the weight
+  can't be tuned) and Vollkorn (more personality, variable 400-900).
+
+  Sizing one against Archivo also has to be measured, not eyeballed, and the
+  target is CAP height rather than x-height: matching x-height overshoots the
+  caps by 6-8%, which is what the eye reads at display size. The working figures
+  were PT Serif 400 at 1.002em and Vollkorn 500 at 1.045em.
+*/
 
 // Captions & labels, eyebrows, nav, tags, the terminal prompt motif.
 const spaceMono = Space_Mono({

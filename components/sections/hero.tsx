@@ -114,12 +114,34 @@ export function Hero() {
           <h1
             id="hero-heading"
             style={rise(1)}
-            className="hero-rise max-w-[56rem] text-[clamp(1.5rem,4.2vw,2.9rem)] leading-[1.15] font-extrabold tracking-tight text-balance text-foreground"
+            className="hero-rise max-w-[56rem] text-[clamp(1.5rem,4.2vw,2.9rem)] leading-[1.15] font-medium tracking-tight text-balance text-foreground"
           >
-            I&apos;m Hanru Wehmeyer, UX Designer in Scotland who starts by
-            asking &ldquo;Why does it{" "}
-            <em>have to</em>{" "}
-            work like that?&rdquo;
+            {/*
+              The name holds 800 while everything around it drops to 500,
+              "I'm" included: the weight marks the name itself, not the phrase
+              it arrives in, and carrying it across "I'm" blunted that. The
+              clause after it is doing explanatory work and reads better much
+              lighter, which also stops it competing with the question below.
+              700 was tried first and the gap to 800 was too small to look
+              deliberate.
+            */}
+            I&apos;m{" "}
+            <strong className="font-extrabold">Hanru Wehmeyer</strong>
+            , UX Designer in Scotland who starts by asking{" "}
+            {/*
+              The question is Archivo like the rest of the line now, so it
+              needs no optical size correction and no tracking of its own: same
+              face, same weight, same measure. Only the slant on "have to"
+              marks it.
+
+              `block` stays, so the question always starts its own line rather
+              than beginning halfway along the sentence, with its own
+              `text-balance` since balancing is per block.
+            */}
+            <span className="block text-balance">
+              &ldquo;Why does it <em>have to</em>{" "}
+              work like that?&rdquo;
+            </span>
           </h1>
 
           <div style={rise(2)} className="hero-rise morph-raised mt-14 flex flex-wrap justify-center gap-3 sm:hidden">

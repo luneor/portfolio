@@ -64,10 +64,19 @@ function Section({
 }
 
 /*
-  The role/timeline/team/tools fact list is intentionally not rendered, it
-  read as clutter above the write-up. The fields stay on the Project type so
-  the metadata isn't lost and the list can be brought back if wanted.
+  Only `role` is rendered of the snapshot's fact fields. The full
+  role/timeline/team/tools list read as clutter above the write-up, but the
+  role is the one fact a reader needs before the first sentence: it says what
+  was mine. The other fields stay on the Project type so the metadata isn't
+  lost and the list can be brought back if wanted.
 */
+function SnapshotRole({ role }: { role: string }) {
+  return (
+    <p className="text-sm text-foreground-muted">
+      <span className="font-semibold text-brand-weak">Role:</span> {role}
+    </p>
+  );
+}
 
 /**
  * Section body content. A plain string becomes a paragraph; richer content
@@ -135,6 +144,7 @@ export default async function ProjectPage({
             {/* Snapshot leads, so it frames the work before the image. */}
             {snapshot && (
               <Section id="snapshot" heading="Snapshot">
+                {snapshot.role && <SnapshotRole role={snapshot.role} />}
                 {snapshot.statement && (
                   <p className="text-[1.05rem] text-foreground">
                     {snapshot.statement}

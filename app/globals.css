@@ -170,6 +170,22 @@
   --brand-grad-5: #f5f3ec;
 
   /*
+    Saturation compensation for the hero field, and the one part of the
+    gradient that IS per-theme.
+
+    The shader mixes each colour out of `--background`, so on the cream paper
+    every lobe fades toward near-white at its edges and the whole field reads
+    washed out, while the same stops on the near-black paper read as glow. The
+    palette is deliberately identical across themes (see the note above), so
+    the correction can't be new hexes: it's a saturation multiply applied after
+    mixing, which restores the intensity the light ground bleeds away without
+    moving a single hue.
+
+    1 in dark, where nothing needs correcting.
+  */
+  --hero-field-sat: 1.42;
+
+  /*
     The ring's stop list, held as one value so the hairline and its glow can't
     drift apart: they are different elements and would otherwise each carry
     their own copy.
@@ -192,6 +208,9 @@
 }
 
 .dark {
+  /* No compensation needed: colours mixed out of near-black keep their bite. */
+  --hero-field-sat: 1;
+
   --background: #0f0f0f;
   --background-alt: #1a1a1a;
   --foreground: #f5f3ec;

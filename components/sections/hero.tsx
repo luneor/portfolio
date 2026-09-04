@@ -113,8 +113,15 @@ export function Hero() {
             /*
               Tight to the headline: the two read as one block, which leaves the
               larger gap below to separate them from the navigation.
+
+              Capped at 44rem rather than a reading measure: the tagline is one
+              sentence, and it wants to sit on one line under the h1 (which is
+              wider still). At 54ch it fell ~13px short and orphaned the closing
+              "that?" onto a line of its own. `text-balance` handles the
+              viewports too narrow for one line, splitting them evenly instead
+              of leaving a stub at the end.
             */
-            className="mt-5 max-w-[54ch] text-[1.05rem] leading-relaxed text-foreground"
+            className="mt-5 max-w-[44rem] text-[1.05rem] leading-relaxed text-balance text-foreground"
           >
             UX Designer in Scotland who starts by asking &ldquo;why does it{" "}
             <em>have to</em>{" "}

@@ -1,9 +1,11 @@
 import { Hero } from "@/components/sections/hero";
 import { HomeProcess } from "@/components/sections/home-process";
+import { HomeTestimonials } from "@/components/sections/home-testimonials";
 import { HomeWork } from "@/components/sections/home-work";
 
 /*
-  The hero, then three case studies, then the two writing-led sections.
+  The hero, then three case studies, the two writing-led sections, and the
+  colleague quotes.
 
   The hero used to be the whole page. Everything was behind a click and that
   one sentence had to carry the entire decision to go further, which is a lot
@@ -18,6 +20,7 @@ export default function Home() {
       <Hero />
       <HomeWork />
       <HomeProcess />
+      <HomeTestimonials />
     </main>
   );
 }

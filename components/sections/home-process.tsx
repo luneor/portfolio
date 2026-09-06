@@ -29,7 +29,7 @@ const LINKS = [
   },
   {
     href: "/ai",
-    name: "On AI",
+    name: "AI",
     blurb:
       "How I work with AI day to day, and where I keep it out of the thinking.",
   },

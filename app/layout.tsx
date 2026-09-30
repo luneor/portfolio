@@ -62,7 +62,7 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Hanru Wehmeyer | UX Designer",
   description:
-    "Hanru Wehmeyer is a UX Designer at Genio, designing admin tooling that gives educators real control over how they support students at scale.",
+    "Hanru Wehmeyer is a UX Designer with experience designing admin tooling that gives educators real control over how they support students at scale.",
 };
 
 export default function RootLayout({

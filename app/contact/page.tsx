@@ -4,7 +4,7 @@ import { Contact } from "@/components/sections/contact";
 export const metadata: Metadata = {
   title: "Contact | Hanru Wehmeyer",
   description:
-    "Get in touch with Hanru Wehmeyer, UX Designer at Genio, about UX work, collaborations or roles.",
+    "Get in touch with Hanru Wehmeyer, UX Designer, about UX work, collaborations or roles.",
 };
 
 /*

@@ -164,14 +164,14 @@ export function Cv() {
                   Junior UX Designer, Genio
                 </strong>
                 <div className="mb-2 text-[0.85rem] text-foreground-muted italic">
-                  June 2025 – Present
+                  June 2025 – October 2026
                 </div>
                 <p className="text-foreground">
                   Design lead within my squad, working closely with a
                   Product Manager (PM), Tech Lead, and Product Marketing
-                  Manager. I own UX for Genio Admin, the B2B SaaS platform
+                  Manager. I owned UX for Genio Admin, the B2B SaaS platform
                   organisations use to manage their access to Genio Notes,
-                  our flagship product for students.
+                  Genio's flagship product for students.
                 </p>
                 <ul className="mt-2 list-disc space-y-1.5 pl-5">
                   {genioBullets.map(({ label, body }) => (

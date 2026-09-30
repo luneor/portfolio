@@ -42,11 +42,11 @@ export function GenioAdmin() {
           <p>
             As design lead within the squad,{" "}
             <strong className="font-semibold">
-              I own UX for Genio Admin end to end
+              I owned UX for Genio Admin end to end
             </strong>
             , working closely with a Product Manager, Tech Lead, and Product
             Marketing Manager. It&apos;s the B2B SaaS platform academic
-            institutions use to manage their access to Genio Notes, our
+            institutions use to manage their access to Genio Notes, Genio&apos;s
             flagship product for students, giving university staff real
             control over how those students are supported.
           </p>

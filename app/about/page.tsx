@@ -4,7 +4,7 @@ import { About } from "@/components/sections/about";
 export const metadata: Metadata = {
   title: "About | Hanru Wehmeyer",
   description:
-    "Hanru Wehmeyer is a UX Designer at Genio, based in Scotland, designing admin tools that give educators real control over how they support students.",
+    "Hanru Wehmeyer is a UX Designer based in Scotland, with experience designing admin tools that give educators real control over how they support students.",
 };
 
 export default function AboutPage() {

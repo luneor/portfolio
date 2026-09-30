@@ -35,9 +35,12 @@ export function About() {
               Hi, I&apos;m Hanru.
             </h2>
             <p className="mb-4 text-foreground">
-              I&apos;m 26, based in Scotland, and I&apos;ve been a UX Designer
-              at Genio since June 2025, designing admin tools that give
-              educators real control over how they support students.
+              I&apos;m 26, based in Scotland, and I&apos;m a UX Designer who
+              starts every project by asking why it has to work the way it
+              does. I like to push the boundaries of UX/UI with innovative,
+              human-centred solutions, owning problems end to end and
+              balancing what users need against business goals and technical
+              constraints.
             </p>
             <p className="mb-4 text-foreground">
               I&apos;ve always been interested in art and visuals growing up,
@@ -63,6 +66,12 @@ export function About() {
           <h3 className="text-[clamp(1.3rem,2.4vw,1.7rem)] leading-[1.2] font-bold tracking-tight text-foreground">
             Don&apos;t just hear it from me
           </h3>
+          {/* Dates the quotes to my time at Genio, so present-tense lines
+              like Marianne's read as accurate then rather than a claim about
+              now. The quotes themselves stay verbatim. */}
+          <p className="mt-1 text-[0.9rem] text-foreground-muted">
+            From colleagues during my time at Genio
+          </p>
 
           {/*
             Stacked, not side by side. Both quotes are a full paragraph, and in

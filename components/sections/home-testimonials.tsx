@@ -43,6 +43,11 @@ export function HomeTestimonials() {
         >
           Don&apos;t just hear it from me
         </h2>
+        {/* Dates the quotes to my time at Genio, same as About; the quotes
+            themselves stay verbatim. */}
+        <p className="mt-1 text-[0.9rem] text-foreground-muted">
+          From colleagues during my time at Genio
+        </p>
 
         {/*
           Counter first, then the two arrows together. The arrows are a pair
